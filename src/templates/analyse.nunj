@@ -1,0 +1,25 @@
+{% extends "./ext/base.nunj" %}
+{% from "parts/piecesBoard.nunj" import piecesBoard %}
+{% block title %}UI test {{ super() }}{% endblock title %}
+
+{% block stylesheets %}
+	{{ super() }}
+	<link rel="stylesheet" href="assets/pieces/external.css" />
+	<link rel="stylesheet" href="assets/css/analyse-game.css" />
+	<style>
+		
+	</style>
+{% endblock stylesheets %}
+
+{% block scripts %}
+	{{ super() }}
+	<script>
+		var analyse = onix.AnalyseGameTest('boardHere');
+	</script>
+{% endblock scripts %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div id="boardHere"></div>
+    </div>
+{% endblock content %}

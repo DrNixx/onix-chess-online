@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>{% block title %}| Onix Game{% endblock %}</title>
+		<!-- <link rel="shortcut icon" href="" /> -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,600,700" rel="stylesheet">
+
+		{% block stylesheets %}
+			<link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet">
+			<link rel="stylesheet" href="assets/common.css" />
+			<link rel="stylesheet" href="assets/boards/board.css" />
+			<link href="//cdn.chess-online.com/assets/css/common-50e28e944a5b0682a37bd60a72b4f6a8.css" rel="stylesheet">
+			<link href="//cdn.chess-online.com/assets/css/plugins-cfeddd94dd2642f3ae9ae6944935e241.css" rel="stylesheet">
+			<link href="//cdn.chess-online.com/assets/css/chess-a595c6180a09e63e75750083cf2c3e7b.css" rel="stylesheet">
+		{% endblock stylesheets %}
+	</head>
+	<body>
+		<div class="wrapper {{ wrapperClass }}">
+			{% block content %}
+			{% endblock content %}
+		</div>
+		{% block scripts %}
+		<script src="assets/js/chess-online.manifest.js"></script>
+    	<script src="assets/js/chess-online.vendors.js"></script>
+    	<script src="assets/js/chess-online.tests.js"></script>
+		{% endblock scripts %}
+	</body>
+</html>

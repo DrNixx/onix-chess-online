@@ -1,0 +1,13 @@
+.timer {
+    font-size: 120%;
+    font-weight: 500;
+
+    &.active {
+        font-size: 150%;
+        font-weight: bold;
+
+        i {
+            color: #ff8719;
+        }
+    }
+}

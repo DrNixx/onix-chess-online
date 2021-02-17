@@ -1,0 +1,62 @@
+@import "functions";
+
+.movetimes {
+    .recharts-text {
+        font-size: .75rem;
+    }
+
+    .recharts-bar {
+        &.white {
+            .recharts-bar-rectangle {
+                fill: #f0d9b5;
+            }
+        }
+
+        &.black {
+            .recharts-bar-rectangle {
+                fill: #b58863;
+            }
+        }
+    }
+
+    .graph-totals {
+        max-width: none;
+        label {
+            font-weight: 500;
+        }
+
+        .white {
+            background-color: #f0d9b5;
+            color: #000;
+            a {
+                color: #000;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .black {
+            background-color: #b58863;
+            color: #fff;
+            a {
+                color: #fff;
+                text-decoration: none;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        } 
+    }
+}
+
+@media (min-width: 992px) { 
+    .movetimes {
+        .graph-totals {
+            max-width: rem-calc(170px);
+        }
+    }
+}

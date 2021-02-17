@@ -1,0 +1,30 @@
+@import "../../node_modules/breakpoint-sass/stylesheets/breakpoint";
+@import "media-queries";
+
+.controls {
+    max-width: 640px;
+    .tab-content {
+        flex-grow: 1;
+
+        .tab-pane {
+            height: 100%;
+        }
+    }
+}
+
+.pgn-text {
+    height: 400px;
+}
+
+@include breakpoint($mq-medium) {
+    .mini-controls {
+        width: 32px;
+    
+        .btn-toolbar {
+            .btn-group {
+                margin: 0;
+                display: block;
+            }
+        }
+    }
+}
