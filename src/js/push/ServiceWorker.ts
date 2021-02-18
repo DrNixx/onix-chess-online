@@ -1,4 +1,4 @@
-import { storage } from "onix-core";
+import { storage } from "../storage/Builder";
 
 export default function() {
   if ('serviceWorker' in navigator && 'Notification' in window && 'PushManager' in window) {

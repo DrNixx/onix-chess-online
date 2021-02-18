@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Logger } from '../common/Logger';
+import Centrifuge from 'centrifuge';
 import { IModule } from './IModule';
 import { IApplication, setAppInstance } from './IApplication';
 import { ConnectionStatus } from '../net/ConnectionStatus';
-import { IStream } from '../net/IStream';
 import serviceWorker from '../push/ServiceWorker';
 import { ConnectionInfo } from '../ui/components/ConnectionInfo';
 import { Frontend } from '../ui/Frontend';
@@ -15,7 +15,6 @@ export interface AppProps {
     channel?: string,
     ui?: boolean,
     sw?: boolean,
-    stream?: IPushStreamSettings,
     modules?: IModule[],
 }
 
@@ -29,24 +28,16 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     public static defaultProps: AppProps = {
         ui: true,
         sw: false,
-        stream: {
-            host: "stream.chess-online.com",
-            useSSL: true,
-            modes: "websocket|eventsource|longpolling",
-            extraParams: function() {
-                return {"qs": "on"};
-            },
-        },
         modules: [],
     };
 
-    public stream!: IStream;
+    public stream!: Centrifuge;
 
     public ui?: Frontend;
 
     constructor(props: AppProps) {
         super(props);
-
+        
         this.state = {
             status: ConnectionStatus.Uninitialized,
             pmsg: 0,
@@ -55,7 +46,7 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     }
 
     componentDidMount() {
-        const { ui, channel, stream, modules } = this.props;
+        const { ui, channel, modules } = this.props;
 
         if (ui) {
             this.ui = new Frontend();
@@ -66,8 +57,15 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
             value.init();
         });
 
-        this.stream = new PushStream(stream!);
-        this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
+        this.stream = new Centrifuge('ws://centrifuge.example.com/connection/websocket');
+
+        this.stream.on('connect', (context) => {
+            // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
+        });
+
+        this.stream.on('disconnect', (context) => {
+            // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
+        });
 
         if (channel) {
             this.stream.subscribe(channel, this.onAlertMessage);
@@ -86,7 +84,7 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
 
     componentWillUnmount() {
         if (this.stream) {
-            this.stream.removeAll();
+            this.stream.removeAllListeners();
         }
     }
 
