@@ -1,0 +1,90 @@
+﻿.post {
+    .last-post {
+        .post-links {
+            margin: 0;
+        }
+    }
+}
+
+
+.topic-wrapper {
+    .user-info-wrapper {
+        float: left;
+        margin: 10px 20px 0 0;
+    }
+
+    &.topic-info {
+        .user-info-wrapper {
+            width: 48px;
+        }
+    }
+
+    &.topic-body {
+        .user-info-wrapper {
+            width: 80px;
+        }
+    }
+
+    .topic-text {
+        display: block;
+        overflow: hidden;
+        width: auto;
+    }
+
+    h4 + .username { 
+        margin-bottom: 5px;
+    }
+}
+
+.posts-container {
+    padding-left: 30px;
+}
+
+.post-wrapper {
+    
+
+    &.grid.simple {
+        & > .grid-body {
+            padding-top: 10px;
+            padding-left: 15px;
+        }
+    }
+
+    .user-info-wrapper {
+        float: left;
+        width: 48px;
+        margin: 0 20px 0 0;
+    }
+
+    .post-text {
+        display: block;
+        overflow: hidden;
+        width: auto;
+    }
+}
+
+@media only screen and (max-width : 320px) {
+    .topic-wrapper {
+        .user-info-wrapper {
+            margin-top: 0;
+        }
+
+        .topic-text {
+            overflow: visible;
+        }
+    }
+
+    .posts-container {
+        padding-left: 10px;
+    }
+
+    .post-wrapper {
+        &.grid.simple {
+            border-left: 4px solid $color-base-blue;
+        }
+
+        .post-text {
+            overflow: visible;
+        }
+    }
+}

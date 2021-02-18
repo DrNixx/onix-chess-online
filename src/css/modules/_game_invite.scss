@@ -1,0 +1,99 @@
+.new-game {
+    &.step1 {
+        input[type="radio"] {
+            display: none;
+
+            & + label {
+                border: 2px solid transparent;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            &:checked {
+                & + label.time-class-label {
+                    border-color: #115d9c;
+                }
+
+                & + label.time-corrs-label {
+                    border-color: #1f3953;
+                }
+            }
+        }
+
+        .time-blitz-icon {
+            fill: #ff8719;
+        }
+
+        .time-class-icon {
+            fill: #115d9c;
+        }
+
+        .time-corrs-icon {
+            fill: #1f3953;
+        }
+    }
+
+    &.step2 {
+        .asign {
+            width: 100px;
+            position: relative;
+
+            &:after {
+                content: "";
+                display: block;
+                padding-bottom: 100%;
+            }
+        }
+
+        .advance-icon {
+            fill: #666;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .disable-icon {
+            fill: #a00;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: .8;
+        }
+
+        .cheat-yes .advance-icon {
+            fill: #128023;
+        }
+
+        .cheat-no .advance-icon {
+            fill: #666;
+        }
+
+        input[type="radio"] {
+            display: none;
+
+            & + label {
+                border: 2px solid transparent;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+
+            &:checked + label {
+                border-color: #115d9c;
+            }
+        }
+
+        label svg {
+            width: 80px;
+            height: 80px;
+        }
+
+        label span {
+            display: block;
+            text-align: center;
+        }
+    }
+}

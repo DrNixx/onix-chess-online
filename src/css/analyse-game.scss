@@ -1,11 +1,13 @@
-@import "functions";
 
-@import "username";
-@import "movetimes";
-@import "analyse";
-@import "moves-list";
-@import "controls";
-@import "captures";
-@import "timer";
-@import "game-result";
-@import "gameinfo";
+@import "pages";
+@import "site";
+
+@import "modules/username";
+@import "modules/movetimes";
+@import "modules/analyse";
+@import "modules/moves-list";
+@import "modules/controls";
+@import "modules/captures";
+@import "modules/timer";
+@import "modules/game-result";
+@import "modules/gameinfo";

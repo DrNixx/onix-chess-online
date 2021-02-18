@@ -1,0 +1,103 @@
+/*------------------------------------------------------------------
+[27. Widgets]
+*/
+.widget {
+    position: relative;
+    & > div {
+        position: relative;
+        z-index: 1;
+    }
+
+    &:after {
+        background-size: cover;
+        content: " ";
+        @include left( 0 );
+        @include right( 0 );
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        z-index: 0;
+        opacity: 0.69;
+    }
+
+    &.widget-box {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        @include border-radius(6px);
+    }
+
+    .widget-body {
+        overflow: hidden;
+        &.card {
+            .card-header {
+                .card-title {
+                    a {
+                        opacity: 1;
+                    }
+
+                    i {
+                        font-size: 2em;
+                    }
+                }
+            }
+            .nav-tabs-linetriangle {
+                background-color: $color-master-lightest;
+            }
+
+            &.arena {
+                background-color: #edebe9;
+            }
+        }
+    }
+}
+
+.btn-circle-arrow {
+    border: 1px solid #fff;
+    border-radius: 100px;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    @include margin-right(4px);
+    i {
+        font-size: 20px;
+        position: absolute;
+        @include left(0);
+        top: 0;
+        @include margin-left(-1px);
+        margin-top: -1px;
+    }
+}
+
+.live-tile {
+    color: inherit;
+}
+
+/*** Large screens ***/
+@media only screen and (min-width: 1824px) {
+    // Dashboard
+    .ar-3-2:before {
+        padding-top: calc(55% - 5px) !important;
+    }
+    .ar-2-3:before {
+        padding-top: calc(135% - 5px) !important;
+    }
+}
+@media (max-width: 991px) {
+    .card {
+        height: auto !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .widgets-container {
+        margin-top: 80px;
+    }
+}
+
+@media (max-width: 610px) {
+    .widget-item,
+    .widgets-container {
+        width: 100% !important;
+    }
+}

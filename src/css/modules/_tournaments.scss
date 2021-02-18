@@ -1,0 +1,76 @@
+.tour-spotlight {
+  // background: linear-gradient(to bottom, #B1CACD 0%, #4DA4B0 100%);
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
+  flex: 0 0 auto;
+  padding: .3em 20px;
+  opacity: 0.8;
+  transition: all 150ms;
+  color: #013F47;
+
+  .tour-spotlight .img {
+    flex: 0 0 50px;
+    margin: 0 .5em 0 .3em;
+  }
+
+  .img {
+    flex: 0 0 50px;
+    line-height: normal;
+  }
+
+  i.img {
+    margin: 0 5px 0 0;
+    color: $color-base-orange;
+
+    &:before {
+      font-size: 3em;
+      text-shadow: 1px 1px 2px $color-base-blue;
+    }
+  }
+
+  .name {
+    margin-top: 1px;
+    line-height: 13px;
+    display: block;
+  }
+
+  .headline {
+    display: block;
+    font-size: .85em;
+    margin-bottom: -3px;
+  }
+
+  .more {
+    font-size: .85em;
+
+    time {
+      margin-left: 3px;
+    }
+  }
+}
+
+.tournament-table {
+    .result {
+        &.none {
+            font-weight: normal;
+        }
+
+        &.win {
+            color: $emerald !important;
+        }
+
+        &.loss {
+            color: $darkRed !important;
+        }
+
+        &.draw {
+            color: $color-master-darkest !important;
+        }
+    }
+}

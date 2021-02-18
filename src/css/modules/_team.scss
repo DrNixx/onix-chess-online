@@ -1,0 +1,160 @@
+@import '../mixins';
+@import 'node_modules/breakpoint-sass/stylesheets/breakpoint';
+@import "../media-queries";
+
+.media {
+    .team-logo {
+
+    }
+}
+
+.team-item {
+  .inactive {
+    opacity: .5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .card-body {
+    border-bottom: 1px solid $panel-border-color;
+  }
+}
+
+.team-row {
+  .team-logo {
+    width: 150px;
+  }
+}
+
+.social-team-profile {
+  .team-logo {
+    max-height: 200px;
+    max-width: 100%;
+  }
+}
+
+.team-member-item {
+  width: 100%;
+
+  &.card {
+    .card-header {
+      min-height: unset;
+    }
+  }
+
+  @include breakpoint($mq-small) {
+    width: 48%;
+  }
+
+  @include breakpoint($mq-medium) {
+    width: 48%;
+  }
+
+  @include breakpoint($mq-large) {
+    width: 18rem;
+  }
+}
+
+.members {
+  .stacked {
+    display: inline-block;
+    padding-right: .7rem;
+
+    .username-block {
+      margin-right: -.7rem;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+$wsc: #dee3e6;
+$bsc: #8ca2ad;
+$scs: 60px;
+
+$badge-from: mix($wsc, #000, 75%);
+$badge-to: mix($bsc, #000, 75%);
+
+.team-challenge {
+  .waiting {
+    max-height: 150vh;
+    overflow-y: scroll;
+
+    .list {
+      .badge-board {
+        visibility: hidden;
+      }
+
+      .add-member {
+        display: inline-block;
+      }
+
+      .remove-member {
+        display: none;
+      }
+
+      .up-member {
+        display: none;
+      }
+
+      .down-member {
+        display: none;
+      }
+    }
+  }
+
+  .seating {
+    min-height: 6rem;
+    margin-bottom: 1rem;
+    //background-image: linear-gradient(135deg, #f0d9b5 25%, #b58863 25%, #b58863 50%, #f0d9b5 50%, #f0d9b5 75%, #b58863 75%, #b58863 100%);
+    //background-size: 56.57px 56.57px;
+    position: relative;
+
+    @include bg-board($wsc, $bsc, $scs);
+    @include ribbon($badge-from, $badge-to, #fff, left);
+
+    .card-footer.summary {
+      background-color: $bsc;
+      color: #fff;
+      border-color: $badge-to;
+    }
+
+    .list {
+      .badge-board {
+        visibility: visible;
+      }
+
+      .add-member {
+        display: none;
+      }
+
+      .remove-member {
+        display: inline-block;
+      }
+
+      .up-member {
+        display: inline-block;
+      }
+
+      .down-member {
+        display: inline-block;
+      }
+
+      .team-member-item:first-child {
+        .up-member {
+          display: none;
+        }
+      }
+
+      .team-member-item:last-child {
+        .down-member {
+          display: none;
+        }
+      }
+    }
+  }
+}

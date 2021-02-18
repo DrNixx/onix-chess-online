@@ -1,0 +1,90 @@
+@import 'node_modules/breakpoint-sass/stylesheets/breakpoint';
+@import '../media-queries';
+
+
+
+.widget {
+    &.ar-custom {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+
+        &:before {
+            content: "";
+            display: block;
+            padding-top: calc(113% - #{$layout-gutter-sm});
+        }
+
+        & > div {
+            @include stretch-absolute();
+        }
+    }
+
+    &.puzzle {
+        &:before {
+            padding-top: calc(116% - #{$layout-gutter-sm});
+        }
+    }
+
+    &.arena-tv {
+        &:before {
+            padding-top: calc(125% - #{$layout-gutter-sm});
+        }
+    }
+
+    @include breakpoint($mq-medium) {
+        &.puzzle {
+            &:before {
+                padding-top: calc(116% - #{$layout-gutter-sm});
+            }
+        }
+
+        &.arena-tv {
+            &:before {
+                padding-top: calc(120% - #{$layout-gutter-sm});
+            }
+        }
+    }
+
+    @include breakpoint($mq-large) {
+        &.puzzle {
+            &:before {
+                padding-top: calc(127% - #{$layout-gutter-sm});
+            }
+        }
+
+        &.arena-tv {
+            &:before {
+                padding-top: calc(130% - #{$layout-gutter-sm});
+            }
+        }
+
+        &#active_games_list {
+            .scrollable {
+                max-height: 75vh;
+            }
+        }
+    }
+
+
+    @include breakpoint($mq-x-large) {
+        &.puzzle {
+            &:before {
+                padding-top: calc(113% - #{$layout-gutter-sm});
+            }
+        }
+
+        &.arena-tv {
+            &:before {
+                padding-top: calc(117% - #{$layout-gutter-sm});
+            }
+        }
+    }
+
+    @include breakpoint($mq-not-medium) {
+        &#forum-widget {
+            height: 75vh;
+        }
+    }
+}
+

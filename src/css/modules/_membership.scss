@@ -1,0 +1,21 @@
+.table-statuses {
+    font-size: 12px;
+
+    tr {
+        th {
+            text-align: center;
+
+            &:first-child {
+                text-align: left;
+            }
+        }
+        td {
+            vertical-align: top;
+            text-align: center;
+
+            &:first-child {
+                text-align: left;
+            }
+        }
+    }
+}

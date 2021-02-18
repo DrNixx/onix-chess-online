@@ -1,0 +1,58 @@
+.movelist {
+    .btn {
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}
+
+.movelist-wrap {
+    .opening {
+        margin-right: .5em;
+    }
+
+    .moveno {
+        padding-right: .2em;
+    }
+
+    .move {
+        padding-left: .2em;
+        padding-right: .2em;
+        margin-right: .3em;
+        display: inline-block;
+        font-weight: 500;
+        cursor: pointer;
+
+        &.best {
+            color: #1e7145;
+        }
+
+        &.blunder {
+            color: #e76e70;
+        }
+
+        &.mistake {
+            color: #ce8f22;
+        }
+
+        &.inaccuracy {
+            color: #246a8e;
+        }
+
+        &.active {
+            background-color: #ff8719;
+            color: #fff;
+        }
+    }
+
+    .nag {
+        padding-right: .5em;
+        font-weight: bold;
+    }
+
+    .comment {
+        color: #999;
+        font-style: italic;
+        padding-right: .6em;
+    }
+}

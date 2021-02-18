@@ -1,0 +1,17 @@
+.result-color {
+    text-align: center;
+    &.white {
+        background-color: #fff !important;
+        color: #4b4b4b;
+    }
+
+    &.black {
+        background-color: #132232 !important;
+        color: #fff;
+    }
+
+    &.draw {
+        background-color: #e0e0e0 !important;
+        color: #4b4b4b;
+    }
+}

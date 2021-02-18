@@ -21,4 +21,8 @@ gulp.task("compile", compile, function() {
     console.log('Building scripts...');
 });
 
+gulp.task("styles", styles, function() {
+    console.log('Building styles...');
+});
+
 gulp.task('default', parallel('build', watch, server));
