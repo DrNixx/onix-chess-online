@@ -1,0 +1,349 @@
+﻿@charset "UTF-8";
+
+/* ver 1.1.37-2018-07-16 */
+
+@import '../../chess/css/global';
+@import '../../chess/css/fonts';
+@import '../../chess/css/mixins';
+@import '../../chess/css/themes/welcome/theme';
+@import '../../chess/css/modules';
+@import 'component';
+
+body {
+    color: #6f7b8a;
+    background-color:#f2f4f6;
+    text-rendering: optimizeLegibility;
+}
+
+.main-wrapper {
+    opacity: 0;
+    position: relative;
+}
+
+body.pace-running .main-wrapper {
+	opacity: 0.2;
+}
+
+body.pace-done .main-wrapper {
+	opacity: 1;
+}
+
+.hide {
+    display: none !important;
+}
+
+.appear {
+    visibility: hidden;
+}
+
+.navbar > .container .navbar-brand {
+	margin-left: 0;
+}
+
+.navbar-brand {
+	line-height: 34px;
+	margin: 33px 0;
+	padding:0;
+
+    &.compressed {
+	    margin: 6px 0 13px;
+
+    }
+}
+
+.navbar-static-top, .navbar-fixed-top {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 70;
+	width: 100%;
+	padding: 0 0 20px !important;
+	margin: 0! important;
+}
+
+.navbar-top {
+    position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 70;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.navbar-nav {
+    & > li {
+        & > a {
+            line-height: 45px;
+	        margin: 39px 25px;
+	        padding: 0;
+            border-bottom: 2px solid transparent;
+            color: #909296;
+	        font-weight: bold;
+
+            &:hover, &:focus {
+                background-color: transparent;
+	            border-bottom: #fff 2px solid;
+            }
+        }
+    }
+}
+
+.compressed {
+    .navbar-nav {
+        & > li {
+            & > a {
+	            margin: 11px 25px;
+                text-transform: uppercase;
+	            letter-spacing: 0.8px;
+	            font-size: 0.875em;
+	            text-rendering: optimizeLegibility;
+            }
+        }
+    }
+}
+
+.navbar-toggler {
+	margin-top: 15px;
+    .icon-bar {
+        display: block;
+	    border-radius: 0 !important;
+	    height: 3px !important;
+        width: 22px;
+        margin-bottom: 4px;
+    }
+}
+
+.navbar-default {
+    background: #fff none;
+    box-shadow: none;
+
+    .navbar-nav {
+        & > li {
+            & > a {
+                &:hover, &:focus {
+                    background-color: transparent;
+                }
+            }
+        }
+
+        & > .active {
+            & > a {
+                background-image: none;
+	            box-shadow: none;
+	            color: #22262e;
+            }
+        }
+    }
+
+    .collapse.in {
+        background-color: #fff;
+    }
+
+    .navbar-toggler {
+	    border:none;
+
+        &:hover, &:active {
+            background-color: #fff;
+        }
+
+        .icon-bar{
+	        background-color: #4c5264 !important;
+        }
+    }
+}
+
+.navbar-transparent {
+	background-color: transparent;
+
+    .navbar-nav {
+        background-color: transparent;
+	    margin-top: 15px;
+
+        & > li {
+            & > a {
+                color: #fff;
+            }
+        }
+
+        & > .active {
+            & > a {
+                box-shadow: none;
+                background: transparent none;
+                color: #fff;
+            }
+        }
+    }
+
+    .collapse.in {
+        background-color: rgba(33, 33, 33, .8);
+    }
+
+    .navbar-toggler {
+	    margin-top: 35px;
+
+        .icon-bar {
+	        background-color: #fff !important;
+        }
+    }
+}
+
+.ha-header {
+	height: 170px;
+    background: none;
+
+    .navbar-nav > li > a {
+	    text-align: left
+    }
+}
+
+.ha-header-hide {
+    .navbar-collapse {
+        display: none;
+    }
+}
+
+.progress-bar-orange {
+    background-color: $orange;
+}
+
+@media (max-width: 767px) {
+    .ha-header-perspective > div {
+        overflow: visible;
+        padding: 0;
+    }
+
+    .navbar-transparent {
+        .navbar-collapse {
+            background-color: rgba(33, 33, 33, .8);
+        }
+    }
+
+    .navbar-default {
+        .navbar-collapse {
+            background-color: #fff;
+        }
+    }
+}
+
+.custom-font {
+	letter-spacing: 0.8px;
+}
+
+.parallax_row  .custom-font {
+    color: $color-white;
+}
+
+.feature-list .title {
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#parallax_wrapper {
+    border: 0 none;
+    height: auto;
+    margin: 0;
+    min-height: 50px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+#parallax_content_wrapper {
+    float: left;
+    width: 100%;
+    position: relative;
+}
+
+#parallax_content {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.parallax_row {
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin: 0 -1500px;
+    padding: 0 1500px;
+    position: relative;
+    background-color: transparent !important;
+    min-width: 1000px;
+}
+
+.parallax_row_background {
+    background-position: center center;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &.parallax_row_background_fixed {
+        background-attachment: fixed !important;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+}
+
+.sub-bg {
+    background: url('#{$base-img-url}chess-para2-b.jpg') no-repeat scroll center center;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+[data-rowid="1"] > .parallax_row_background {
+    background-image: url('#{$base-img-url}chess-para2.jpg');
+}
+
+[data-rowid="2"] > .parallax_row_background {
+    background-image: url('#{$base-img-url}chess-para2-b.jpg');
+}
+
+.parallax_column {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 0 none;
+    display: block;
+    float: left;
+    margin: 0;
+    min-height: 30px;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+
+.section {
+    &.white {
+        background-color: #fff;
+    }
+}
+
+.pre-footer {
+    ul {
+        list-style: none outside none;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+
+        li {
+            padding: 0;
+        }
+    }
+}
+
+footer {
+    font-size: .75rem;
+    background-color: #333;
+    color: #d5d0bd;
+     a {
+         color: #b5b0ad;
+         &:hover {
+             color: #d5d0bd;
+         }
+     }
+}
