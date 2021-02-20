@@ -1,10 +1,6 @@
-/*------------------------------------------------------------------
-[5@mixin  Typography]
-*/
-
-/* Standard elements
---------------------------------------------------
-*/
+@import "../var";
+@import "../color";
+@import "../directions";
 
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600");
 @import url("https://keplerapis.com/fonts/css?family=Inter+UI:300,400,500,600");
@@ -602,18 +598,22 @@ kbd {
     background-color: $color-info !important;
     color: text-contrast($color-info);
 }
+
 .bg-info-dark {
     background-color: $color-info-dark;
     color: text-contrast($color-info-dark);
 }
+
 .bg-info-darker {
     background-color: $color-info-darker;
     color: text-contrast($color-info-darker);
 }
+
 .bg-info-light {
     background-color: $color-info-light;
     color: text-contrast($color-info-light);
 }
+
 .bg-info-lighter {
     background-color: $color-info-lighter;
     color: text-contrast($color-info-lighter);
@@ -921,15 +921,19 @@ z = font size
 .font-arial {
     font-family: Arial, sans-serif !important;
 }
+
 .font-montserrat {
     font-family: $secondary-font-family !important;
 }
+
 .font-georgia {
     font-family: Georgia !important;
 }
+
 .font-heading {
     font-family: $secondary-font-family;
 }
+
 .font-secondary {
     font-family: $secondary-font-family;
 }

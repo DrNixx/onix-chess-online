@@ -107,36 +107,43 @@ $color-primary-lighter: make-shade($color-primary, $mix-percentage-lighter, $sat
 $color-primary-light: make-shade($color-primary, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-primary-dark: make-shade($color-primary, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-primary-darker: make-shade($color-primary, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //success-shade
 $color-success-lighter: make-shade($color-success, $mix-percentage-lighter, $saturation-shift, $hue-shift, -2) !default;
 $color-success-light: make-shade($color-success, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-success-dark: make-shade($color-success, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-success-darker: make-shade($color-success, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //complete-shade
 $color-complete-lighter: make-shade($color-complete, $mix-percentage-lighter, $saturation-shift, $hue-shift, -2) !default;
 $color-complete-light: make-shade($color-complete, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-complete-dark: make-shade($color-complete, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-complete-darker: make-shade($color-complete, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //warning-shade
 $color-warning-lighter: make-shade($color-warning, $mix-percentage-lighter, $saturation-shift, $hue-shift, -2) !default;
 $color-warning-light: make-shade($color-warning, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-warning-dark: make-shade($color-warning, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-warning-darker: make-shade($color-warning, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //danger-shade
 $color-danger-lighter: make-shade($color-danger, $mix-percentage-lighter, $saturation-shift, $hue-shift, -2) !default;
 $color-danger-light: make-shade($color-danger, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-danger-dark: make-shade($color-danger, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-danger-darker: make-shade($color-danger, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //info-shade
 $color-info-lighter: make-shade($color-info, $mix-percentage-lighter, $saturation-shift, $hue-shift, -2) !default;
 $color-info-light: make-shade($color-info, $mix-percentage-light, $saturation-shift, $hue-shift, -1) !default;
 $color-info-dark: make-shade($color-info, $mix-percentage-dark, $saturation-shift, $hue-shift, 1) !default;
 $color-info-darker: make-shade($color-info, $mix-percentage-darker, $saturation-shift, $hue-shift, 2) !default;
+
 //Neutral color shades - #hex values
 $color-contrast-lower: mix($color-contrast-higher, $color-contrast-lowest, $mix-percentage-contrast-lower) !default;
 $color-contrast-low: mix($color-contrast-higher, $color-contrast-lowest, $mix-percentage-contrast-low) !default;
 $color-contrast-medium: mix($color-contrast-higher, $color-contrast-lowest, $mix-percentage-contrast-medium) !default;
 $color-contrast-high: mix($color-contrast-higher, $color-contrast-lowest, $mix-percentage-contrast-high) !default;
+
 //Neutral color shades - rgba values
 $color-contrast-lower-a: rgba($color-contrast-higher, $mix-percentage-contrast-lower/100) !default;
 $color-contrast-low-a: rgba($color-contrast-higher, $mix-percentage-contrast-low/100) !default;
@@ -146,6 +153,7 @@ $color-contrast-high-a: rgba($color-contrast-higher, $mix-percentage-contrast-hi
 //Menu colors generation
 $color-menu-dark: mix($color-menu, #000, 77%) !default;
 $color-menu-darker: mix($color-menu, #000, 90%) !default;
+
 //Generating Menu font color
 $menu-mix-temp: mix($color-menu, #fff, 86%) !default;
 $menu: blend-hardlight($menu-mix-temp,#fff) !default;
@@ -233,50 +241,6 @@ $form-control-border-color: rgba($color-black, .07) !default;
 
 //Dashboard
 $dashboard-background : #f5f5f5 !default;
-
-//Mixing Color varriable for creating both light and dark colors
-$mix-percentage-dark: 81% !default;
-$mix-percentage-darker: 60% !default;
-$mix-percentage-light: 80% !default;
-$mix-percentage-lighter: 20% !default;
-
-//Lighter colors
-$color-success-light: mix($color-success, $color-white, $mix-percentage-light) !default;
-$color-success-lighter: mix($color-success, $color-white, $mix-percentage-lighter) !default;
-
-$color-complete-light: mix($color-complete, $color-white, $mix-percentage-light) !default;
-$color-complete-lighter: mix($color-complete, $color-white, $mix-percentage-lighter) !default;
-
-$color-primary-light: mix($color-primary, $color-white, $mix-percentage-light) !default;
-$color-primary-lighter: mix($color-primary, $color-white, $mix-percentage-lighter) !default;
-
-$color-warning-light: mix($color-warning, $color-white, $mix-percentage-light) !default;
-$color-warning-lighter: mix($color-warning, $color-white, $mix-percentage-lighter) !default;
-
-$color-danger-light: mix($color-danger, $color-white, $mix-percentage-light) !default;
-$color-danger-lighter: mix($color-danger, $color-white, $mix-percentage-lighter) !default;
-
-$color-info-light: mix($color-info, $color-white, $mix-percentage-light) !default;
-$color-info-lighter: mix($color-info, $color-white, $mix-percentage-lighter) !default;
-
-//Darker colors
-$color-success-dark: mix($color-success, $color-black, $mix-percentage-dark) !default;
-$color-success-darker: mix($color-success, $color-black, $mix-percentage-darker) !default;
-
-$color-complete-dark: mix($color-complete, $color-black, $mix-percentage-dark) !default;
-$color-complete-darker: mix($color-complete, $color-black, $mix-percentage-darker) !default;
-
-$color-primary-dark: mix($color-primary, $color-black, $mix-percentage-dark) !default;
-$color-primary-darker: mix($color-primary, $color-black, $mix-percentage-darker) !default;
-
-$color-warning-dark: mix($color-warning, $color-black, $mix-percentage-dark) !default;
-$color-warning-darker: mix($color-warning, $color-black, $mix-percentage-darker) !default;
-
-$color-danger-dark: mix($color-danger, $color-black, $mix-percentage-dark) !default;
-$color-danger-darker: mix($color-danger, $color-black, $mix-percentage-darker) !default;
-
-$color-info-dark: mix($color-info, $color-black, $mix-percentage-dark) !default;
-$color-info-darker: mix($color-info, $color-black, $mix-percentage-darker) !default;
 
 // Email colors
 // $sidebar-background-color : $color-menu-dark !default;

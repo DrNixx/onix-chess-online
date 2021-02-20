@@ -1,13 +1,7 @@
-﻿@charset "UTF-8";
-
-/* ver 1.1.37-2018-07-16 */
-
-@import '../../chess/css/global';
-@import '../../chess/css/fonts';
-@import '../../chess/css/mixins';
-@import '../../chess/css/themes/welcome/theme';
-@import '../../chess/css/modules';
-@import 'component';
+﻿@import 'mixins';
+@import 'themes/welcome/theme';
+@import 'pages';
+@import 'modules/welcome';
 
 body {
     color: #6f7b8a;

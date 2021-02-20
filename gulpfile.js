@@ -12,16 +12,16 @@ const { series, parallel } = require('gulp');
 
 // let build = series(clean, parallel(webpack, html, vendor));
 let build = series(clean, parallel(html, styles, vendor, webpack));
-gulp.task("build", build, function() {
+gulp.task("build", build, function () {
     console.log('Building public...');
 });
 
 let compile = series(clean, parallel(scripts, styles));
-gulp.task("compile", compile, function() {
+gulp.task("compile", compile, function () {
     console.log('Building scripts...');
 });
 
-gulp.task("styles", styles, function() {
+gulp.task("styles", styles, function () {
     console.log('Building styles...');
 });
 
