@@ -26,8 +26,8 @@ gulp.task("welcome", welcome, function () {
 const siteClean = getTask('', 'clean', PATHS_OPTIONS.site);
 const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
 const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
-const siteScripts = getTask('', 'webpack', PATHS_OPTIONS.site);
-let site = series(siteClean, parallel(siteHtml, siteStyles, siteScripts));
+const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
+let site = series(siteClean, parallel(siteHtml, siteStyles, siteWebpack));
 gulp.task("site", site, function () {
     console.log('Building site...');
 });

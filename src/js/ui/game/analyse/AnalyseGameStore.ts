@@ -4,7 +4,7 @@ import { gameReducer } from '../../../actions/GameReducer';
 import { boardReducer } from '../../../actions/BoardReducer';
 import { AnalyseGameState } from "./AnalyseGameState";
 
-export const createAnalyseGameStore = (preloadedState: AnalyseGameState) =>
+export const createAnalyseGameStore = (preloadedState: AnalyseGameState): AnalyseGameStore =>
     reduxCreateStore(
         combineReducers<AnalyseGameState>({
             intl: intlReducer,

@@ -5,15 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "tsc": "tsc",
+    "compile": "tsc",
     "welcome:dev": "cross-env NODE_ENV=development gulp welcome",
     "welcome:prod": "cross-env NODE_ENV=production gulp welcome",
     "site:dev": "cross-env NODE_ENV=development gulp site",
     "site:prod": "cross-env NODE_ENV=production gulp site",
     "start": "cross-env NODE_ENV=development gulp",
-    "build": "cross-env NODE_ENV=development gulp build",
-    "compile": "cross-env NODE_ENV=production gulp compile",
-    "styles": "cross-env NODE_ENV=production gulp styles",
     "webpack": "webpack --config webpack.config.js",
     "test": "cross-env NODE_ICU_DATA=node_modules/full-icu mocha -r jsdom-global/register -r ts-node/register test/**/*.unittest.ts"
   },
