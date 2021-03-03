@@ -7,7 +7,7 @@ let cache_bust = 1;
 let listenerLoop: number;
 
 // A var used in awesome browsers.
-let rm_callback:  (this: Window, ev: MessageEvent<any>) => any;
+let rm_callback: ((this: Window, ev: MessageEvent<any>) => any) | undefined = undefined;
 
 const _postMessage = 'postMessage';
 
@@ -61,7 +61,9 @@ export const receiveMessage = p_receiveMessage = function(callback: Function, so
 
             window.addEventListener('message', rm_callback, false);
         } else {
-            window.removeEventListener('message', rm_callback, false);
+            if (rm_callback) {
+                window.removeEventListener('message', rm_callback, false);
+            }
         }
     } else {
         // Since the browser sucks, a polling loop will be started, and the

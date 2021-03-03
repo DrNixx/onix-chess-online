@@ -1,57 +1,48 @@
-const gulp = require('gulp');
+const path = require('path');
 const log = require('fancy-log');
-const nunjucksRender = require('gulp-nunjucks-api');
-const plumber = require('gulp-plumber');
-const beautify = require('gulp-jsbeautifier');
+const pipe = require('multipipe');
 
-const { PRODUCTION } = require('../config');
-const PATHS = require('../paths');
-const extensions = require('../src/templates/lib/extensions.js');
-const filters = require('../src/templates/lib/filters.js');
-const functions = require('../src/templates/lib/functions.js');
-const gulpif = require('gulp-if');
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
+    const task = function () {
+		if (PRODUCTION) {
+			return gulp.src('.', {allowEmpty: true});
+		} else {
+			const globalData = {};
+			const extensions = require(path.resolve(PATHS.src.templates, 'lib/extensions.js'));
+			const filters = require(path.resolve(PATHS.src.templates, 'lib/filters.js'));
+			const functions = require(path.resolve(PATHS.src.templates, 'lib/functions.js'));
 
-const globalData = {}; //require('../global-data.json');
-const pieces = {}; //require('../src/pieces/pieces.json');
+			return gulp
+				.src(PATHS.src.nunj)
+				.pipe(
+					plugins.plumber({
+						errorHandler: function(err) {
+							log(err.message);
+						},
+					})
+				)
+				.pipe(
+					plugins.nunjucksApi({
+						src: PATHS.src.templates,
+						data: Object.assign(
+							{
+								DEVELOP: !PRODUCTION,
+							},
+							globalData
+						),
+						extensions,
+						filters,
+						functions,
+						trimBlocks: true,
+						lstripBlocks: true,
+						autoescape: false,
+					})
+				)
+				.pipe(gulp.dest(PATHS.build.html));
+		}
+	};
 
-module.exports = function() {
-	return gulp
-		.src(PATHS.src.nunj)
-		.pipe(
-			plumber({
-				errorHandler: function(err) {
-					log(err.message);
-				},
-			})
-		)
-		.pipe(
-			nunjucksRender({
-				src: PATHS.src.templates,
-				data: Object.assign(
-					{
-						DEVELOP: !PRODUCTION,
-					},
-					globalData,
-					pieces
-				),
-				extensions,
-				filters,
-				functions,
-				trimBlocks: true,
-				lstripBlocks: true,
-				autoescape: false,
-			})
-		)
-		.pipe(
-			gulpif(
-				PRODUCTION,
-				beautify({
-					max_preserve_newlines: 1,
-					wrap_line_length: 0,
-				})
-			)
-		)
-		.pipe(gulp.dest(PATHS.build.html));
-}
+	task.displayName = 'html';
 
-module.exports.displayName = 'html';
+    return task;
+};

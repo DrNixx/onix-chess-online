@@ -1,28 +1,38 @@
 ﻿const gulp = require('gulp');
-const clean = require('./gulp-tasks/clean');
-const scripts = require('./gulp-tasks/scripts');
-const styles = require('./gulp-tasks/styles');
-const webpack = require('./gulp-tasks/webpack');
-const vendor = require('./gulp-tasks/vendor');
-const html = require('./gulp-tasks/html');
-const watch = require('./gulp-tasks/watch');
-const server = require('./gulp-tasks/server');
-
 const { series, parallel } = require('gulp');
-
-// let build = series(clean, parallel(webpack, html, vendor));
-let build = series(clean, parallel(html, styles, vendor, webpack));
-gulp.task("build", build, function () {
-    console.log('Building public...');
+const plugins = require('gulp-load-plugins')({
+    rename: {
+        'gulp-if': 'gif',
+        'nunjucks-api': 'nunjucksApi'
+    }
 });
 
-let compile = series(clean, parallel(scripts, styles));
-gulp.task("compile", compile, function () {
-    console.log('Building scripts...');
+const { PRODUCTION } = require('./config');
+const PATHS_OPTIONS = require('./paths');
+
+function getTask(module, task, paths) {
+    const taskMoodule = './' + module + '/gulp-tasks/' + task;
+    return require(taskMoodule)(gulp, plugins, paths, PRODUCTION);
+}
+
+const welcomeClean = getTask('', 'clean', PATHS_OPTIONS.welcome);
+const welcomeStyles = getTask('', 'styles', PATHS_OPTIONS.welcome);
+const welcomeScripts = getTask('', 'scripts', PATHS_OPTIONS.welcome);
+let welcome = series(welcomeClean, parallel(welcomeStyles, welcomeScripts));
+gulp.task("welcome", welcome, function () {
+    console.log('Building welcome...');
 });
 
-gulp.task("styles", styles, function () {
-    console.log('Building styles...');
+const siteClean = getTask('', 'clean', PATHS_OPTIONS.site);
+const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
+const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
+const siteScripts = getTask('', 'webpack', PATHS_OPTIONS.site);
+let site = series(siteClean, parallel(siteHtml, siteStyles, siteScripts));
+gulp.task("site", site, function () {
+    console.log('Building site...');
 });
 
-gulp.task('default', parallel('build', watch, server));
+gulp.task('sass:watch', function () {
+    gulp.watch('./chess/**/*.scss', parallel(['chessSass']));
+    gulp.watch('./pages/**/*.scss', parallel(['pagesSass']));
+});

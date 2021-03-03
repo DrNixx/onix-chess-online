@@ -1,9 +1,12 @@
-const del = require('del');
-const PATHS = require('../paths');
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
+    const del = require('del');
 
-module.exports = function(cb) {
-	del.sync(PATHS.clean, {force: true});
-  	cb();
-}
+    const task = function (cb) {
+        del.sync(PATHS.clean, {force: true});
+        return cb();
+    };
 
-module.exports.displayName = 'clean';
+    task.displayName = 'clean';
+
+    return task;
+};

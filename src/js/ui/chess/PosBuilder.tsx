@@ -47,7 +47,7 @@ function selectedToClass(s: Selected): string {
 }
 
 function selectedToCursor(s: Selected): string {
-    return "cursor-" + joinSelected(s, "-");;
+    return "cursor-" + joinSelected(s, "-")
 }
 
 function classToSelected(c: string): Selected | undefined {
@@ -299,7 +299,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 }
             }
 
-            cg.setShapes(sh.filter((s) => { return cg.state.drawable.brushes[s.brush] !== undefined; }));
+            cg.setShapes(sh.filter((s) => { return !!cg.state.drawable.brushes[s.brush!]; }));
             result = shapesToMarkers(cg.state.drawable.shapes);
         }
 

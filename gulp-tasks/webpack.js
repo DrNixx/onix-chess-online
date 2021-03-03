@@ -1,36 +1,31 @@
-const log = require('fancy-log')
-const webpack = require('webpack');
+const path = require('path');
+const pipe = require('multipipe');
 
-const config = require('../webpack.config.js');
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
+    const gulpWebpack = require('webpack-stream');
+    const webpack = require('webpack');
+    const { merge } = require('webpack-merge');
 
-const defaultStatsOptions = {
-	colors: true,
-	hash: false,
-	timings: false,
-	chunks: false,
-	chunkModules: false,
-	modules: false,
-	children: true,
-	version: true,
-	cached: false,
-	cachedAssets: false,
-	reasons: false,
-	source: false,
-	errorDetails: false,
+    const common = require(path.resolve(__dirname, '../webpack.common.js'));
+
+    const config = merge(common, PATHS.webpack);
+    
+    const task = function () {
+		return gulp.src(PATHS.src.scripts)
+  			.pipe(gulpWebpack(config, webpack))
+  			.pipe(gulp.dest(PATHS.build.scripts))
+        .pipe(
+          plugins.gif(
+              PRODUCTION,
+              pipe(
+                  plugins.rename({ suffix: ".min" }),
+                  gulp.dest(PATHS.build.scripts)
+              )
+          )
+        );
+    };
+
+    task.displayName = 'webpack';
+
+    return task;
 };
-
-module.exports = function() {
-	return new Promise(resolve =>
-		webpack(config, (err, stats) => {
-			if (err) {
-				log('Webpack', err);
-			}
-
-			// log(stats.toString(defaultStatsOptions));
-
-			resolve();
-		})
-	);
-}
-
-module.exports.displayName = 'webpack';

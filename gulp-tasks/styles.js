@@ -1,47 +1,45 @@
-const gulp = require('gulp');
-const gulpif = require('gulp-if');
-const sass = require('gulp-sass');
-const syntax = require('postcss-scss');
-const postcss = require('gulp-postcss');
-const autoprefixer = require('autoprefixer');
 const assets = require('postcss-assets');
+const autoprefixer = require('autoprefixer');
+const fonts = require('postcss-font-magician');
 const cssnano = require('cssnano');
-const sourcemaps = require('gulp-sourcemaps');
-const rename = require('gulp-rename');
-const cleanCSS = require('gulp-clean-css');
+const inlineSVG = require('postcss-inline-svg');
+const pipe = require('multipipe');
 
-const { PRODUCTION } = require('../config');
-const PATHS = require('../paths');
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
+    const task = function () {
+        // const pre = [assets({basePath: 'https://static.chess-online.com/', loadPaths: ['pages/img/', 'pages/fonts/', 'pages/ico/']})];
+        // const pre = [];
+        // const post = [inlineSVG, autoprefixer, fonts];
+        const post = [inlineSVG, autoprefixer, fonts];
+        const compress = [cssnano()];
 
-module.exports = function() {
-    var pre = [assets({basePath: 'public/', loadPaths: ['static/img/', 'static/fonts/']})];
-    var post = [autoprefixer];
-    var compress = [cssnano];
+        return gulp.src(PATHS.src.styles, {base: PATHS.src.stylesBase})
+            // .pipe(postcss(pre, {syntax: plugins.syntax}))
+            // .pipe(sassVars(boardFiles, { verbose: false }))
+            .pipe(plugins.sourcemaps.init())
+            .pipe(plugins.sass({
+                includePaths: ['node_modules/breakpoint-sass/stylesheets/breakpoint'],
+            }).on("error", plugins.sass.logError))
+            .pipe(plugins.postcss(post))
+            .pipe(plugins.sourcemaps.write('.'))
+            .pipe(gulp.dest(PATHS.build.styles))
+            .pipe(
+                plugins.gif(
+                    PRODUCTION,
+                    pipe(
+                        plugins.filter('**/*.css'),
+                        plugins.postcss(compress),
+                        plugins.rename({ suffix: ".min" }),
+                        gulp.dest(PATHS.build.styles)
+                    )
+                )
+            )
+            //.pipe(plugins.gif(PRODUCTION, plugins.postcss(compress)))
+            //.pipe(plugins.gif(PRODUCTION, gulp.dest(PATHS.build.css)))
+            ;
+    }
 
-    return gulp.src(PATHS.src.styles)
-        .pipe(postcss(pre, {syntax: syntax}))
-        .pipe(sass().on("error", sass.logError))
-        .pipe(postcss(post))
-        .pipe(gulp.dest(PATHS.build.styles))
-        .pipe(
-            gulpif(
-				PRODUCTION,
-				rename({ suffix: ".min" })
-			)
-        )
-        .pipe(
-            gulpif(
-				PRODUCTION,
-                cleanCSS()
-                //postcss(compress)
-			)
-        )
-        .pipe(
-            gulpif(
-				PRODUCTION,
-				gulp.dest(PATHS.build.styles)
-			)
-        ); 
-}
+    task.displayName = 'styles';
 
-module.exports.displayName = 'styles';
+    return task;
+};

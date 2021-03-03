@@ -21,9 +21,5 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "outDir": "./dist"
-    },
-    "files": [
-        "src/js/index.ts",
-        "src/test/index.ts"
-    ]
+    }
 }

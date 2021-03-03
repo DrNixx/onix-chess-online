@@ -1,30 +1,27 @@
-const PATHS = require('../paths');
+const pipe = require('multipipe');
 
-const gulp = require('gulp');
-const ts = require('gulp-typescript');
-const sourcemaps = require('gulp-sourcemaps');
-const merge = require('merge2');
-
-const tsProj = ts.createProject('tsconfig.json');
-
-module.exports = function() {
-    const copyJson = gulp.src('src/js/**/*.json');
-    
-    const reporter = ts.reporter.fullReporter();
-
-    const tsResult = gulp.src(['src/js/**/*.ts', 'src/js/**/*.tsx'])
-        .pipe(sourcemaps.init())
-        .pipe(tsProj(reporter));
-
-    return merge([
-        tsResult.dts
-            .pipe(gulp.dest(PATHS.build.scripts)),
-        copyJson
-            .pipe(gulp.dest(PATHS.build.scripts)),
-        tsResult.js
-            .pipe(sourcemaps.write('.'))
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
+    const task = function () {
+        return gulp.src(PATHS.src.scripts, {base: PATHS.src.scriptsBase})
             .pipe(gulp.dest(PATHS.build.scripts))
-    ]);
-}
+            .pipe(
+                plugins.gif(
+                    PRODUCTION,
+                    pipe(
+                        plugins.minify({
+                            ext:{
+                                src:'.js',
+                                min:'.min.js'
+                            },
+                            ignoreFiles: ['.min.js']
+                        }),
+                        gulp.dest(PATHS.build.scripts)
+                    )
+                )
+            );
+    }
 
-module.exports.displayName = 'scripts';
+    task.displayName = 'scripts';
+
+    return task;
+};

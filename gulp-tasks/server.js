@@ -1,36 +1,38 @@
-const log = require('fancy-log');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const webpack = require('webpack');
 
-const PATHS = require('../paths');
-const webpackConfig = require('../webpack.config');
+module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 
-const browserSync = require('browser-sync').create();
-const bundler = webpack(webpackConfig);
+	if (PRODUCTION) {
+		return gulp.src('.', {allowEmpty: true});
+	} else {
+		const browserSync = require('browser-sync').create();
+		let watchFiles = [
+			PATHS.build.html + '*.html',
+			PATHS.build.styles + '*.css'
+		];
+		
+		
+		watchFiles.push(PATHS.build.scripts + '*.js');
+		watchFiles.push(PATHS.watch.scripts);
 
-let watchFiles = [
-	PATHS.build.html + '*.html',
-	PATHS.build.styles + '*.css'
-];
+		const task = function () {
+			browserSync.init({
+				server: {
+					baseDir: PATHS.build.html,
+					middleware: [],
+				},
+				injectchanges: true,
+				notify: false,
+				open: false,
+				port: 9000,
+				logPrefix: 'SP.Starter',
+				files: watchFiles,
+			});
+		};
+	}
 
+	
 
-watchFiles.push(PATHS.build.scripts + '*.js');
-watchFiles.push(PATHS.watch.scripts);
+	task.displayName = 'server';
 
-module.exports = function() {
-	browserSync.init({
-		server: {
-			baseDir: './public',
-			middleware: [],
-		},
-		injectchanges: true,
-		notify: false,
-		open: false,
-		port: 9000,
-		logPrefix: 'SP.Starter',
-		files: watchFiles,
-	});
-}
-
-module.exports.displayName = 'server';
+    return task;
+};
