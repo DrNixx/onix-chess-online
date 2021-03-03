@@ -1,7 +1,7 @@
 ﻿jQuery(function () {
-    const $html = jQuery(html);
+    const $html = jQuery('html');
     const $window = jQuery(window);
-    const $body = jQuery(body);
+    const $body = jQuery('body');
 
     let parallax_isMobile = ($window.height() <= 640);
     let screenHeight = 0;
@@ -116,8 +116,9 @@
     }
 
     /**** Scroller ****/
+    let mainScroller = undefined;
     if ($.fn.niceScroll) {
-        var mainScroller = $("html").niceScroll({
+        mainScroller = $body.niceScroll({
             zindex: 999999,
             boxzoom: true,
             cursorcolor: "#FF8719",
@@ -142,6 +143,10 @@
                     $head.attr('class', 'ha-header ' + animClassDown);
                 } else if (direction === 'up' && animClassUp) {
                     $head.attr('class', 'ha-header ' + animClassUp);
+                }
+
+                if (mainScroller) {
+                    mainScroller.resize();
                 }
             }, { offset: '100%' });
         });

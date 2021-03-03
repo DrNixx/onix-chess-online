@@ -11,7 +11,13 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
         // const pre = [];
         // const post = [inlineSVG, autoprefixer, fonts];
         const post = [inlineSVG, autoprefixer, fonts];
-        const compress = [cssnano()];
+        const compress = [cssnano({
+            preset: ['default', {
+                discardComments: {
+                    removeAll: true,
+                },
+            }],
+        })];
 
         return gulp.src(PATHS.src.styles, {base: PATHS.src.stylesBase})
             // .pipe(postcss(pre, {syntax: plugins.syntax}))

@@ -1,6 +1,6 @@
 ﻿@import '../../../css/mixins';
-@import '../../../css/themes/welcome/theme';
 @import '../../../css/pages';
+@import '../../../css/site';
 
 body {
     color: #6f7b8a;
@@ -283,18 +283,18 @@ body.pace-done .main-wrapper {
 }
 
 .sub-bg {
-    background: url('#{$base-img-url}chess-para2-b.jpg') no-repeat scroll center center;
+    background: url('#{$base-img-url}/chess-para2-b.jpg') no-repeat scroll center center;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
 
 [data-rowid="1"] > .parallax_row_background {
-    background-image: url('#{$base-img-url}chess-para2.jpg');
+    background-image: url('#{$base-img-url}/chess-para2.jpg');
 }
 
 [data-rowid="2"] > .parallax_row_background {
-    background-image: url('#{$base-img-url}chess-para2-b.jpg');
+    background-image: url('#{$base-img-url}/chess-para2-b.jpg');
 }
 
 .parallax_column {
@@ -638,9 +638,11 @@ footer {
 	transform: rotateX(-90deg);
 }
 
+/*
 .ha-header-color {
 	height: auto;
 }
+*/
 
 .ha-header-color .ha-header-front,
 .ha-header-color .ha-header-bottom {
