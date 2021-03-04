@@ -69,7 +69,7 @@
     });
 
     $body.on('mousewheel', function (event, x1, x2, x3) {
-        event.preventDefault();
+        //event.preventDefault();
         const step = (-x1 * 40) / 10;
         for (let i = 0; i < 10; i++) {
             window.scrollBy(0, step);
