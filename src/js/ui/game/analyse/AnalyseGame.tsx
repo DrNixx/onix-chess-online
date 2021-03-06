@@ -7,7 +7,7 @@ import { Container, Row, Col, Tabs, Tab, FormGroup, FormLabel, Nav } from 'react
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
-
+import { notify } from 'pages-ts';
 import { BoardSizeClass } from 'onix-board-assets';
 
 import { GameProps, defaultProps } from '../../../chess/settings/GameProps';
@@ -23,6 +23,7 @@ import { Chess as ChessEngine } from '../../../chess/Chess';
 import { IStreamMessage } from '../../../net/IStreamMessage';
 import { FenString } from '../../../chess/FenString';
 
+import { copy } from '../../CopyToClipboard';
 import { TextWithCopy } from '../../controls/TextWithCopy';
 
 import { ChessMoves } from '../../components/ChessMoves';
@@ -158,7 +159,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                         <Tab.Pane eventKey="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="mb-auto board-height auto-overflow">
-                                    <ChessMoves mode={MovesMode.List} nav={NavigatorMode.Top} store={this.store} />
+                                    <ChessMoves mode={MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures store={this.store} piece={this.props.board.piece!} />
@@ -245,6 +246,16 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
         const fen = FenString.fromPosition(engine.CurrentPos);
         const pgn = engine.RawData.pgn;
 
+        const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
+            if (copy(pgn)) {
+                notify({
+                    message: _("core", "copied"),
+                    position: "bottom-right",
+                    style: 'simple' 
+                });
+            }
+        };
+
         return (
             <Tab.Pane eventKey="fenpgn">
                 <Row>
@@ -259,7 +270,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                     <Col md={12}>
                         <div className="pgn-text">
                             <Scrollbar trackYProps={{style: {width: 5}}}>
-                                <pre>{pgn}</pre>
+                                <pre onClick={copyPgn} className="py-0 pl-0">{pgn}</pre>
                             </Scrollbar>
                         </div>
                     </Col>
@@ -378,6 +389,6 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
     }
 }
 
-export const AnalyseGame = (props: GameProps, container: HTMLElement) => {
+export const analyseGame = (props: GameProps, container: HTMLElement) => {
     ReactDOM.render(React.createElement(AnalyseGameComponent, props), container, () => { });
 };

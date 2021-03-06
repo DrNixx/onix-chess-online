@@ -2,7 +2,8 @@
     "core": {
         "save": "Сохранить",
         "send": "Отправить",
-        "cancel": "Отмена"
+        "cancel": "Отмена",
+        "copied": "Скопировано"
     },
     "datetime": {
         "years": "{y, plural, one{# год} few{# года} many{# лет} other{# года}}",
@@ -112,7 +113,8 @@
         "averageCentipawnLossTitle": "В среднем потеряно сотых пешки",
         "inaccuracies": "Неточности",
         "mistakes": "Ошибки",
-        "blunders": "Зевки"
+        "blunders": "Зевки",
+        "hideAnalysis": "Show/hide analysis"
     },
     "app": {
         "load": "Загрузить",

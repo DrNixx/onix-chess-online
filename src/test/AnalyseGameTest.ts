@@ -1,4 +1,4 @@
-import { AnalyseGame } from '../js/ui/game/analyse/AnalyseGame';
+import { analyseGame } from '../js/ui/game/analyse/AnalyseGame';
 import { GameProps } from '../js/chess/settings/GameProps';
 
 var props: GameProps = {
@@ -2732,4 +2732,4 @@ var props2: GameProps = {
 
 
 
-export const AnalyseGameTest = (element: string) => AnalyseGame(props, document.getElementById(element)!);
+export const AnalyseGameTest = (element: string) => analyseGame(props, document.getElementById(element)!);

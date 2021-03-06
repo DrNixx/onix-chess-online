@@ -1,4 +1,4 @@
-import { ConfigureGame } from '../js/ui/game/configure/ConfigureGame';
+import { configureGame } from '../js/ui/game/configure/ConfigureGame';
 import { BoardSettings } from '../js/chess/settings/BoardSettings';
 
 var props: BoardSettings = {
@@ -8,4 +8,4 @@ var props: BoardSettings = {
     coordinates: true,
 };
 
-export const ConfigureGameTest = (element: string) => ConfigureGame(props, document.getElementById(element)!);
+export const ConfigureGameTest = (element: string) => configureGame(props, document.getElementById(element)!);

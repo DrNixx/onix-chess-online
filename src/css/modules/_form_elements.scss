@@ -131,6 +131,13 @@ form legend {
   }
 }
 
+.reset-select-apperance {
+  select.form-control {
+    
+    appearance: menulist;
+  }
+}
+
 /* Input Sizes
 --------------------------------------------------
 */

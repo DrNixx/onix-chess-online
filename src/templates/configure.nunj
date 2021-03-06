@@ -4,22 +4,34 @@
 
 {% block stylesheets %}
 	{{ super() }}
-	<link rel="stylesheet" href="assets/pieces/external.css" />
 	<link rel="stylesheet" href="assets/css/configure-game.css" />
 	<style>
 		
 	</style>
 {% endblock stylesheets %}
 
+{% block content %}
+    <div class="container-fluid">
+        <div id="config-view" class="reset-select-apperance"></div>
+    </div>
+{% endblock content %}
+
 {% block scripts %}
 	{{ super() }}
 	<script>
-		var analyse = onix.ConfigureGameTest('boardHere');
+		const module = {
+			init: function() {
+				const props = {
+					size: 4,
+					piece: "alpha",
+					square: "cedar",
+					coordinates: true,
+				};
+				onix.configureGame(props, document.getElementById("config-view"));
+			}
+		};
+
+    	app_props.modules.push(module);
 	</script>
 {% endblock scripts %}
 
-{% block content %}
-    <div class="container-fluid">
-        <div id="boardHere"></div>
-    </div>
-{% endblock content %}

@@ -1,5 +1,5 @@
 ﻿const gulp = require('gulp');
-const { series, parallel } = require('gulp');
+const { series, parallel, watch } = require('gulp');
 const plugins = require('gulp-load-plugins')({
     rename: {
         'gulp-if': 'gif',
@@ -11,7 +11,13 @@ const { PRODUCTION } = require('./config');
 const PATHS_OPTIONS = require('./paths');
 
 function getTask(module, task, paths) {
-    const taskMoodule = './' + module + '/gulp-tasks/' + task;
+    let taskMoodule = '.';
+    if (module) {
+        taskMoodule += '/' + module
+    }
+
+    taskMoodule +=  '/gulp-tasks/' + task;
+
     return require(taskMoodule)(gulp, plugins, paths, PRODUCTION);
 }
 
@@ -24,13 +30,20 @@ gulp.task("welcome", welcome, function () {
 });
 
 const siteClean = getTask('', 'clean', PATHS_OPTIONS.site);
+const siteBoard = getTask('', 'board', PATHS_OPTIONS.site);
+const siteVendors = getTask('', 'vendors', PATHS_OPTIONS.site);
 const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
 const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
 const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
-let site = series(siteClean, parallel(siteHtml, siteStyles, siteWebpack));
+const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
+const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
+
+let site = series(siteClean, parallel(siteBoard, siteVendors, siteHtml, siteStyles, siteWebpack));
 gulp.task("site", site, function () {
     console.log('Building site...');
 });
+
+gulp.task('site:server', parallel('site', siteWatch, siteServer));
 
 gulp.task('sass:watch', function () {
     gulp.watch('./chess/**/*.scss', parallel(['chessSass']));

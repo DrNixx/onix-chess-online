@@ -60,7 +60,7 @@ export class MoveNavigator extends React.Component<MoveNavigatorProps, {}> {
     }
 
     render() {
-        const { currentMove } = this.props;
+        const { currentMove, children } = this.props;
         const { moveFirst, movePrev, moveNext, moveLast } = this;
         const btnClass = "btn btn-default";
 
@@ -72,6 +72,7 @@ export class MoveNavigator extends React.Component<MoveNavigatorProps, {}> {
                     <button className={btnClass} disabled={currentMove.isLast()} onClick={moveNext}><i className="xi-page-next xi-lg"></i></button>
                     <button className={btnClass} disabled={currentMove.isLast()} onClick={moveLast}><i className="xi-page-last xi-lg"></i></button>
                 </div>
+                { children }
             </div>
         );
     }

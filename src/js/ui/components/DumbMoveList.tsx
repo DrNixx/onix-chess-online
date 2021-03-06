@@ -14,14 +14,18 @@ export interface DumbMoveListProps {
     nav: NavigatorMode,
     game: Chess,
     opeinig?: IChessOpening,
+    hasEvals?: boolean,
     startPly: number,
     currentMove: Move,
     onChangePos: (move: Move) => void,
     onChangeKey: (move: string) => void,
 }
 
-export class DumbMoveList extends React.Component<DumbMoveListProps, {}> {
+interface DumbMoveListState {
+    evals: boolean
+}
 
+export class DumbMoveList extends React.Component<DumbMoveListProps, DumbMoveListState> {
     private activeMove?: string;
     private scrollerRef: HTMLDivElement|null = null;
 
@@ -30,11 +34,20 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, {}> {
      */
     constructor(props: DumbMoveListProps) {
         super(props);
+
+        this.state = {
+            evals: !!props.hasEvals
+        };
     }
 
-    componentDidUpdate(prevProps: DumbMoveListProps) {
+    componentDidMount() {
+        this.ensureActiveItemVisible();
+    }
+
+    componentDidUpdate(prevProps: DumbMoveListProps, prevState: DumbMoveListState) {
+        const { props, state } = this;
         // only scroll into view if the active item changed last render
-        if (this.props.currentMove.moveKey !== prevProps.currentMove.moveKey) {
+        if ((props.currentMove.moveKey !== prevProps.currentMove.moveKey) || (state.evals !== prevState.evals)) {
             this.ensureActiveItemVisible();
         }
     }
@@ -73,10 +86,43 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, {}> {
         }
     }
 
+    private toggleEvals = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const { state } = this;
+        this.setState({
+            ...state,
+            evals: !state.evals
+        });
+    };
+
+    private renderToggleEval = () => {
+        const { props, state, toggleEvals } = this;
+
+        if (!!props.hasEvals) {
+            const btnClass = classNames(
+                "btn btn-default",
+                {
+                    active: state.evals
+                }
+            );
+
+            return (
+                <div className="btn-group move-nav my-2">
+                    <button className={btnClass}  onClick={toggleEvals}><i className="xi-info-c"></i></button>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    };
+
     private renderNav= (pos: NavigatorMode) => {
-        const { nav, currentMove, onChangePos } = this.props;
+        const { props, renderToggleEval } = this;
+        const { nav, currentMove, onChangePos } = props;
+
         return nav ===  pos? (
-                <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey} />
+                <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
+                    { renderToggleEval() }
+                </MoveNavigator>
         ) : null;
     }
 
@@ -102,6 +148,7 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, {}> {
     }
 
     private renderMove = (x: Move, uid: string|undefined, i: number, p: string, c: Colors.BW, s: string, n?: string[], m?: string, classes?: any) => {
+        const { state } = this;
         let result = [];
         if (c === Color.White) {
             result.push(this.renderMoveNo(c, i));
@@ -138,7 +185,7 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, {}> {
             }
         }
 
-        if (m) {
+        if (m && state.evals) {
             const evalKey = `cm_${p}`;
             result.push(
                 <span key={evalKey} className="comment">{m}</span>

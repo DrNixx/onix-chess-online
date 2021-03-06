@@ -1,4 +1,4 @@
-import { WatchGame } from '../js/ui/game/watch/WatchGame';
+import { watchGame } from '../js/ui/game/watch/WatchGame';
 import { GameProps } from '../js/chess/settings/GameProps';
 
 var props: GameProps = {
@@ -756,4 +756,4 @@ var props: GameProps = {
     }
 };
 
-export const WatchGameTest = (element: string) => WatchGame(props, document.getElementById(element)!);
+export const WatchGameTest = (element: string) => watchGame(props, document.getElementById(element)!);

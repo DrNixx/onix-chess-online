@@ -14,6 +14,7 @@ module.exports = {
             assets: base + '/site' + assets,
             scripts: base + '/site' + assets + '/js',
             styles: base + '/site' + assets + '/css',
+            board: base + '/site' + assets + '/bs',
         },
 
         src: {
@@ -25,11 +26,17 @@ module.exports = {
             nunj: 'src/templates/*.nunj',
         },
 
+        watch: {
+            nunj: 'src/templates/**/*.nunj',
+            scripts: ['src/js/**/*.ts', 'src/js/**/*.tsx'],
+            styles: 'src/css/**/*.scss',
+        },
+
         clean: base + '/site',
 
         webpack: {
             entry: {
-                site: path.resolve(__dirname, './src/test/index.ts'),
+                site: path.resolve(__dirname, './src/js/index.ts'),
             },
             
             output: {
@@ -58,27 +65,5 @@ module.exports = {
         },
 
         clean: assets + '/welcome'
-    },
-
-    build: {
-        html: base + '/',
-        assets: assets + '/',
-        scripts: assets + '/js/',
-        styles: assets + '/css/',
-    },
-    src: {
-        scriptsPath: './src/js/',
-        scripts: './src/js/index.ts',
-        styles: ['./src/css/*.scss', '!./src/css/_*.scss'],
-        tests: './src/test/index.ts',
-        templates: './src/templates/',
-        nunj: 'src/templates/*.nunj',
-    },
-    watch: {
-        nunj: 'src/templates/**/*.nunj',
-        scripts: 'src/js/**/*.ts',
-        styles: 'src/css/**/*.scss',
-    },
-    clean: base + '/*',
-    deploy: '../web/boards/',
+    }
 };

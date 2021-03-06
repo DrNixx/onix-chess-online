@@ -204,6 +204,6 @@ class ConfigureGameComponent extends React.Component<BoardSettings, {}> {
     }
 }
 
-export const ConfigureGame = (props: BoardSettings, container: HTMLElement) => {
+export const configureGame = (props: BoardSettings, container: HTMLElement) => {
     ReactDOM.render(React.createElement(ConfigureGameComponent, props), container, () => { });
 };

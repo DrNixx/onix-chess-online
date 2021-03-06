@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { InputGroup, FormControl, FormControlProps, Button } from 'react-bootstrap';
+import { notify } from 'pages-ts';
 import { copy } from '../CopyToClipboard';
 import { i18n, _ } from '../../i18n/i18n';
 
@@ -34,6 +35,12 @@ export class TextWithCopy extends React.Component<TextWithCopyProps, TextWithCop
 
     private onCopy = () => {
         if (copy(this.props.value)) {
+            notify({
+                message: _("core", "copied"),
+                position: "bottom-right",
+                style: 'simple' 
+            });
+            
             this.setSuccess();
         }
     }

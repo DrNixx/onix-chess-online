@@ -233,6 +233,6 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
 }
 
 
-export const WatchGame = (props: GameProps, container: HTMLElement) => {
+export const watchGame = (props: GameProps, container: HTMLElement) => {
     ReactDOM.render(React.createElement(WatchGameComponent, props), container, () => { });
 };

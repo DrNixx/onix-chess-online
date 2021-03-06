@@ -1,12 +1,11 @@
-const path = require('path');
-const log = require('fancy-log');
-const pipe = require('multipipe');
-
 module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
     const task = function () {
 		if (PRODUCTION) {
 			return gulp.src('.', {allowEmpty: true});
 		} else {
+			const path = require('path');
+			const log = require('fancy-log');
+
 			const globalData = {};
 			const extensions = require(path.resolve(PATHS.src.templates, 'lib/extensions.js'));
 			const filters = require(path.resolve(PATHS.src.templates, 'lib/filters.js'));

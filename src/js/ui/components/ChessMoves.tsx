@@ -10,7 +10,8 @@ import { GameActions } from '../../actions/GameActions';
 export interface ChessMovesProps {
     mode: MovesMode,
     nav: NavigatorMode,
-    store: GameRelatedStore
+    store: GameRelatedStore,
+    hasEvals?: boolean
 }
 
 export class ChessMoves extends React.Component<ChessMovesProps, {}> {
@@ -32,7 +33,7 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
     }
 
     render() {
-        const { store, mode, nav } = this.props;
+        const { store, mode, nav, hasEvals } = this.props;
         const state = store.getState();
         const { engine } = state.game;
         const currMove = engine.CurrentMove;
@@ -43,6 +44,7 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
                     startPly={engine.StartPlyCount}
                     game={engine}
                     opeinig={engine.Eco}
+                    hasEvals={hasEvals}
                     currentMove={currMove}
                     nav={nav} 
                     onChangePos={this.onChangePos} 
@@ -55,6 +57,7 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
                     startPly={engine.StartPlyCount}
                     game={engine}
                     opeinig={engine.Eco}
+                    hasEvals={hasEvals}
                     currentMove={currMove} 
                     nav={nav} 
                     onChangePos={this.onChangePos} 

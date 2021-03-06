@@ -1,7 +1,7 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 import isString from 'lodash/isString';
 import * as shortid from 'shortid';
-import { Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
+import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
 import { Content } from './Content';
 import { equalHeight } from './Functions';
 import { IModule } from '../app/IModule';
@@ -43,62 +43,62 @@ export class Frontend implements IModule {
 
     private initPages() {
         var parallax = null;
-        var $this = this;
+        var that = this;
 
-		$('[data-pages="list-view"]').each(function() {
-			 new ListView(this, {});
-		});
+        pg.queryElements('[data-pages="list-view"]').forEach((el) => {
+            new ListView(el, {});
+        });
 
-		$('[data-navigate="view"]').each(function() {
-			new MobileView(this, {});
+        pg.queryElements('[data-navigate="view"]').forEach((el) => {
+			new MobileView(el, {});
 		});
 
 		Parallax.onInitialize();
 
-        $('body').on('click', '.toggle-more-details', function (event) {
+        jQuery('body').on('click', '.toggle-more-details', function (event) {
             event.stopPropagation();
-            var p = $(this).closest('.heading');
+            const p = jQuery(this).closest('.heading');
             p.closest('.heading').children('.more-details').stop().slideToggle('fast', function () {
                 p.toggleClass('open');
             });
         });
 
-		$('[data-pages-progress="circle"]').each(function() {
-			new Progress(<HTMLInputElement>this, {});
+		pg.queryElements('[data-pages-progress="circle"]').forEach((el) => {
+			new Progress(<HTMLInputElement>el, {});
 		});
 
-		$('[data-pages="quickview"]').each(function() {
-			new Quickview(this, {});
+		pg.queryElements('[data-pages="quickview"]').forEach((el) => {
+			new Quickview(el, {});
 		});
 
-		$('[data-pages="sidebar"]').each(function() {
-			new SideBar(this, {});
+		pg.queryElements('[data-pages="sidebar"]').forEach((el) => {
+			new SideBar(el, {});
         });
 
-        $('.toggle-secondary-sidebar').on('click', function(e) {
+        jQuery('.toggle-secondary-sidebar').on('click', function(e) {
             e.stopPropagation();
-            $('.secondary-sidebar').toggle();
+            jQuery('.secondary-sidebar').toggle();
         });
 
         Bootstrap.reponsiveTabs();
 
         Social.onInitialize();
 
-		$(window).on('resize', function() {
+		that.window.on('resize', function() {
 		    Social.onFitWidth();
 		    Social.onResize();
 
-            if ($(window).width()! <= 991) {
-                $('.secondary-sidebar').hide();
+            if (that.window.width()! <= 991) {
+                jQuery('.secondary-sidebar').hide();
             } else {
-                $('.secondary-sidebar').show();
+                jQuery('.secondary-sidebar').show();
             }
         });
 
-        $('[data-toggle="tooltip"]').tooltip();
+        jQuery().tooltip && jQuery('[data-toggle="tooltip"]').tooltip();
 
         // {{{ Popover
-        $('[data-toggle="popover"]').popover();
+        jQuery().popover && jQuery('[data-toggle="popover"]').popover();
 
         const userNamePopup = function($owner: JQuery<Element>, popoverLink: string, divId: string): string {
             fetch(popoverLink, {mode: "cors"})
@@ -145,7 +145,7 @@ export class Frontend implements IModule {
 
         // }}} Popover
 
-        $('.scrollable').scrollbar({
+        jQuery().scrollbar && jQuery('.scrollable').scrollbar({
             ignoreOverlay: false
         });
     }

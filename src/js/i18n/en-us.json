@@ -2,7 +2,8 @@
     "core": {
         "save": "Save",
         "send": "Send",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "copied": "Copied"
     },
     "datetime": {
         "years": "{y,plural,one{# year} few{# years} many{# years} other{# years}}",
@@ -113,7 +114,8 @@
         "averageCentipawnLossTitle": "Average centipawn loss",
         "inaccuracies": "Inaccuracies",
         "mistakes": "Mistakes",
-        "blunders": "Blunders"
+        "blunders": "Blunders",
+        "hideAnalysis": "Show/hide analysis"
     },
     "app": {
         "load": "Load",

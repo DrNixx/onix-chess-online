@@ -1,8 +1,9 @@
-
 module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
-
+	let task;
 	if (PRODUCTION) {
-		return gulp.src('.', {allowEmpty: true});
+		const task = function () {
+			return gulp.src('.', {allowEmpty: true});
+		}
 	} else {
 		const browserSync = require('browser-sync').create();
 		let watchFiles = [
@@ -14,7 +15,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 		watchFiles.push(PATHS.build.scripts + '*.js');
 		watchFiles.push(PATHS.watch.scripts);
 
-		const task = function () {
+		task = function () {
 			browserSync.init({
 				server: {
 					baseDir: PATHS.build.html,
@@ -29,8 +30,6 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 			});
 		};
 	}
-
-	
 
 	task.displayName = 'server';
 
