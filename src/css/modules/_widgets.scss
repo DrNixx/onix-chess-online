@@ -39,8 +39,19 @@
                     }
                 }
             }
+
             .nav-tabs-linetriangle {
                 background-color: $color-master-lightest;
+
+                & > .nav-item {
+                    & > a {
+                        &.active {
+                            &:after {
+                                border-top-color: $color-master-lightest;
+                            }
+                        }
+                    }
+                }
             }
 
             &.arena {

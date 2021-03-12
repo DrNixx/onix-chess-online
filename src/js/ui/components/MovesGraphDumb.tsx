@@ -23,6 +23,8 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
 
     private storeUnsubscribe?: Unsubscribe = undefined;
 
+    private _isMounted = false;
+
     constructor(props: MovesGraphProps) {
         super(props);
 
@@ -33,6 +35,8 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
 
     componentDidMount() {
         const { store, updateMovetimes } = this;
+
+        this._isMounted = true;
         this.storeUnsubscribe = store.subscribe(() => {
             updateMovetimes();
         });
@@ -40,14 +44,17 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
 
     componentWillUnmount() {
         const { storeUnsubscribe } = this;
-
+        
+        this._isMounted = false;
         if (storeUnsubscribe) {
             storeUnsubscribe();
         }
     }
 
     private updateMovetimes = () => {
-        this.forceUpdate();
+        if (this._isMounted) {
+            this.forceUpdate();
+        }
     };
 
     private formatTooltipValue = (...params: any[]) => {

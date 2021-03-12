@@ -1,0 +1,1 @@
+export { watchGame } from './ui/game/watch/WatchGame';

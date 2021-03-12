@@ -13,7 +13,7 @@ import { BoardSizeClass } from 'onix-board-assets';
 import { GameProps, defaultProps } from '../../../chess/settings/GameProps';
 import { createAnalyseGameStore, AnalyseGameStore } from './AnalyseGameStore';
 import { createAnalyseGameState } from './AnalyseGameState';
-import { renderPlayer, renderResult } from '../GameUtils';
+import { renderPlayer, renderResult, renderBoardControls } from '../GameUtils';
 
 import { GameInfo } from '../GameInfo';
 import * as BoardActions from '../../../actions/BoardActions';
@@ -31,6 +31,7 @@ import { MovesMode, NavigatorMode } from '../../components/Constants';
 import { Captures } from '../../components/Captures';
 import { AnalyseGraphAsync } from '../../components/AnalyseGraphAsync';
 import { MovesGraphAsync } from '../../components/MovesGraphAsync';
+import { Logger } from '../../../common/Logger';
 
 interface AnalyseGameState {
 }
@@ -124,15 +125,15 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
     }
 
     gameMsgHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     pvtChatHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     pubChatHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     loadGame = (id: number, insite: boolean) => {
@@ -144,6 +145,9 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
     }
 
     private renderControls = () => {
+        const { store } = this;
+        const { game } = store.getState();
+
         return (
             <div className="controls flex-grow-1 d-flex flex-column">
                 <Tab.Container defaultActiveKey="info">
@@ -159,7 +163,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                         <Tab.Pane eventKey="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="mb-auto board-height auto-overflow">
-                                    <ChessMoves mode={MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
+                                    <ChessMoves mode={game.moves} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures store={this.store} piece={this.props.board.piece!} />
@@ -352,7 +356,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                                         <Col md={6}>
                                             {renderPlayer(game.engine, board.orientation, "top")} 
                                         </Col>
-                                        <Col className="text-right" md={6}>
+                                        <Col className="text-right position-relative" md={6}>
                                             {renderResult(game.engine, board.orientation, "top")}
                                         </Col>
                                     </Row>
@@ -371,15 +375,8 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                                     </Row>
                                 </div>
                             </div>
-                            <div className="mini-controls mx-md-3 mt-3 mt-md-5 mb-4">
-                                <div className="btn-toolbar flex-wrap" role="toolbar">
-                                    <div className="btn-group">
-                                        { boardCfg.configUrl ? (<a aria-label={_("game", "config")} className="btn btn-link" title={_("game", "config")} href={boardCfg.configUrl + "?returnUrl=" + window.location.href}><i className="xi-config"></i></a>) : "" }
-                                        <button aria-label={_("game", "flip")} className="btn btn-link" title={_("game", "flip")} onClick={flipBoard}><i className="xi-refresh"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            {this.renderControls()}
+                            { renderBoardControls(store, boardCfg.configUrl) }
+                            { this.renderControls() }
                         </div>
                     </Col>
                 </Row>

@@ -27,7 +27,6 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
                 const fmt = _("game", "datesFmt");
 
                 const diff = to.getTime() - from.getTime();
-                console.log(diff);
 
                 const strDates = (diff > 86400000) ? 
                     sprintf(fmt, from.toLocaleDateString(), to.toLocaleDateString()) :

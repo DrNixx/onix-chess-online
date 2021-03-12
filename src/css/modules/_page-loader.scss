@@ -3,12 +3,14 @@
 */
 .pace {
   .pace-progress {
-    background: $color-success;
+    background: $color-base-orange;
     height: 3px;
   }
+
   .pace-progress-inner {
     box-shadow: none;
   }
+
   .pace-activity {
     -webkit-animation: none;
     animation: none;

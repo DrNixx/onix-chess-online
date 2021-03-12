@@ -1,11 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
 import * as cg from 'chessground/types';
+import { _ } from '../../i18n/i18n';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { Chess as ChessEngine } from "../../chess/Chess";
 import { IChessPlayer, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
 import { UserName } from '../user/UserName';
+import * as BoardActions from '../../actions/BoardActions';
+import { GameActions as ga } from '../../actions/GameActions';
+import { AnalyseGameStore } from './analyse/AnalyseGameStore';
+import { WatchGameStore } from './watch/WatchGameStore';
+import { MovesMode } from '../components/Constants';
 
 
 export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
@@ -85,6 +91,7 @@ export const renderResult = (engine: ChessEngine, orientation: cg.Color, positio
         const whiteResult = engine.Result;
         const blackResult = GameResult.OppositeColor[whiteResult];
 
+        const className = `game-result _${position}`;
         let score: number;
         let type: GameResult.Type;
         if (orientation == "white") {
@@ -94,9 +101,36 @@ export const renderResult = (engine: ChessEngine, orientation: cg.Color, positio
         }
 
         return (
-            <div className="game-result">{score}</div>
+            <div className={className}>{score}</div>
         );
     }
     
     return null;
+};
+
+export const renderBoardControls = (store: AnalyseGameStore|WatchGameStore, configUrl?: string) => {
+    const s = store.getState();
+    const flipBoard = () => {
+        store.dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
+    };
+
+    const toggleMoves = () => {
+        store.dispatch({ type: ga.TOGGLE_MOVES } as ga.GameAction)
+    }
+
+    const movesClass = classNames("btn btn-link", {
+        'active': s.game.moves == MovesMode.List
+    })
+
+    return (
+        <div className="mini-controls mx-md-3 mt-3 mt-md-5 mb-4">
+            <div className="btn-toolbar flex-wrap" role="toolbar">
+                <div className="btn-group">
+                    { configUrl ? (<a aria-label={_("game", "config")} className="btn btn-link" title={_("game", "config")} href={configUrl + "?returnUrl=" + window.location.href}><i className="xi-config"></i></a>) : "" }
+                    <button aria-label={_("game", "toggle_moves")} className={movesClass} title={_("game", "toggle_moves")} onClick={toggleMoves}><i className="fa fa-list"></i></button>
+                    <button aria-label={_("game", "flip")} className="btn btn-link" title={_("game", "flip")} onClick={flipBoard}><i className="xi-refresh"></i></button>
+                </div>
+            </div>
+        </div>
+    );
 };

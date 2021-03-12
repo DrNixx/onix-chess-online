@@ -2,6 +2,7 @@ import { Move } from '../chess/Move';
 import { IGameData, IMovePart, ITreePart } from '../chess/types/Interfaces';
 
 export namespace GameActions {
+    export type TOGGLE_MOVES = 'TOGGLE_MOVES';
     export type NAVIGATE_TO_PLY = 'NAVIGATE_TO_PLY';
     export type NAVIGATE_TO_KEY = 'NAVIGATE_TO_KEY';
     export type NAVIGATE_TO_MOVE = 'NAVIGATE_TO_MOVE';
@@ -9,6 +10,7 @@ export namespace GameActions {
     export type GAME_LOAD_PARTIAL = 'GAME_LOAD_PARTIAL';
     export type GAME_ADD_MOVE = 'GAME_ADD_MOVE';
 
+    export const TOGGLE_MOVES : TOGGLE_MOVES = 'TOGGLE_MOVES';
     export const NAVIGATE_TO_PLY : NAVIGATE_TO_PLY = 'NAVIGATE_TO_PLY';
     export const NAVIGATE_TO_KEY : NAVIGATE_TO_KEY = 'NAVIGATE_TO_KEY';
     export const NAVIGATE_TO_MOVE : NAVIGATE_TO_MOVE = 'NAVIGATE_TO_MOVE';
@@ -47,7 +49,12 @@ export namespace GameActions {
         game: IGameData,
     }
 
+    export type ToggleMoves = {
+        type: TOGGLE_MOVES
+    };
+
     export type GameAction = 
+        ToggleMoves |
         NavigateToPly | 
         NavigateToKey |
         NavigateToMove |

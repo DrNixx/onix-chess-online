@@ -10,6 +10,7 @@
     & > .nav-item {
         @include padding-left( 0 );
         @include padding-right( 0 );
+
         & > a.active {
             &:hover,
             &:focus {
@@ -18,6 +19,7 @@
                 background-color: $color-contrast-low;
             }
         }
+
         & > a {
             display: block;
             border-radius: 0;
@@ -33,43 +35,53 @@
             border-color: transparent;
             position: relative;
             line-height: 1.7em;
+
             &:hover,
             &:focus {
                 background: transparent;
                 border-color: transparent;
                 color: $color-contrast-high;
             }
+
             .tab-icon {
                 @include margin-right(6px);
             }
+
             &.active {
                 color: $color-contrast-higher;
             }
         }
     }
+
     & ~ .tab-content {
         overflow: hidden;
         padding: 15px;
+
         & > .tab-pane {
             &.slide-left,
             &.slide-right {
                 @include transition(all 0.3s ease);
+
                 &.sliding {
                     opacity: 0 !important;
                 }
+
                 &.active {
                     @include translate3d(0, 0, 0);
                     opacity: 1;
                 }
             }
+
             &.slide-left.sliding {
                 @include translate3d(10%, 0, 0);
             }
+
             &.slide-right.sliding {
                 @include translate3d(-10%, 0, 0);
             }
         }
     }
+
     // POSITIONG OPTIONS
     &.nav-tabs-left,
     &.nav-tabs-right {
@@ -82,16 +94,20 @@
         -webkit-flex-shrink: 0;
         -ms-flex-negative: 0;
         flex-shrink: 0;
+
         &:after {
             border-bottom: 0px;
         }
+
         & > .nav-item {
             float: none;
         }
     }
+
     &.nav-tabs-left {
         float: left;
         @include padding-right( 0 );
+
         & ~ .tab-content {
             @include border-left( 1px solid rgba(0, 0, 0, 0.1) );
             //IE10 Fix
@@ -99,6 +115,7 @@
             -ms-flex-negative: 0;
         }
     }
+
     &.nav-tabs-right {
         float: right;
         @include padding-right( 0 );
@@ -117,6 +134,7 @@
 
 .nav-tabs-simple {
     border-bottom: 0px;
+
     &:after {
         content: "";
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -126,8 +144,10 @@
         z-index: 120;
         @include left( 0 );
     }
+
     & > .nav-item {
         margin-bottom: 0;
+
         & > a {
             &:after {
                 position: absolute;
@@ -160,6 +180,7 @@
                     background-color: $color-info;
                 }
             }
+
             &.active {
                 &:hover,
                 &:focus {
@@ -167,6 +188,7 @@
                     border-color: transparent;
                 }
             }
+
             &.active,
             &:hover {
                 &:after {
@@ -175,12 +197,14 @@
             }
         }
     }
+
     // POSITIONG OPTIONS
     &.nav-tabs-left,
     &.nav-tabs-right {
         &:after {
             border-bottom: 0px;
         }
+
         & > .nav-item {
             & > a:after {
                 width: 0px;
@@ -189,6 +213,7 @@
                 bottom: 0;
                 position: absolute;
             }
+
             & > a {
                 &.active,
                 &:hover {
@@ -199,12 +224,14 @@
             }
         }
     }
+
     &.nav-tabs-left {
         & > .nav-item > a:after {
             @include right( 0 );
             @include left( auto );
         }
     }
+
     &.nav-tabs-right {
         & > .nav-item > a:after {
             @include left( 0 );
@@ -218,6 +245,7 @@
 
 .nav-tabs-linetriangle {
     border-bottom: 0;
+
     &:after {
         content: "";
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -240,6 +268,7 @@
                     border-color: transparent;
                     background-color: transparent;
                 }
+
                 &:after,
                 &:before {
                     border: medium solid transparent;
@@ -265,12 +294,14 @@
                     @include margin-left(-11px);
                 }
             }
+
             span {
                 font-size: 1em;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
+            
             &:hover,
             &:focus {
                 overflow: visible;

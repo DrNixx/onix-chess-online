@@ -33,9 +33,9 @@
 		{% block scripts %}
 		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 		<script src="assets/js/bootstrap.js"></script>
-		<script src="assets/js/chess-online.manifest.js"></script>
-    	<script src="assets/js/chess-online.vendors.js"></script>
-    	<script src="assets/js/chess-online.site.js"></script>
+		<script src="assets/js/chess-online.runtime.js"></script>
+    	<script src="assets/js/chess-online.467.js"></script>
+    	<script src="assets/js/chess-online.onix.js"></script>
 		{% endblock scripts %}
 
 		<script>

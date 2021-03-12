@@ -1,7 +1,7 @@
 module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 	let task;
 	if (PRODUCTION) {
-		const task = function () {
+		task = function () {
 			return gulp.src('.', {allowEmpty: true});
 		}
 	} else {

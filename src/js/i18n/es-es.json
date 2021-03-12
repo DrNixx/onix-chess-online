@@ -98,6 +98,7 @@
 
         "config": "Configure",
         "flip": "Flip board",
+        "toggle_moves": "Toggle moves view",
 
         "board_size": "Board size",
         "display_coord": "Coordinates"

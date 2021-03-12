@@ -1,10 +1,7 @@
-import * as shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import { Color } from './Color';
-import { Piece } from './Piece';
-import { Square } from './Square';
 import { SimpleMove } from './SimpleMove';
-import { Squares, Colors, Pieces } from './types/Types';
-import { ITreePart, IMovePart, IEval, IJudgment, IGlyph } from './types/Interfaces';
+import { Colors } from './types/Types';
 import { Position } from './Position';
 
 /**
@@ -36,7 +33,7 @@ export class Move {
      */
     constructor() {
         this.id = "0";
-        this.uid = shortid.generate();
+        this.uid = nanoid(8);
         this.name = "";
         this.fen = "";
         this.sm = new SimpleMove();

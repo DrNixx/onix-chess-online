@@ -3,6 +3,7 @@ import { FormControl, FormControlProps } from 'react-bootstrap';
 import { i18n, _ } from '../../i18n/i18n';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { IChessOpening } from '../../chess/types/Interfaces';
+import { Logger } from '../../common/Logger';
 
 export interface StartPosSelectorProps extends FormControlProps {
     fen?: string,
@@ -57,7 +58,7 @@ export class StartPosSelector extends React.Component<StartPosSelectorProps, Sta
                         ajaxCallback(responseAsJson);
                     })
                     .catch(function(error) {
-                        console.log('Looks like there was a problem when reading openings: \n', error);
+                        Logger.error('Looks like there was a problem when reading openings: \n', error);
                     });
             } 
         }

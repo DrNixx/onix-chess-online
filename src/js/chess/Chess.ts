@@ -1,5 +1,5 @@
 import toSafeInteger from 'lodash/toSafeInteger';
-import * as shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import isNumber from 'lodash/isNumber';
 import indexOf from 'lodash/indexOf';
 
@@ -450,7 +450,7 @@ export class Chess {
             }
             
             const move = this.addMove(sm, sm.san, mv.fen);
-            move.id = mv.id || shortid.generate();
+            move.id = mv.id || nanoid(8);
             this.moveList.set(move.moveKey, move);
         }
     }

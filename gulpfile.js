@@ -10,7 +10,7 @@ const plugins = require('gulp-load-plugins')({
 const { PRODUCTION } = require('./config');
 const PATHS_OPTIONS = require('./paths');
 
-function getTask(module, task, paths) {
+function getTask(module, task, paths, taskName = undefined) {
     let taskMoodule = '.';
     if (module) {
         taskMoodule += '/' + module
@@ -18,7 +18,12 @@ function getTask(module, task, paths) {
 
     taskMoodule +=  '/gulp-tasks/' + task;
 
-    return require(taskMoodule)(gulp, plugins, paths, PRODUCTION);
+    const taskFn = require(taskMoodule)(gulp, plugins, paths, PRODUCTION);
+    if (taskName) {
+        taskFn.displayName = taskName;
+    }
+    
+    return taskFn;
 }
 
 const welcomeClean = getTask('', 'clean', PATHS_OPTIONS.welcome);
@@ -33,12 +38,14 @@ const siteClean = getTask('', 'clean', PATHS_OPTIONS.site);
 const siteBoard = getTask('', 'board', PATHS_OPTIONS.site);
 const siteVendors = getTask('', 'vendors', PATHS_OPTIONS.site);
 const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
+const siteFonts = getTask('', 'copy', PATHS_OPTIONS.site.fonts, 'fonts');
+const siteImg = getTask('', 'copy', PATHS_OPTIONS.site.img, 'img');
 const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
 const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
 const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
 const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
 
-let site = series(siteClean, parallel(siteBoard, siteVendors, siteHtml, siteStyles, siteWebpack));
+let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteHtml, siteStyles, siteWebpack));
 gulp.task("site", site, function () {
     console.log('Building site...');
 });

@@ -308,7 +308,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
     private onDrawShape = (shapes: DrawShape[]) => {
         const { state } = this;
-        console.log('onDrawShape', shapes);
         const markers = this.shapesToMarkers(shapes);
         this.setState({
             ...state,
@@ -373,7 +372,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
     private onPositionChange = () => {
         const { cg, state, assignShapes } = this;
-        console.log('onPositionChange', state);
         if (cg !== undefined) {
             const fen = cg.getFen();
             const shapes = state.markers;
@@ -568,7 +566,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         return function(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
             const { cg, select } = that;
             e.preventDefault();
-            console.log(s, upEvent);
             if (s === 'pointer' || s === 'trash') {
                 select(s);
             } else {

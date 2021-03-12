@@ -12,6 +12,7 @@ import { GameRelatedStore } from '../../actions/GameStore';
 import { GameActions } from '../../actions/GameActions';
 import { Color } from '../../chess/Color';
 import { sprintf } from '../../fn/string/Sprintf';
+import { toInteger } from 'lodash';
 
 export interface IAnalysisState {
     status: AnalyseStatus,
@@ -26,6 +27,10 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
     private timer: any = null;
 
     private storeUnsubscribe: Unsubscribe | null = null;
+
+    private abortController = new AbortController();
+
+    private _isMounted = false;
 
     constructor(props: AnalyseGraphProps) {
         super(props);
@@ -45,8 +50,9 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
     }
 
     componentDidMount() {
+        this._isMounted = true;
+
         const { store } = this;
-        
         this.storeUnsubscribe = store.subscribe(() => {
             this.updateAnalysis();
         });
@@ -54,24 +60,33 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         const { game } = store.getState();
 
         if (game && game.engine.Analysis.state === "empty") {
-            this.loadAnalysis();
+            const that = this;
+            that.loadAnalysis();
         }
     }
 
     componentWillUnmount() {
-        if (this.storeUnsubscribe) {
-            this.storeUnsubscribe();
+        this._isMounted = false;
+        
+        const { storeUnsubscribe, abortController } = this;
+
+        abortController.abort();
+
+        if (storeUnsubscribe) {
+            storeUnsubscribe();
         }
     }
 
     private updateAnalysis = () => {
-        const { store, state } = this;
-        const { game } = store.getState();
-        const { status } = state;
+        if (this._isMounted) {
+            const { store, state } = this;
+            const { game } = store.getState();
+            const { status } = state;
 
-        this.setState({
-            status: game?.engine.Analysis.state ?? status
-        });
+            this.setState({
+                status: game?.engine.Analysis.state ?? status
+            });
+        }
     };
 
     private requestAnalysis = () => {
@@ -80,7 +95,11 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
 
         if (!id) return;
 
-        fetch('https://www.chess-online.com/fishnet/create/' + id.toString(), {mode: "cors"})
+        if (this.abortController.signal.aborted) {
+            this.abortController =  new AbortController();
+        }
+        
+        fetch('https://www.chess-online.com/fishnet/create/' + id.toString(), { mode: "cors", signal: this.abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -104,7 +123,11 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
 
         if (!id) return;
 
-        fetch('https://www.chess-online.com/api/analyse/game/' + id.toString() + "?v=2", {mode: "cors"})
+        if (this.abortController.signal.aborted) {
+            this.abortController =  new AbortController();
+        }
+
+        fetch('https://www.chess-online.com/api/analyse/game/' + id.toString() + "?v=2", { mode: "cors", signal: this.abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -164,11 +187,12 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
     renderProgress(progress?: number) {
         const fmt = _("analyse", "completed");
         const progressStr = sprintf(fmt, progress ?? 0);
+        const progressInt = toInteger(progress);
         return (
-            <span className="analysis-inprogress">
+            <div className="analysis-inprogress">
                 { _("analyse", "inprogress")}
-                { progress ? <span className="progress">{progressStr}</span> : null }
-            </span>
+                { progress ? <div className="progress"><div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}}></div></div> : null }
+            </div>
         );
     }
 

@@ -1,0 +1,1 @@
+export { configureGame } from './ui/game/configure/ConfigureGame';

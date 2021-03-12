@@ -17,6 +17,15 @@
 
 {% block scripts %}
 	{{ super() }}
+
+	<script src="assets/js/chess-online.511.js"></script>
+	<script src="assets/js/chess-online.36.js"></script>
+	<script src="assets/js/chess-online.99.js"></script>
+	<script src="assets/js/chess-online.890.js"></script>
+	<script src="assets/js/chess-online.797.js"></script>
+	<script src="assets/js/chess-online.811.js"></script>
+	<script src="assets/js/chess-online.63.js"></script>
+	<script src="assets/js/chess-online.watch.js"></script>
 	<script>
 		const module = {
 			init: function() {
@@ -774,7 +783,7 @@
 						]
 					}
 				};
-				onix.watchGame(props, document.getElementById("game-view"));
+				watch.watchGame(props, document.getElementById("game-view"));
 			}
 		};
 

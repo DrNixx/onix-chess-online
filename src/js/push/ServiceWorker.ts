@@ -1,3 +1,4 @@
+import { Logger } from "../common/Logger";
 import { storage } from "../storage/Builder";
 
 export default function() {
@@ -27,10 +28,10 @@ export default function() {
               if (res.ok) {
                 store.set('' + Date.now());
               } else {
-                console.log('submitting push subscription failed', res.statusText);
+                Logger.error('submitting push subscription failed', res.statusText);
               }
             }), err => {
-              console.log('push subscribe failed', err.message);
+              Logger.error('push subscribe failed', err.message);
               if (sub) {
                 sub.unsubscribe();
               }

@@ -17,11 +17,12 @@ import { createWatchGameState } from './WatchGameState';
 import { ChessMoves } from '../../components/ChessMoves';
 import { MovesMode, NavigatorMode } from '../../components/Constants';
 import { Captures } from '../../components/Captures';
-import { renderPlayer, renderTimer } from '../GameUtils';
+import { renderPlayer, renderTimer, renderBoardControls } from '../GameUtils';
 import * as BoardActions from '../../../actions/BoardActions';
 import { GameInfo } from '../GameInfo';
 import { i18n, _ } from '../../../i18n/i18n';
 import { Color } from '../../../chess/Color';
+import { Logger } from '../../../common/Logger';
 
 interface WatchGameState {
 }
@@ -107,15 +108,15 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
     }
 
     gameMsgHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     pvtChatHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     pubChatHandler = (msg: IStreamMessage) => {
-        console.log(msg);
+        Logger.debug(msg);
     }
 
     loadGame = () => {
@@ -128,6 +129,9 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
     };
 
     private renderControls = () => {
+        const { store } = this;
+        const { game } = store.getState();
+
         return (
             <div className="controls flex-grow-1 d-flex flex-column">
                 <Tab.Container defaultActiveKey="moves">
@@ -143,7 +147,7 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
                         <Tab.Pane eventKey="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="mb-auto board-height auto-overflow">
-                                    <ChessMoves mode={MovesMode.List} nav={NavigatorMode.Top} store={this.store} />
+                                    <ChessMoves mode={game.moves} nav={NavigatorMode.Top} store={this.store} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures store={this.store} piece={this.props.board.piece!} />
@@ -215,15 +219,8 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
                                     </Row>
                                 </div>
                             </div>
-                            <div className="mini-controls mx-md-3 mt-3 mt-md-5 mb-4">
-                                <div className="btn-toolbar flex-wrap" role="toolbar">
-                                    <div className="btn-group">
-                                    { boardCfg.configUrl ? (<a aria-label={_("game", "config")} className="btn btn-link" title={_("game", "config")} href={boardCfg.configUrl + "?returnUrl=" + window.location.href}><i className="xi-config"></i></a>) : "" }
-                                        <button aria-label={_("game", "flip")} className="btn btn-link" title={_("game", "flip")} onClick={flipBoard}><i className="xi-refresh"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            {this.renderControls()}
+                            { renderBoardControls(store, boardCfg.configUrl) }
+                            { this.renderControls() }
                         </div>
                     </Col>
                 </Row>

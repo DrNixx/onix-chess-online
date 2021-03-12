@@ -2,138 +2,18 @@ import * as React from 'react';
 import Scrollbar from "react-scrollbars-custom";
 import classNames from 'classnames';
 import { NavigatorMode } from './Constants';
-import { MoveNavigator } from './MoveNavigator';
-import { Chess } from '../../chess/Chess';
-import { IChessOpening } from '../../chess/types/Interfaces';
 import { Move } from '../../chess/Move';
 import { Colors } from '../../chess/types/Types';
 import { Color } from '../../chess/Color';
+import { DumbMoveElement, DumbMoveProps } from './DumbMoveElement';
 
 
-export interface DumbMoveListProps {
-    nav: NavigatorMode,
-    game: Chess,
-    opeinig?: IChessOpening,
-    hasEvals?: boolean,
-    startPly: number,
-    currentMove: Move,
-    onChangePos: (move: Move) => void,
-    onChangeKey: (move: string) => void,
-}
-
-interface DumbMoveListState {
-    evals: boolean
-}
-
-export class DumbMoveList extends React.Component<DumbMoveListProps, DumbMoveListState> {
-    private activeMove?: string;
-    private scrollerRef: HTMLDivElement|null = null;
-
+export class DumbMoveList extends DumbMoveElement {
     /**
      * constructor
      */
-    constructor(props: DumbMoveListProps) {
+    constructor(props: DumbMoveProps) {
         super(props);
-
-        this.state = {
-            evals: !!props.hasEvals
-        };
-    }
-
-    componentDidMount() {
-        this.ensureActiveItemVisible();
-    }
-
-    componentDidUpdate(prevProps: DumbMoveListProps, prevState: DumbMoveListState) {
-        const { props, state } = this;
-        // only scroll into view if the active item changed last render
-        if ((props.currentMove.moveKey !== prevProps.currentMove.moveKey) || (state.evals !== prevState.evals)) {
-            this.ensureActiveItemVisible();
-        }
-    }
-
-    ensureActiveItemVisible() {
-        const itemId = this.activeMove;
-        if (itemId) {
-            const domNode = document.getElementById(itemId);
-            this.scrollElementIntoViewIfNeeded(domNode, this.scrollerRef);
-        }
-    }
-
-    scrollElementIntoViewIfNeeded(domNode: HTMLElement|null, parent: HTMLElement|null) {
-        if (domNode && parent) {
-            const centerIfNeeded = true;
-            var parentComputedStyle = window.getComputedStyle(parent, null),
-                parentBorderTopWidth = parseInt(parentComputedStyle.getPropertyValue('border-top-width')),
-                parentBorderLeftWidth = parseInt(parentComputedStyle.getPropertyValue('border-left-width')),
-                overTop = domNode.offsetTop - parent.offsetTop < parent.scrollTop,
-                overBottom = (domNode.offsetTop - parent.offsetTop + domNode.clientHeight - parentBorderTopWidth) > (parent.scrollTop + parent.clientHeight),
-                overLeft = domNode.offsetLeft - parent.offsetLeft < parent.scrollLeft,
-                overRight = (domNode.offsetLeft - parent.offsetLeft + domNode.clientWidth - parentBorderLeftWidth) > (parent.scrollLeft + parent.clientWidth),
-                alignWithTop = overTop && !overBottom;
-
-            if ((overTop || overBottom) && centerIfNeeded) {
-                parent.scrollTop = domNode.offsetTop - parent.offsetTop - parent.clientHeight / 2 - parentBorderTopWidth + domNode.clientHeight / 2;
-            }
-
-            if ((overLeft || overRight) && centerIfNeeded) {
-                parent.scrollLeft = domNode.offsetLeft - parent.offsetLeft - parent.clientWidth / 2 - parentBorderLeftWidth + domNode.clientWidth / 2;
-            }
-
-            if ((overTop || overBottom || overLeft || overRight) && !centerIfNeeded) {
-                domNode.scrollIntoView(alignWithTop);
-            }
-        }
-    }
-
-    private toggleEvals = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const { state } = this;
-        this.setState({
-            ...state,
-            evals: !state.evals
-        });
-    };
-
-    private renderToggleEval = () => {
-        const { props, state, toggleEvals } = this;
-
-        if (!!props.hasEvals) {
-            const btnClass = classNames(
-                "btn btn-default",
-                {
-                    active: state.evals
-                }
-            );
-
-            return (
-                <div className="btn-group move-nav my-2">
-                    <button className={btnClass}  onClick={toggleEvals}><i className="xi-info-c"></i></button>
-                </div>
-            );
-        } else {
-            return null;
-        }
-    };
-
-    private renderNav= (pos: NavigatorMode) => {
-        const { props, renderToggleEval } = this;
-        const { nav, currentMove, onChangePos } = props;
-
-        return nav ===  pos? (
-                <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
-                    { renderToggleEval() }
-                </MoveNavigator>
-        ) : null;
-    }
-
-    onMoveClick = (e: React.MouseEvent<HTMLSpanElement>) => {
-        const key = e.currentTarget.getAttribute("data-key");
-        if (key) {
-            const { onChangeKey } = this.props;
-            if (onChangeKey) {
-                onChangeKey(key);
-            }
-        }
     }
 
     private renderMoveNo = (color: Colors.BW, ply: number) => {
@@ -296,12 +176,10 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, DumbMoveLis
     }
 
     render() {
-        const { renderNav } = this;
+        const { renderNav, setElRef } = this;
 
-        let s;
-        
         return (
-            <div className="movelist moves d-flex flex-column h-100">
+            <div className="movelist moves d-flex flex-column h-100" ref={(el) => setElRef(el)}>
                 {renderNav(NavigatorMode.Top)}
                 <div className="flex-grow-1">
                     <Scrollbar trackYProps={{style: {width: 5}}} scrollerProps={{elementRef: (el) => this.scrollerRef = el}}>
@@ -314,5 +192,4 @@ export class DumbMoveList extends React.Component<DumbMoveListProps, DumbMoveLis
             </div>
         );
     }
-
 }

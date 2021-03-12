@@ -5,12 +5,14 @@ import { FenString } from '../chess/FenString';
 import { Move } from '../chess/Move';
 import { Square } from '../chess/Square';
 import { IGameData } from '../chess/types/Interfaces';
+import { MovesMode } from '../ui/components/Constants';
 
 export interface GameState {
     engine: ChessEngine;
     fen: string;
     lastMove?: cg.Key[];
     isCheck?: cg.Color|boolean;
+    moves: MovesMode;
 }
 
 const getLastMove = (move: Move) => {
@@ -31,6 +33,7 @@ export const getGameState = (engine: ChessEngine) => {
         lastMove: getLastMove(engine.CurrentMove),
         fen: engine.CurrentMove.fen ?? FenString.fromPosition(engine.CurrentPos),
         isCheck: engine.CurrentPos.isKingInCheck() ? Color.toName(engine.CurrentPos.WhoMove) : false,
+        moves: MovesMode.List
     };
 }
 

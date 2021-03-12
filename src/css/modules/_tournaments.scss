@@ -1,23 +1,16 @@
 .tour-spotlight {
-  // background: linear-gradient(to bottom, #B1CACD 0%, #4DA4B0 100%);
-
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
 
   display: flex;
   flex-flow: row;
-  align-items: center;
+  align-items: flex-start;
 
   flex: 0 0 auto;
   padding: .3em 20px;
   opacity: 0.8;
   transition: all 150ms;
   color: #013F47;
-
-  .tour-spotlight .img {
-    flex: 0 0 50px;
-    margin: 0 .5em 0 .3em;
-  }
 
   .img {
     flex: 0 0 50px;
@@ -34,24 +27,26 @@
     }
   }
 
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  
   .name {
-    margin-top: 1px;
-    line-height: 13px;
+    line-height: 1.2;
     display: block;
   }
 
   .headline {
     display: block;
     font-size: .85em;
+    line-height: 1.2;
     margin-bottom: -3px;
   }
 
   .more {
     font-size: .85em;
-
-    time {
-      margin-left: 3px;
-    }
+    line-height: 1.2;
   }
 }
 

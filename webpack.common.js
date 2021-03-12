@@ -29,19 +29,19 @@ module.exports = {
 	devtool: PRODUCTION ? false : 'eval-source-map',
 	mode: PRODUCTION ? 'production' : 'development',
 	optimization: {
-        runtimeChunk: {
-            name: "manifest"
-        },
+        runtimeChunk: 'single',
+        //chunkIds: PRODUCTION ? 'deterministic' : 'named',
+        chunkIds: 'deterministic',
         splitChunks: {
             chunks: 'all',
-            cacheGroups: {
-                defaultVendors: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: "vendors",
-                    priority: -20,
-                    chunks: "all"
-                }
-            }
+            //cacheGroups: {
+            //    defaultVendors: {
+            //        test: /[\\/]node_modules[\\/]/,
+            //        name: "vendors",
+            //        priority: -20,
+            //        chunks: "all"
+            //    }
+            //}
         },
 		minimize: PRODUCTION,
         minimizer: [

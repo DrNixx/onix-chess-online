@@ -1,0 +1,39 @@
+<% var item, key %><?php
+namespace common\assets;
+
+use kartik\base\AssetBundle;
+use onix\assets\AppearAsset;
+use onix\assets\WaypointsAsset;
+use Yii;
+use yii\bootstrap4\BootstrapAsset;
+use yii\bootstrap4\BootstrapPluginAsset;
+use yii\web\YiiAsset;
+
+class ChessWelcomeAsset extends AssetBundle
+{
+    public $depends = [
+        YiiAsset::class,
+        BootstrapAsset::class,
+        BootstrapPluginAsset::class,
+        PaceAsset::class,
+        AppearAsset::class,
+        WaypointsAsset::class
+    ];
+
+    public function init()
+    {
+        $this->setSourcePath(dirname(__DIR__).DIRECTORY_SEPARATOR.'assets'));
+        if (YII_ENV == 'prod') {
+            $this->setSourcePath(Yii::getAlias('@ui/build/welcome'));
+        } else {
+            $this->setSourcePath(Yii::getAlias('@ui/build/welcome-dev'));
+        }
+
+        <% var files = htmlWebpackPlugin.files.js.map((file) => { 
+            return "\n\t\t\t'js/" + file.replace(htmlWebpackPlugin.files.publicPath, "").replace(".js", "") + "'";
+        }) %>
+        
+        $this->setupAssets('js', [<%= files.join(", ") %>]);
+        parent::init();
+    }
+}

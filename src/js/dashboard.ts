@@ -1,0 +1,1 @@
+export { forumWidget } from './ui/components/ForumWidget';

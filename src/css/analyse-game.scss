@@ -1,7 +1,19 @@
+//Direction
+$direction: ltr; // use `rtl` or `ltr
+@import "directions";
+
+// Color functions
+@import "color";
+
+// Import Vars
+@import "var";
+
+// Mixins tools
+@import "mixins";
 
 @import "modules/movetimes";
 @import "modules/analyse";
-@import "modules/moves-list";
+@import "modules/moves";
 @import "modules/controls";
 @import "modules/captures";
 @import "modules/timer";

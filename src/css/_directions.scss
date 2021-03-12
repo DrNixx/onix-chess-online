@@ -168,7 +168,6 @@ $opposite-direction: right !default;
 }
 
 // "clear:" rule
-
 @mixin clear($side: both) {
 	@if $direction != 'rtl' and not ($side == 'left') and not ($side == 'right') {
 		clear: $side;
@@ -182,7 +181,6 @@ $opposite-direction: right !default;
 
 
 // "direction:" rule
-
 @mixin direction($dir) {
 	@if ($direction == 'rtl') {
 		@if ($dir == 'rtl') {
@@ -198,7 +196,6 @@ $opposite-direction: right !default;
 
 
 // "left:" rule
-
 @mixin left($left) {
 	@if $direction != 'rtl' {
 		left: $left;
@@ -209,7 +206,6 @@ $opposite-direction: right !default;
 
 
 // "float:" rule
-
 @mixin float($float){
 	@if ($direction == 'rtl') {
 		@if ($side == 'left') {
@@ -224,7 +220,6 @@ $opposite-direction: right !default;
 }
 
 // "margin:" rule
-
 @mixin margin($top, $right, $bottom, $left) {
 	@if $direction != 'rtl' {
 		margin: $top $right $bottom $left;
@@ -235,7 +230,6 @@ $opposite-direction: right !default;
 
 
 // "margin-left:" rule
-
 @mixin margin-left($left) {
 	@if $direction != 'rtl' {
 		margin-left: $left;
@@ -246,7 +240,6 @@ $opposite-direction: right !default;
 
 
 // "margin-right:" rule
-
 @mixin margin-right($right) {
 	@if $direction != 'rtl' {
 		margin-right: $right;
@@ -257,7 +250,6 @@ $opposite-direction: right !default;
 
 
 // "padding:" rule
-
 @mixin padding($top, $right, $bottom, $left) {
 	@if $direction != 'rtl' {
 		padding: $top $right $bottom $left;
@@ -268,7 +260,6 @@ $opposite-direction: right !default;
 
 
 // "padding-left:" rule
-
 @mixin padding-left($left) {
 	@if $direction != 'rtl' {
 		padding-left: $left;
@@ -279,7 +270,6 @@ $opposite-direction: right !default;
 
 
 // "padding-right:" rule
-
 @mixin padding-right($right) {
 	@if $direction != 'rtl' {
 		padding-right: $right;
@@ -288,10 +278,7 @@ $opposite-direction: right !default;
 	}
 }
 
-
-
 // "text-align:" rule
-
 @mixin text-align($align) {
 	@if ($direction == 'rtl') {
 		@if ($align == 'left') {
@@ -307,7 +294,6 @@ $opposite-direction: right !default;
 
 
 // "right:" rule
-
 @mixin right($right) {
 	@if $direction != 'rtl' {
 		right: $right;
@@ -318,7 +304,6 @@ $opposite-direction: right !default;
 }
 
 // "translateX":rule
-
 @mixin translateX($x) {
 	@if $direction != 'rtl' {
 		transform: translateX($x);
@@ -328,7 +313,6 @@ $opposite-direction: right !default;
 }
 
 // "translate3d":rule
-
 @mixin translate3d($x, $y, $z) {
 	@if $direction != 'rtl' {
 		transform: translate3d($x, $y, $z);

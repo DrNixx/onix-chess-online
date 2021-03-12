@@ -1,0 +1,1 @@
+export { analyseGame } from './ui/game/analyse/AnalyseGame';

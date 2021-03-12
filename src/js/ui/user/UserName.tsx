@@ -1,5 +1,5 @@
 import React, { useEffect} from 'react';
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import classNames from 'classnames';
 import isString from "lodash/isString";
 import {OverlayTrigger, Popover, PopoverProps} from "react-bootstrap";
@@ -115,7 +115,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
 
         return (
-            <UpdatingPopover id={shortid.generate()} className="username-popup">
+            <UpdatingPopover id={nanoid(8)} className="username-popup">
                 {this.getPopoverContent()}
             </UpdatingPopover>
         );

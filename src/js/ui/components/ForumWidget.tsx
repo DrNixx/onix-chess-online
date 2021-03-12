@@ -6,6 +6,7 @@ import {Tab, Nav, Fade} from "react-bootstrap";
 import { OnixStorage, storage } from '../../storage';
 import { UserName } from '../user/UserName';
 import { IChessUser } from '../../chess/types/Interfaces';
+import { Logger } from '../../common/Logger';
 
 
 interface IForumMessage {
@@ -18,9 +19,23 @@ interface IForumMessage {
     poster: IChessUser;
 }
 
+type topic = "chatter" | "arena" | "official";
+type TabIterator = (key: string) => void;
+
+interface IIdentifiers {
+    [key: string]: number[];
+}
+
+interface IForumPosts {
+    [key: string]: IForumMessage[],
+}
+
+interface IForumDiffs {
+    [key: string]: number,
+}
+
 interface IForumData {
-    chatter: IForumMessage[],
-    official: IForumMessage[],
+    posts: IForumPosts,
     nextInterval: number
 }
 
@@ -29,16 +44,15 @@ export interface IForumWidgetProps {
     apiUrl: string;
     i18n: {
         forums: string,
-        chatters: string,
-        official: string,
+        tabs: {
+            [key: string]: string
+        }
     }
 }
 
 export interface IForumWidgetState {
-    chatter: IForumMessage[],
-    chatterDiff: number,
-    official: IForumMessage[],
-    officialDiff:  number,
+    posts: IForumPosts,
+    diffs: IForumDiffs,
     loading: boolean,
     fade: boolean
 }
@@ -48,7 +62,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
 
     private forumKeyStore: OnixStorage;
 
-    private forumPrevStore?: OnixStorage;
+    private forumPrevStore: OnixStorage;
 
     private activeKey: string;
 
@@ -57,8 +71,11 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         apiUrl: '/api/forums/widget?c=15',
         i18n: {
             forums: 'Forums',
-            chatters: 'Chatter',
-            official: 'Official',
+            tabs: {
+                chatter: 'Chatter',
+                official: 'Official',
+                arena: 'Arena',
+            }
         }
     }
 
@@ -68,17 +85,21 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
     constructor(props: IForumWidgetProps) {
         super(props);
 
-        this.forumKeyStore = storage.make('forum-widget-tab');
+        this.forumPrevStore = storage.make('dashboard-forum-diff');
+        this.forumKeyStore = storage.make('dashboard-forum-tab');
         this.activeKey = this.forumKeyStore.get() || 'chatter';
 
         this.state = {
-            chatter: [],
-            chatterDiff: 0,
-            official: [],
-            officialDiff: 0,
+            posts: {},
+            diffs: {},
             loading: true,
             fade: true
         };
+
+        this.forTabs((key) => {
+            this.state.posts[key] = [];
+            this.state.diffs[key] = 0;
+        });
     }
 
     componentDidMount() {
@@ -94,9 +115,9 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         }
 
         this.setState({
+            ...other,
             loading: true,
-            fade: fade || withFade,
-            ...other
+            fade: fade || withFade
         });
 
         fetch(this.props.apiUrl, {mode: "cors"})
@@ -111,12 +132,12 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
                 that.fetchCallback(responseAsJson);
             })
             .catch(function(error) {
-                console.log('Looks like there was a problem when reading openings: \n', error);
+                Logger.error('Looks like there was a problem when reading forums: \n', error);
             });
     };
 
     private arrayDiff = (a1: number[], a2: number[]) => {
-        const diff = [];
+        const diff: number[] = [];
         for (const k1 in a1) {
             let found = false;
             for (const k2 in a2) {
@@ -134,59 +155,50 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         return diff;
     };
 
-    private fetchCallback = (data: IForumData) => {
+    private forTabs = (fn: TabIterator) => {
+        Object.keys(this.props.i18n.tabs).forEach(fn);
+    };
 
-        const chatter: number[] = [];
-        const official: number[] = [];
+    private prevStored = () => {
+        const empty: IIdentifiers = {};
+        
+        this.forTabs((key) => {
+            empty[key] = [];
+        });
 
-        data.chatter.map(msg => chatter.push(msg.msgId));
-        data.official.map(msg => official.push(msg.msgId));
-
-        this.forumPrevStore = storage.make('forum-widget-diff');
+        let prev: IIdentifiers;
         const diffStr = this.forumPrevStore.get() || "";
-        let prev;
         try {
-            prev = diffStr ? JSON.parse(diffStr) : {
-                chatter: [],
-                official: [],
-            };
+            prev = diffStr ? JSON.parse(diffStr) : empty;
         } catch (e) {
-            prev = {
-                chatter: [],
-                official: [],
-            };
+            prev = empty;
         }
 
-        const diff = {
-            chatter: 0,
-            official: 0
-        };
+        return prev;
+    };
 
-        diff.chatter = this.arrayDiff(chatter, prev.chatter).length;
-        diff.official = this.arrayDiff(official, prev.official).length;
+    private fetchCallback = (data: IForumData) => {
+        const ids: IIdentifiers = {};
+        const diffs: IForumDiffs = {};
 
-        switch (this.activeKey) {
-            case "chatter":
-                diff.chatter = 0;
-                this.forumPrevStore.set(JSON.stringify({
-                    chatter: chatter,
-                    official: prev.official
-                }));
-                break;
-            case "official":
-                diff.official = 0;
-                this.forumPrevStore.set(JSON.stringify({
-                    chatter: prev.chatter,
-                    official: official
-                }));
-                break;
-        }
+        const prev = this.prevStored();
+
+        this.forTabs((key) => {
+            ids[key] = [];
+            if (data.posts && data.posts[key]) {
+                data.posts[key].map(msg => ids[key].push(msg.msgId));
+            }
+
+            diffs[key] = this.arrayDiff(ids[key], prev[key]).length;
+        });
+        
+        diffs[this.activeKey] = 0;
+        prev[this.activeKey] = ids[this.activeKey];
+        this.forumPrevStore.set(JSON.stringify(prev));
 
         this.setState({
-            chatter: data.chatter,
-            chatterDiff: diff.chatter,
-            official: data.official,
-            officialDiff: diff.official,
+            posts: data.posts,
+            diffs: diffs,
             loading: false,
             fade: false
         });
@@ -195,6 +207,26 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
             this.timeout = setTimeout(this.fetchForumData, data.nextInterval * 1000);
         }
     }
+
+    private clearDiff = (k: string) => {
+        let { ...other } = this.state;
+
+        const prev = this.prevStored();
+        prev[k] = [];
+        other.posts[k].map(msg => prev[k].push(msg.msgId));
+        this.forumPrevStore.set(JSON.stringify(prev));
+
+        other.diffs[k] = 0;
+        this.setState(other);
+    };
+
+    private setKey = (k: string|null) => {
+        if (k) {
+            this.forumKeyStore.set(k);
+            this.activeKey = k;
+            this.clearDiff(k);
+        }
+    };
 
     private renderLoader = () => {
         const { state } = this;
@@ -234,7 +266,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         );
     };
 
-    private renderForumBlock(messages: IForumMessage[]) {
+    private renderForumBlock = (messages: IForumMessage[]) => {
         const rows: JSX.Element[] = [];
 
         messages.forEach((item) => {
@@ -268,33 +300,6 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         return null;
     };
 
-    private clearDiff = (k:string) => {
-        let { chatterDiff, officialDiff, ...other } = this.state;
-
-        switch (k) {
-            case "chatter":
-                chatterDiff = 0;
-                break;
-            case "official":
-                officialDiff = 0;
-                break;
-        }
-
-        this.setState({
-            chatterDiff: chatterDiff,
-            officialDiff: officialDiff,
-            ...other
-        });
-    };
-
-    private setKey = (k: string|null) => {
-        if (k) {
-            this.forumKeyStore.set(k);
-            this.activeKey = k;
-            this.clearDiff(k);
-        }
-    };
-
     private refreshClick = (e: React.MouseEvent) => {
         e.preventDefault();
         if (!this.state.loading) {
@@ -302,9 +307,39 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         }
     }
 
+    private renderTabs = () => {
+        const { props, state, activeKey, renderDiff } = this;
+        const { tabs } = props.i18n;
+
+        return Object.keys(tabs).map((key) => {
+            return (
+                <Nav.Item key={key}>
+                    <Nav.Link eventKey={key}>{tabs[key]}{renderDiff(key, activeKey, state.diffs[key])}</Nav.Link>
+                </Nav.Item>
+            );
+        });
+    };
+
+    private renderPanes = () => {
+        const { props, state, renderForumBlock } = this;
+        const { tabs } = props.i18n;
+
+        return Object.keys(tabs).map((key) => {
+            return (
+                <Tab.Pane key={key} eventKey={key} className="w-100 h-100">
+                    <Scrollbar>
+                        <div className="container striped">
+                            {renderForumBlock(state.posts[key])}
+                        </div>
+                    </Scrollbar>
+                </Tab.Pane>
+            );
+        });
+    };
+
     render() {
-        const { state, props, activeKey, renderRefreshIcon, refreshClick, renderDiff } = this;
-        const { forums, chatters, official } = props.i18n;
+        const { state, props, activeKey, renderRefreshIcon, refreshClick, renderTabs, renderPanes } = this;
+        const { forums } = props.i18n;
 
         const refrechClass = classNames([
             'card-refresh',
@@ -335,28 +370,10 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
                 <div className="card-body p-0 h-100 w-100 d-flex flex-column">
                     <Tab.Container id="forum-widget" defaultActiveKey={activeKey} onSelect={this.setKey}>
                         <Nav variant="tabs" className="nav-tabs-linetriangle d-flex">
-                            <Nav.Item>
-                                <Nav.Link eventKey="chatter">{chatters}{renderDiff('chatter', activeKey, state.chatterDiff)}</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="official">{official}{renderDiff('official', activeKey, state.officialDiff)}</Nav.Link>
-                            </Nav.Item>
+                            { renderTabs() }
                         </Nav>
                         <Tab.Content className="px-0 flex-grow-1">
-                            <Tab.Pane eventKey="chatter" className="w-100 h-100">
-                                <Scrollbar>
-                                    <div className="container striped">
-                                        {this.renderForumBlock(state.chatter)}
-                                    </div>
-                                </Scrollbar>
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="official" className="w-100 h-100">
-                                <Scrollbar>
-                                    <div className="container striped">
-                                        {this.renderForumBlock(state.official)}
-                                    </div>
-                                </Scrollbar>
-                            </Tab.Pane>
+                            { renderPanes() }
                         </Tab.Content>
                     </Tab.Container>
                 </div>

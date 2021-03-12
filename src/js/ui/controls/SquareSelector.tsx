@@ -43,7 +43,7 @@ export class SquareSelector extends React.Component<SquareSelectorProps, {}> {
     render() {
         const { defaultValue, onChangeSquare, size, ...otherProps } = this.props;
         return (
-            <FormControl as="select" size={size} onChange={this.onChange} defaultValue={defaultValue}>
+            <FormControl as="select" size={size} onChange={this.onChange} defaultValue={defaultValue} {...otherProps}>
                 {this.getSquares()}
             </FormControl>
         );

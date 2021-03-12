@@ -1,11 +1,12 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 import isString from 'lodash/isString';
-import * as shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
 import { Content } from './Content';
 import { equalHeight } from './Functions';
 import { IModule } from '../app/IModule';
 import { Logger } from '../common/Logger';
+import { focusVisible } from './FocusVisible';
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
     return (isString(selector)) ? jQuery(selector) : selector;
@@ -39,6 +40,7 @@ export class Frontend implements IModule {
         this.adjustSizes();
         this.wire();
         this.initPages();
+        focusVisible();
     }
 
     private initPages() {
@@ -132,7 +134,7 @@ export class Frontend implements IModule {
             template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
             content: function() {
                 const $that: JQuery<Element> = jQuery(this);
-                let popupId = $that.data('popupId') ?? shortid.generate();
+                let popupId = $that.data('popupId') ?? nanoid(8);
                 let popupData = $that.data('popupData');
                 if (popupData) {
                     return popupData;

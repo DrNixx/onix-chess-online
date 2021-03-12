@@ -1,0 +1,124 @@
+
+
+.moves {
+    .move {
+        cursor: pointer;
+
+        &.best {
+            color: #1e7145;
+        }
+
+        &.blunder {
+            color: #e76e70;
+        }
+
+        &.mistake {
+            color: #ce8f22;
+        }
+
+        &.inaccuracy {
+            color: #246a8e;
+        }
+
+        &.active {
+            background-color: #ff8719;
+            color: #fff;
+        }
+    }
+}
+
+.movelist {
+    .btn {
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}
+
+.movelist-wrap {
+    .opening {
+        margin-right: .5em;
+    }
+
+    .moveno {
+        padding-right: .2em;
+    }
+
+    .move {
+        padding-left: .2em;
+        padding-right: .2em;
+        margin-right: .3em;
+        display: inline-block;
+        font-weight: 500;
+    }
+
+    .nag {
+        padding-right: .5em;
+        font-weight: bold;
+    }
+
+    .comment {
+        color: #999;
+        font-style: italic;
+        padding-right: .6em;
+    }
+}
+
+.movetable {
+    max-width: 30rem;
+}
+
+.movetable-wrap {
+    display: flex;
+    flex-flow: row wrap;
+
+    & > .opening {
+        flex: 0 0 100%;
+        padding: .5em 0 0 13%;
+        border-bottom: 1px solid $color-contrast-low;
+    }
+
+    & > .game_result {
+        width: 100%;
+        text-align: center;
+        font-size: 1.3em;
+        font-weight: 500;
+        padding: .5em 0;
+        border-top: 1px solid $color-contrast-low;
+    }
+    
+    & > .moveno {
+        flex: 0 0 13%;
+        display: flex;
+        justify-content: center;
+        border-right: 1px solid $color-contrast-low;
+        //background: #f7f6f5;
+        line-height: 2.07em;
+        color: $color-contrast-medium;;
+    }
+
+    .move {
+        flex: 0 0 43.5%;
+        display: flex;
+        font-size: 1.185em;
+        line-height: 1.75em;
+        padding: 0 .3em 0 .5em;
+        
+        &.active {
+            font-weight: bold;
+        }
+
+        .nag {
+            padding-left: .5em;
+            flex: 0 1 auto;
+            font-size: .8em;
+        }
+
+        .eval {
+            flex: 3 0 auto;
+            text-align: right;
+            font-size: .82em;
+            opacity: .7;
+        }
+    }
+}
