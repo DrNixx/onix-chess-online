@@ -7,32 +7,35 @@ import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
 
-import { IStreamMessage } from '../../../net/IStreamMessage';
+import { i18n, _ } from '../../i18n/i18n';
+
+import { Color } from '../../chess/Color';
 
 import { BoardSizeClass } from 'onix-board-assets';
 
-import { GameProps, defaultProps } from '../../../chess/settings/GameProps';
-import { createWatchGameStore, WatchGameStore } from './WatchGameStore';
-import { createWatchGameState } from './WatchGameState';
-import { ChessMoves } from '../../components/ChessMoves';
-import { MovesMode, NavigatorMode } from '../../components/Constants';
-import { Captures } from '../../components/Captures';
-import { renderPlayer, renderTimer, renderBoardControls } from '../GameUtils';
-import * as BoardActions from '../../../actions/BoardActions';
-import { GameInfo } from '../GameInfo';
-import { i18n, _ } from '../../../i18n/i18n';
-import { Color } from '../../../chess/Color';
-import { Logger } from '../../../common/Logger';
+import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 
-interface WatchGameState {
+import * as BoardActions from '../../actions/BoardActions';
+import { createCombinedGameStore, CombinedGameStore } from '../../actions/CombinedGameStore';
+import { createCombinedGameState } from '../../actions/CombinedGameState';
+
+import { ChessMoves } from '../components/ChessMoves';
+import { NavigatorMode, MovesMode } from '../components/Constants';
+import { Captures } from '../components/Captures';
+
+import { renderPlayer, renderTimer } from './GameUtils';
+import { GameInfo } from './GameInfo';
+import { BoardToolbar } from '../components/BoardToolbar';
+
+interface GameState {
 }
 
-class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
+class WatchGameComponent extends React.Component<GameProps, GameState> {
     public static defaultProps: GameProps = defaultProps;
 
     private storeUnsubscribe?: Unsubscribe = undefined;
 
-    private store: WatchGameStore;
+    private store: CombinedGameStore;
 
     private cg?: Api = undefined;
 
@@ -43,9 +46,9 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
 
         i18n.register();
 
-        const state = createWatchGameState(this.props);
+        const state = createCombinedGameState(this.props);
 
-        this.store = createWatchGameStore(state);
+        this.store = createCombinedGameStore(state);
     }
 
     componentDidMount() {
@@ -107,18 +110,6 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
         
     }
 
-    gameMsgHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
-    pvtChatHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
-    pubChatHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
     loadGame = () => {
         
     }
@@ -130,7 +121,7 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
 
     private renderControls = () => {
         const { store } = this;
-        const { game } = store.getState();
+        const { board } = store.getState();
 
         return (
             <div className="controls flex-grow-1 d-flex flex-column">
@@ -146,8 +137,8 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
                     <Tab.Content className="p-0">
                         <Tab.Pane eventKey="moves">
                             <div className="d-flex flex-column h-100">
-                                <div className="mb-auto board-height auto-overflow">
-                                    <ChessMoves mode={game.moves} nav={NavigatorMode.Top} store={this.store} hasEvals={false} />
+                                <div className="board-height auto-overflow">
+                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures store={this.store} piece={this.props.board.piece!} />
@@ -219,7 +210,7 @@ class WatchGameComponent extends React.Component<GameProps, WatchGameState> {
                                     </Row>
                                 </div>
                             </div>
-                            { renderBoardControls(store, boardCfg.configUrl) }
+                            <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                             { this.renderControls() }
                         </div>
                     </Col>

@@ -10,38 +10,41 @@ import { Api } from 'chessground/api';
 import { notify } from 'pages-ts';
 import { BoardSizeClass } from 'onix-board-assets';
 
-import { GameProps, defaultProps } from '../../../chess/settings/GameProps';
-import { createAnalyseGameStore, AnalyseGameStore } from './AnalyseGameStore';
-import { createAnalyseGameState } from './AnalyseGameState';
-import { renderPlayer, renderResult, renderBoardControls } from '../GameUtils';
+import { i18n, _ } from '../../i18n/i18n';
 
-import { GameInfo } from '../GameInfo';
-import * as BoardActions from '../../../actions/BoardActions';
-import { i18n, _ } from '../../../i18n/i18n';
-import { Color } from '../../../chess/Color';
-import { Chess as ChessEngine } from '../../../chess/Chess';
-import { IStreamMessage } from '../../../net/IStreamMessage';
-import { FenString } from '../../../chess/FenString';
+import { Color } from '../../chess/Color';
+import { Chess as ChessEngine } from '../../chess/Chess';
+import { FenString } from '../../chess/FenString';
 
-import { copy } from '../../CopyToClipboard';
-import { TextWithCopy } from '../../controls/TextWithCopy';
+import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 
-import { ChessMoves } from '../../components/ChessMoves';
-import { MovesMode, NavigatorMode } from '../../components/Constants';
-import { Captures } from '../../components/Captures';
-import { AnalyseGraphAsync } from '../../components/AnalyseGraphAsync';
-import { MovesGraphAsync } from '../../components/MovesGraphAsync';
-import { Logger } from '../../../common/Logger';
+import * as BoardActions from '../../actions/BoardActions';
+import { createCombinedGameStore, CombinedGameStore } from '../../actions/CombinedGameStore';
+import { createCombinedGameState } from '../../actions/CombinedGameState';
 
-interface AnalyseGameState {
+import { renderPlayer, renderResult } from './GameUtils';
+import { GameInfo } from './GameInfo';
+
+import { copy } from '../CopyToClipboard';
+import { TextWithCopy } from '../controls/TextWithCopy';
+
+import { ChessMoves } from '../components/ChessMoves';
+import { MovesMode, NavigatorMode } from '../components/Constants';
+import { Captures } from '../components/Captures';
+import { AnalyseGraphAsync } from '../components/AnalyseGraphAsync';
+import { MovesGraphAsync } from '../components/MovesGraphAsync';
+import { BoardToolbar } from '../components/BoardToolbar';
+
+
+interface GameState {
 }
 
-class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> {
+class AnalyseGameComponent extends React.Component<GameProps, GameState> {
     public static defaultProps: GameProps = defaultProps;
 
     private storeUnsubscribe?: Unsubscribe = undefined;
 
-    private store: AnalyseGameStore;
+    private store: CombinedGameStore;
 
     private cg?: Api = undefined;
 
@@ -52,9 +55,9 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
 
         i18n.register();
 
-        const state = createAnalyseGameState(this.props);
+        const state = createCombinedGameState(this.props);
 
-        this.store = createAnalyseGameStore(state);
+        this.store = createCombinedGameStore(state);
     }
 
     componentDidMount() {
@@ -124,18 +127,6 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
         
     }
 
-    gameMsgHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
-    pvtChatHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
-    pubChatHandler = (msg: IStreamMessage) => {
-        Logger.debug(msg);
-    }
-
     loadGame = (id: number, insite: boolean) => {
         
     }
@@ -146,7 +137,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
 
     private renderControls = () => {
         const { store } = this;
-        const { game } = store.getState();
+        const { board } = store.getState();
 
         return (
             <div className="controls flex-grow-1 d-flex flex-column">
@@ -162,8 +153,8 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                     <Tab.Content className="p-0">
                         <Tab.Pane eventKey="moves">
                             <div className="d-flex flex-column h-100">
-                                <div className="mb-auto board-height auto-overflow">
-                                    <ChessMoves mode={game.moves} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
+                                <div className="board-height auto-overflow">
+                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures store={this.store} piece={this.props.board.piece!} />
@@ -196,7 +187,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
         }
     };
 
-    private renderAnalysis = (store: AnalyseGameStore, engine: ChessEngine) => {
+    private renderAnalysis = (store: CombinedGameStore, engine: ChessEngine) => {
         if (engine.RawData.game?.insite) {
             return (
                 <Tab.Pane eventKey="analysis">
@@ -222,7 +213,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
         }
     };
 
-    private renderMovetime = (store: AnalyseGameStore, engine: ChessEngine) => {
+    private renderMovetime = (store: CombinedGameStore, engine: ChessEngine) => {
         if (engine.RawData.game?.moveCentis) {
             return (
                 <Tab.Pane eventKey="movetime">
@@ -287,11 +278,11 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
         return null;
     }
 
-    private renderCounters = (store: AnalyseGameStore, engine: ChessEngine) => {
+    private renderCounters = (store: CombinedGameStore, engine: ChessEngine) => {
         return null;
     }
 
-    private renderUnderboard = (store: AnalyseGameStore, engine: ChessEngine) => {
+    private renderUnderboard = (store: CombinedGameStore, engine: ChessEngine) => {
         const { renderAnalysis, renderAnalysisTab, renderMovetime, renderMovetimeTab, renderFenPgn, renderFenPgnTab, renderCounters, renderCountersTab } = this;
 
         return (
@@ -375,7 +366,7 @@ class AnalyseGameComponent extends React.Component<GameProps, AnalyseGameState> 
                                     </Row>
                                 </div>
                             </div>
-                            { renderBoardControls(store, boardCfg.configUrl) }
+                            <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                             { this.renderControls() }
                         </div>
                     </Col>

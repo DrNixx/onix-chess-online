@@ -311,7 +311,7 @@ export namespace Square {
         return hqs[fyle(sq)];
     }
 
-    export function parse(sq: string) {
+    export function parse(sq: string): Squares.Square | undefined {
         if (sq && sq.length === 2) {
             const f = fyleFromChar(sq[0]);
             const r = rankFromChar(sq[1]);

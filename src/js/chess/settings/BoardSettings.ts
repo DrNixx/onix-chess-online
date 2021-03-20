@@ -9,6 +9,9 @@ export interface BoardSettings extends CgConfig {
     square?: string,
     orientation?: Color,
     coordinates?: boolean,
+    learnMode?: boolean,
+    confirmMove?: boolean,
+    moveTable?: boolean,
     csrfTokenName?: string,
     csrfTokenValue?: string,
     configUrl?: string,
@@ -21,5 +24,8 @@ export const defaultSettings: BoardSettings = {
     piece: "alpha",
     square: "cedar",
     orientation: "white",
-    coordinates: true
+    coordinates: true,
+    learnMode: false,
+    confirmMove: false,
+    moveTable: false,
 }

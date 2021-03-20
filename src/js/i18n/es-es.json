@@ -96,12 +96,25 @@
         "infoLoading": "Loading...",
         "send": "Send",
 
-        "config": "Configure",
+        "board_config": "Display settings",
         "flip": "Flip board",
         "toggle_moves": "Toggle moves view",
 
         "board_size": "Board size",
-        "display_coord": "Coordinates"
+        "display_coord": "Coordinates",
+        "display_move_hints": "Show allowed moves",
+        "confirm_move_form": "Confirm move",
+
+        "board_and_pieces": "Board and pieces",
+        "other_settings": "Other settings",
+
+        "moves_mode": "Display moves",
+        "moves_mode_list": "list",
+        "moves_mode_table": "table",
+
+        "send_draw": "Send draw",
+        "move_button": "Move",
+        "reset_button": "Reset"
     },
     "analyse": {
         "title": "Computer analysis",

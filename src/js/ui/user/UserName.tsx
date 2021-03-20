@@ -4,14 +4,13 @@ import classNames from 'classnames';
 import isString from "lodash/isString";
 import {OverlayTrigger, Popover, PopoverProps} from "react-bootstrap";
 import { Logger } from '../../common/Logger';
-import { IChessUser } from '../../chess/types/Interfaces';
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import {Avatar} from "./Avatar";
-
+import { IUser } from '../../app/IUser';
 
 export interface IUserNameProps {
     language?: string;
-    user?: IChessUser;
+    user?: IUser;
     size?: AvatarSizeType;
     icon?: UserIconType;
     showInfo?: boolean;
@@ -121,7 +120,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         );
     }
 
-    private renderUsername = (user: IChessUser) => {
+    private renderUsername = (user: IUser) => {
         if (user.display && (user.display != user.name)) {
             return (
                 <div className="small"><span>{user.name}</span></div>
@@ -131,17 +130,17 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         return null;
     }
 
-    private renderTitle = (user: IChessUser) => {
+    private renderTitle = (user: IUser) => {
         if (user.title) {
             if (isString(user.title)) {
                 return (
-                    <span className="label label-success text-uppercase fs-10 mr-1"
+                    <span className="label label-success text-uppercase fs-10 lh-20 mr-1"
                           data-toggle="tooltip"
                           title="">{user.title}</span>
                 );
             } else {
                 return (
-                    <span className="label label-success text-uppercase fs-10 mr-1"
+                    <span className="label label-success text-uppercase fs-10 lh-20 mr-1"
                           data-toggle="tooltip"
                           title={user.title.name}>{user.title.id}</span>
                 );
@@ -151,7 +150,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         return null;
     };
 
-    private renderUserLink = (user: IChessUser, userLink: string) =>  {
+    private renderUserLink = (user: IUser, userLink: string) =>  {
         const { popover } = this.props;
 
         const unClass = ["username", "cursor"];
@@ -174,7 +173,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         }
     };
 
-    private renderInfo = (user: IChessUser, userLink: string) => {
+    private renderInfo = (user: IUser, userLink: string) => {
         const { showInfo } = this.props;
         if (showInfo) {
             return (

@@ -572,7 +572,7 @@ kbd {
 */
 .bg-success {
     background-color: $color-success !important;
-    color: text-contrast($color-success);
+    color: #fff; // text-contrast($color-success);
 }
 .bg-success-dark {
     background-color: $color-success-dark !important;
@@ -890,28 +890,31 @@ z = font size
 ------------------------------------
 */
 .lh-normal {
-    line-height: normal;
+    line-height: normal !important;
 }
 .lh-10 {
-    line-height: 10px;
+    line-height: 10px !important;
 }
 .lh-11 {
-    line-height: 11px;
+    line-height: 11px !important;
 }
 .lh-12 {
-    line-height: 12px;
+    line-height: 12px !important;
 }
 .lh-13 {
-    line-height: 13px;
+    line-height: 13px !important;
 }
 .lh-14 {
-    line-height: 14px;
+    line-height: 14px !important;
 }
 .lh-15 {
-    line-height: 15px;
+    line-height: 15px !important;
 }
 .lh-16 {
-    line-height: 16px;
+    line-height: 16px !important;
+}
+.lh-20 {
+    line-height: 20px !important;
 }
 
 /* Font Faces

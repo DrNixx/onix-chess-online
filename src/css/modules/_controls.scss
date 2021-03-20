@@ -18,13 +18,49 @@
 
 @include breakpoint($mq-medium) {
     .mini-controls {
-        width: 32px;
+        width: 36px;
     
         .btn-toolbar {
+            height: 100%;
             .btn-group {
-                margin: 0;
+                @include margin-right(0);
+                margin-bottom: 14px;
                 display: block;
+
+                .btn {
+                    &:first-child {
+                        border-top-left-radius: 3px;
+                        border-top-right-radius: 3px;
+                    }
+
+                    &:last-child {
+                        border-bottom-left-radius: 3px;
+                        border-bottom-right-radius: 3px;
+                    }
+
+                    &:not(:first-child) {
+                        border-top-left-radius: 0;
+                        border-top-right-radius: 0;
+                    }
+
+                    &:not(:last-child) {
+                        border-bottom-left-radius: 0;
+                        border-bottom-right-radius: 0;
+                    }
+                }
+            }
+
+            .btn {
+                @include padding-left(0);
+                @include padding-right(0);
+                padding-top: 5px;
+                padding-bottom: 5px;
             }
         }
     }
+}
+
+.btn-group > .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }

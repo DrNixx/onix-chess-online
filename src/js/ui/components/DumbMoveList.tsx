@@ -120,7 +120,10 @@ export class DumbMoveList extends DumbMoveElement {
                     "best": false,
                     "blunder": false,
                     "mistake": false,
-                    "inaccuracy": false
+                    "inaccuracy": false,
+                    "border": move.provisional,
+                    "border-danger": move.provisional,
+                    "provisional": move.provisional,
                 };
 
                 if (sm.eval) {

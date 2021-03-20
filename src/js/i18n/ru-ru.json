@@ -95,12 +95,25 @@
         "infoLoading": "Информация загружается...",
         "send": "Отправить",
 
-        "config": "Настройки",
+        "board_config": "Настройки отображения",
         "flip": "Развернуть доску",
         "toggle_moves": "Переключить вид списка ходов",
 
         "board_size": "Размер доски",
-        "display_coord": "Координаты"
+        "display_coord": "Координаты",
+        "display_move_hints": "Показывать допустимые ходы",
+        "confirm_move_form": "Подтверждение хода",
+
+        "board_and_pieces": "Доска и фигуры",
+        "other_settings": "Другие настройки",
+
+        "moves_mode": "Отображение ходов",
+        "moves_mode_list": "список",
+        "moves_mode_table": "таблица",
+
+        "send_draw": "Предложить ничью",
+        "move_button": "Ходить",
+        "reset_button": "Сброс"
     },
     "analyse": {
         "title": "Компьютерный анализ",

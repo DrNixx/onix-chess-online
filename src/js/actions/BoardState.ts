@@ -10,6 +10,9 @@ export interface BoardState {
     square: string;
     orientation: cg.Color;
     coordinates: boolean;
+    learnMode: boolean;
+    confirmMove: boolean;
+    moveTable: boolean;
 }
 
 export interface BoardRelatedState {

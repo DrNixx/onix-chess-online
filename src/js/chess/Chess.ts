@@ -15,6 +15,7 @@ import { IGameData, IMovePart, ITreePart, IChessPlayer, IChessOpening, IGameAnal
 import { FenString } from './FenString';
 import { plyToColor, plyToTurn, turnToPly } from './Common';
 import { EvalItem } from './EvalItem';
+import { colors } from 'chessground/types';
 
 export enum ChessRatingType {
     None = 0,
@@ -168,6 +169,15 @@ export class Chess {
     public Fen?: string;
     
     
+    /**
+     * If game in play mode - Color of current player
+     * 
+     */
+    private player: Colors.BW = Color.White;
+    public get Player() {
+        return this.player;
+    }
+
     /// <summary>
     /// True if game has a promotion to R/B/N.
     /// </summary>
@@ -339,6 +349,8 @@ export class Chess {
             if (game.opening) {
                 this.Eco = game.opening;
             }
+
+            this.player = (game.player == "black") ? Color.Black : Color.White;
         }
 
         this.assignPlayer(player);
@@ -531,15 +543,16 @@ export class Chess {
         return state;
     }
 
-    public makeMove(fr: Squares.Square, to: Squares.Square, promote?: string) {
+    public makeMove(fr: Squares.Square, to: Squares.Square, promote?: string): SimpleMove|undefined {
         const { curPos: currentPos } = this;
         const sm = new SimpleMove();
         sm.pieceNum = currentPos.getPieceNum(fr);
         sm.movingPiece = currentPos.getPiece(fr);
         if (!Piece.isPiece(sm.movingPiece)) {
-            return;
+            return undefined;
         }
 
+        sm.ply = this.CurrentPos.PlyCount + 1;
         sm.color = Piece.color(sm.movingPiece);
         sm.from = fr;
         sm.to = to;
@@ -608,6 +621,27 @@ export class Chess {
         this.positionChanged();
 
         return newMove;
+    }
+
+    /**
+     * Add temporary move. @see addMove
+     * 
+     * @inheritdoc
+     */
+    public addProvisionalMove(sm: SimpleMove, san?: string, fen?: string) {
+        this.moveEnd();
+        const newMove = this.addMove(sm, san, fen);
+        newMove.provisional = true;
+        return newMove;
+    }
+
+    public removeProvisoryMoves() {
+        this.moveLast();
+        while (this.currentMove.provisional) {
+            let move = this.currentMove;
+            this.moveBackward();
+            move.remove();
+        }
     }
 
     public moveToKey(key: string) {

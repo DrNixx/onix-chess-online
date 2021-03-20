@@ -150,7 +150,10 @@ export class DumbMoveTable extends DumbMoveElement {
                     "best": false,
                     "blunder": false,
                     "mistake": false,
-                    "inaccuracy": false
+                    "inaccuracy": false,
+                    "border": move.provisional,
+                    "border-danger": move.provisional,
+                    "provisional": move.provisional
                 };
 
                 if (sm.eval) {
@@ -231,7 +234,7 @@ export class DumbMoveTable extends DumbMoveElement {
         return (
             <div className="movetable moves d-flex flex-column h-100" ref={(el) => setElRef(el)}>
                 {renderNav(NavigatorMode.Top)}
-                <div className="flex-grow-1">
+                <div className="flex-grow-1 movetable-outer">
                     <Scrollbar trackYProps={{style: {width: 5}}} scrollerProps={{elementRef: (el) => this.scrollerRef = el}}>
                         <div className="movetable-wrap">
                             { renderOpening() }

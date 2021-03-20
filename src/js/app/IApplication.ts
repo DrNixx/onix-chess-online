@@ -1,4 +1,9 @@
+import Centrifuge from "centrifuge";
+
 export interface IApplication {
+    stream: Centrifuge|null;
+
+    getUserId(): number;
 }
 
 declare global {
@@ -6,6 +11,7 @@ declare global {
         chessApp: IApplication;
     }
 }
+
 export var appInstance: IApplication|null = null;
 
 export const setAppInstance = (app: IApplication) => {

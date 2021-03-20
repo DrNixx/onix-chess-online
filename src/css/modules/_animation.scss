@@ -1,0 +1,19 @@
+.slide-down {
+    &-enter {
+        transform: translateY(-100%);
+        transition: .3s cubic-bezier(0, 1, 0.5, 1);
+
+        &-active {
+            transform: translateY(0%);
+        }
+    }
+
+    &-leave {
+        transform: translateY(0%);
+        transition: .3s ease-in-out;
+
+        &-active {
+            transform: translateY(-100%);
+        }
+    }
+}

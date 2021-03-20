@@ -18,6 +18,10 @@
 
 {% block scripts %}
 	{{ super() }}
+	<script src="assets/js/chess-online.283.js"></script>
+	<script src="assets/js/chess-online.890.js"></script>
+	<script src="assets/js/chess-online.811.js"></script>
+	<script src="assets/js/chess-online.configure.js"></script>
 	<script>
 		const module = {
 			init: function() {
@@ -27,7 +31,7 @@
 					square: "cedar",
 					coordinates: true,
 				};
-				onix.configureGame(props, document.getElementById("config-view"));
+				configure.configureGame(props, document.getElementById("config-view"));
 			}
 		};
 

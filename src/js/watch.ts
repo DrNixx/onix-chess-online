@@ -1,1 +1,1 @@
-export { watchGame } from './ui/game/watch/WatchGame';
+export { watchGame } from './ui/game/WatchGame';

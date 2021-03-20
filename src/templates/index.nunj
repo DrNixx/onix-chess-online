@@ -3,7 +3,8 @@
 
 {% block content %}
     <h2>Boards</h2>
-	<p><a href="analyse.html">Analyse game</a></p>
+    <p><a href="play.html">Play game</a></p>
     <p><a href="watch.html">Watch game</a></p>
+	<p><a href="analyse.html">Analyse game</a></p>
     <p><a href="configure.html">Configure board</a></p>
 {% endblock content %}

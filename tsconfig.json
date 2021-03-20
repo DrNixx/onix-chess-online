@@ -23,6 +23,10 @@
         "outDir": "./dist"
     },
     "files": [
-        "src/js/index.ts"
+        "src/js/index.ts",
+        "src/js/analyse.ts",
+        "src/js/configure.ts",
+        "src/js/play.ts",
+        "src/js/watch.ts",
     ]
 }

@@ -15,7 +15,9 @@ export const defaultProps: GameProps = {
         orientation: "white",
         size: BoardSize.Largest,
         piece: "alpha",
-        square: "cedar"
+        square: "cedar",
+        learnMode: false,
+        confirmMove: false,
     },
     game: {
         orientation: "white"

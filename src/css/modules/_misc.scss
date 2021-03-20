@@ -482,6 +482,11 @@
     flex-shrink: 0;
 }
 
+.flex-break {
+    flex-basis: 100%;
+    height: 0;
+}
+
 [data-pages-bg-image] {
     background-size: cover;
 }

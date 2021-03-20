@@ -694,7 +694,11 @@ export class Position {
         return mlist;
     }
 
-    public isLegalMove(sm: SimpleMove): boolean {
+    public isLegalMove(sm?: SimpleMove): boolean {
+        if (!sm) {
+            return false;
+        }
+
         const from = sm.from;
         const to = sm.to;
         if (!Square.isSquare(from) || !Square.isSquare(to)) { return false; }

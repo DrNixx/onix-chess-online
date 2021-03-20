@@ -18,7 +18,9 @@
 		{% block head %}
 		<script>
         	var app_props = {
-            	channel: '',
+            	uid: '2',
+            	wsHost: 'wss://ws.chess-online.com',
+            	token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIn0.KUKXf_F0PHtnDzN0SBZCNyauiTUcrkzecRcu_Keyjzs',
             	modules: []
         	};
     	</script>
@@ -34,7 +36,7 @@
 		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 		<script src="assets/js/bootstrap.js"></script>
 		<script src="assets/js/chess-online.runtime.js"></script>
-    	<script src="assets/js/chess-online.467.js"></script>
+    	<script src="assets/js/chess-online.7.js"></script>
     	<script src="assets/js/chess-online.onix.js"></script>
 		{% endblock scripts %}
 

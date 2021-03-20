@@ -1,4 +1,5 @@
 import { IUserProfile } from './IUserProfile';
+import { IUserTitle } from './IUserTitle';
 
 export interface IUser {
     id?: number|string,
@@ -9,4 +10,7 @@ export interface IUser {
     patron?: string,
     status?: string,
     profile?: IUserProfile,
+    aurl?: string | string[];
+    icon?: string,
+    title?: IUserTitle |string;
 }

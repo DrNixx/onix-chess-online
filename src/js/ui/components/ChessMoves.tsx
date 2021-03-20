@@ -11,7 +11,8 @@ export interface ChessMovesProps {
     mode: MovesMode,
     nav: NavigatorMode,
     store: GameRelatedStore,
-    hasEvals?: boolean
+    hasEvals?: boolean,
+    toolbars?: React.ReactNode,
 }
 
 export class ChessMoves extends React.Component<ChessMovesProps, {}> {
@@ -33,7 +34,7 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
     }
 
     render() {
-        const { store, mode, nav, hasEvals } = this.props;
+        const { store, mode, nav, hasEvals, children, toolbars } = this.props;
         const state = store.getState();
         const { engine } = state.game;
         const currMove = engine.CurrentMove;
@@ -46,9 +47,10 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
                     opeinig={engine.Eco}
                     hasEvals={hasEvals}
                     currentMove={currMove}
-                    nav={nav} 
+                    nav={nav}
+                    toolbars={toolbars}
                     onChangePos={this.onChangePos} 
-                    onChangeKey={this.onChangeKey} />
+                    onChangeKey={this.onChangeKey}>{ children }</DumbMoveTable>
                 
             );
         } else if (mode === MovesMode.List) {
@@ -59,9 +61,10 @@ export class ChessMoves extends React.Component<ChessMovesProps, {}> {
                     opeinig={engine.Eco}
                     hasEvals={hasEvals}
                     currentMove={currMove} 
-                    nav={nav} 
+                    nav={nav}
+                    toolbars={toolbars}
                     onChangePos={this.onChangePos} 
-                    onChangeKey={this.onChangeKey} />
+                    onChangeKey={this.onChangeKey}>{ children }</DumbMoveList>
             );
         }
 

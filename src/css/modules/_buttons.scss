@@ -149,31 +149,37 @@
     transform 0.12s cubic-bezier(0.4, 0, 0.6, 1) 0ms,
     -webkit-transform 0.12s cubic-bezier(0.4, 0, 0.6, 1) !important;
     padding: 0px 9px;
+
     &.focus {
         box-shadow: none;
     }
+
     &:hover:not(.active) {
         background: $color-contrast-lower;
         color: $color-contrast-high;
     }
+
     &.active {
         background: #e9ebeb;
         border: 1px solid opacify($color-border-a, 0.06);
         border-bottom: 1px solid opacify($color-border-a, 0.15);
         color: $color-contrast-high;
     }
+
     &:focus,
     &:active:focus,
     &.active:focus {
         outline: none !important;
         box-shadow: 0 0 0 $focus-width $color-focus;
     }
+
     .caret {
         @include margin-left(3px);
         &.single {
             @include margin-left(0px);
         }
     }
+
     i {
         display: inline-flex;
         position: relative;
@@ -182,12 +188,15 @@
         align-items: center;
         justify-content: center;
     }
+
     .pg-icon {
         font-size: 20px;
     }
+
     .material-icons {
         font-size: 24px;
     }
+
     span {
         flex: 1;
     }
@@ -236,6 +245,7 @@ Alternate buttons
         border-bottom: 1px solid opacify($color-border-a, 0.15);
         color: $color-contrast-high;
     }
+
     &.active {
         background: $color-contrast-low;
         animation-name: toggle;
@@ -244,6 +254,7 @@ Alternate buttons
         animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         color: $color-contrast-higher;
     }
+
     &.hover:not(.active),
     &:hover:not(.active) {
         background: $color-contrast-lower;
@@ -266,6 +277,7 @@ Alternate buttons
     box-shadow: none;
     padding: 0;
     line-height: 0;
+
     &:before {
         content: "";
         display: block;
@@ -281,6 +293,7 @@ Alternate buttons
         box-sizing: border-box;
         transform: scale(0.89);
     }
+
     &:hover:not(.active) {
         background: transparent;
         &:before {
@@ -298,6 +311,7 @@ Alternate buttons
             }
         }
     }
+
     &.active {
         background: none;
         &:before {
@@ -306,6 +320,7 @@ Alternate buttons
             background-color: transparentize($color-contrast-medium, 0.74);
         }
     }
+
     &.invert {
         &:hover:not(.active) {
             color: transparentize($color-contrast-lowest, 0.28);
@@ -329,18 +344,23 @@ Outline Buttons
 .btn-outline-primary {
     @include button-outline($color-primary);
 }
+
 .btn-outline-success {
     @include button-outline($color-success);
 }
+
 .btn-outline-complete {
     @include button-outline($color-complete);
 }
+
 .btn-outline-info {
     @include button-outline($color-info);
 }
+
 .btn-outline-warning {
     @include button-outline($color-warning);
 }
+
 .btn-outline-danger {
     @include button-outline($color-danger);
 }
@@ -368,6 +388,7 @@ Outline Buttons
         border: 0;
         text-decoration: none;
     }
+
     &.active,
     &:not(:disabled):not(.disabled):active,
     &.active:focus,
@@ -377,6 +398,7 @@ Outline Buttons
         background: rgba(128, 128, 128, 0.33);
         border: 0;
     }
+
     &.hover:not(.active),
     &:hover:not(.active) {
         color: $color-contrast-high;
@@ -407,6 +429,7 @@ Outline Buttons
     position: relative;
     overflow: hidden;
 }
+
 .btn-file input[type="file"] {
     position: absolute;
     top: 0;
@@ -437,6 +460,7 @@ Button with icons
         margin: 0 3px;
     }
 }
+
 .btn-icon-right {
     @include padding-right( 0px !important );
     i {
@@ -447,7 +471,6 @@ Button with icons
 Button Groups
 --------------------------------------------------
 */
-
 .btn-group
 .btn-group {
     .btn {
@@ -458,6 +481,7 @@ Button Groups
             font-size: 20px;
         }
     }
+
     &:not(.btn-group-vertical) {
         .btn {
             &:not(.dropdown-toggle):not(:last-child):not(.active):after {
@@ -479,6 +503,7 @@ Button Groups
             }
         }
     }
+
     &.btn-group-vertical {
         & > .btn:not(:first-child) {
             @include margin-left( 0 );
@@ -498,7 +523,6 @@ Button with content aligned to column
 Button Sizes
 --------------------------------------------------
 */
-
 .btn-lg,
 .btn-group-lg > .btn {
     padding: 0px $padding-lg-horizontal;
@@ -509,22 +533,26 @@ Button Sizes
     font-weight: 500;
     letter-spacing: -0.011em;
 }
+
 .btn-lg.btn-link,
 .btn-group-lg > .btn.btn-link {
     padding: 0px $padding-xs-horizontal;
 }
+
 .btn-lg.btn-icon-left {
     i {
         @include margin-left( 5px );
         @include margin-right( 4px );
     }
 }
+
 .btn-lg.btn-icon-right {
     i {
         @include margin-right( 5px );
         @include margin-left( 4px );
     }
 }
+
 .btn-sm,
 .btn-group-sm > .btn {
     padding: 0 $padding-sm-horizontal;
@@ -535,6 +563,7 @@ Button Sizes
     line-height: 12px;
     letter-spacing: 0em;
 }
+
 .btn-xs,
 .btn-group-xs > .btn {
     padding: 0 $padding-xs-horizontal;
@@ -544,6 +573,7 @@ Button Sizes
     min-height: 22px;
     letter-spacing: 0em;
 }
+
 .btn-cons {
     @include margin-right(5px);
     min-width: 120px;
@@ -582,6 +612,7 @@ Dropdown menus
         box-shadow: none;
     }
 }
+
 /* Pages default dropdown */
 .dropdown-default {
     display: inline-block;
@@ -740,13 +771,16 @@ Dropdown menus
             margin-top: -2px;
         }
     }
+
     .btn-rounded {
         @include padding-left(17px);
         @include padding-right(17px);
     }
+
     .btn-rounded + .dropdown-menu {
         border-radius: 17px;
     }
+
     .dropdown-menu {
         margin-top: -4px;
         width: 100%;
@@ -799,12 +833,14 @@ Dropdown menus
     background: $color-contrast-lowest;
     min-width: initial;
     z-index: $zIndex-dropdown !important;
+
     .divider {
         background-color: $color-contrast-low;
         height: 1px;
         margin: 3px 0;
         border-bottom: 0px;
     }
+
     & > li, //BS-3
     & > .dropdown-item {
         line-height: 20px;
@@ -824,6 +860,7 @@ Dropdown menus
         &.dropdown-header {
             padding: 3px 20px;
         }
+
         &.active > a, // BS-3
         &.active {
             &,
@@ -835,6 +872,7 @@ Dropdown menus
                 border-radius: 0;
             }
         }
+
         &.disabled > a, // BS-3
         &.disabled {
             &,
@@ -848,6 +886,7 @@ Dropdown menus
                 cursor: default;
             }
         }
+
         & > a {
             // BS-3
             line-height: 35px;
@@ -867,6 +906,7 @@ Dropdown menus
             }
         }
     }
+
     & > a.dropdown-item {
         &:hover,
         &:focus,
@@ -876,10 +916,12 @@ Dropdown menus
             background-color: $color-complete-lighter;
         }
     }
+
     & > li {
         // BS-3
         padding: 0;
     }
+
     & > a {
         // BS-3
         line-height: 35px;
@@ -898,6 +940,7 @@ Dropdown menus
             background-image: none;
         }
     }
+
     & > li {
         // BS-3
         padding: 0;
@@ -924,6 +967,7 @@ Animated buttons
         @include transition(all 0.2s ease-in-out);
         @include transform-style(preserve-3d);
     }
+
     & > .hidden-block {
         position: absolute;
         height: 100%;
@@ -935,12 +979,14 @@ Animated buttons
         justify-content: center;
         @include transition(all 220ms cubic-bezier(0.4, 0, 0.6, 1) 0ms);
     }
+
     &:after {
         content: "";
         position: absolute;
         z-index: -1;
         @include transition(all 380ms cubic-bezier(0.4, 0, 0.6, 1) 0ms);
     }
+
     &.from-top {
         & > .hidden-block {
             @include left(0);
@@ -956,6 +1002,7 @@ Animated buttons
             }
         }
     }
+
     &.from-left {
         & > .hidden-block {
             @include left(-100%);
@@ -983,12 +1030,15 @@ Tag buttons
     color: $color-primary-darker;
     border-radius: 99px;
     border: 1px solid $color-border-a;
+
     &:hover {
         border: 1px solid $color-border-a;
     }
+
     &:active {
         background: $color-border-a;
     }
+
     &:before {
         content: "#";
         font-size: 12px;
@@ -1004,6 +1054,7 @@ Tag buttons
     background: $color-contrast-low;
     border-color: transparent;
     transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
     &.active {
         background: $color-contrast-low;
         border-color: transparent;
@@ -1012,9 +1063,11 @@ Tag buttons
             width: 20px;
         }
     }
+
     &:hover:not(.active) {
         background: darken($color-contrast-low, 10%);
     }
+
     i {
         width: 0px;
         overflow: hidden;
@@ -1032,11 +1085,12 @@ Misc buttons
 
 .btn-toolbar {
     .btn-group {
-        @include margin-right( 14px );
+        @include margin-right(14px);
     }
+
     .btn {
-        @include padding-left( 5px );
-        @include padding-right( 5px );
+        @include padding-left(5px);
+        @include padding-right(5px);
     }
 }
 

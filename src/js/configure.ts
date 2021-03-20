@@ -1,1 +1,1 @@
-export { configureGame } from './ui/game/configure/ConfigureGame';
+export { configureGame } from './ui/game/ConfigureGame';

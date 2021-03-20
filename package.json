@@ -42,6 +42,7 @@
     "react-bootstrap": "^1.5.1",
     "react-dom": "^16.14.0",
     "react-scrollbars-custom": "^4.0.25",
+    "react-transition-group": "^4.4.1",
     "recharts": "^2.0.8",
     "redux": "^4.0.5",
     "ts-md5": "^1.2.7",

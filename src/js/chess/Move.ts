@@ -25,8 +25,10 @@ export class Move {
     public whoMove: Colors.BW;
     public comments: string;
     public fen: string;
-
+    
     public sm: SimpleMove;
+
+    public provisional: boolean = false;
 
     /**
      * @constructor
@@ -205,6 +207,18 @@ export class Move {
         newMove.next_move.ply = newMove.ply;
 
         return newMove;
+    }
+
+    public remove() {
+        if (this.START_MARKER || this.END_MARKER) {
+            return;
+        }
+
+        const prev = this.Prev!;
+        const next = this.Next!;
+
+        prev.next_move = next;
+        next.prev_move = prev;
     }
 
     public get moveKey(): string {

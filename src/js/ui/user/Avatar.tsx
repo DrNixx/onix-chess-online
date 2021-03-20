@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {Md5} from 'ts-md5/dist/md5';
-import { IChessUser } from '../../chess/types/Interfaces';
+import { IUser } from '../../app/IUser';
 import { AvatarSizeMap, AvatarSizeType } from './Interfaces';
 
 
 export interface IAvatarProps {
-    user?: IChessUser,
+    user?: IUser,
     size?: AvatarSizeType
 }
 

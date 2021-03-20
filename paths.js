@@ -57,6 +57,11 @@ module.exports = {
                     import: path.resolve(__dirname, "./src/js/watch.ts"),
                     dependOn: "onix",
                 },
+
+                play:  {
+                    import: path.resolve(__dirname, "./src/js/play.ts"),
+                    dependOn: "onix",
+                },
                 
                 analyse: {
                     import: path.resolve(__dirname, "./src/js/analyse.ts"),

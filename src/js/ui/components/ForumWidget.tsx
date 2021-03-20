@@ -327,7 +327,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         return Object.keys(tabs).map((key) => {
             return (
                 <Tab.Pane key={key} eventKey={key} className="w-100 h-100">
-                    <Scrollbar>
+                    <Scrollbar trackYProps={{style: {width: 5}}}>
                         <div className="container striped">
                             {renderForumBlock(state.posts[key])}
                         </div>

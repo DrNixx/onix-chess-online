@@ -6,6 +6,7 @@ import { IChessOpening } from '../../chess/types/Interfaces';
 
 import { NavigatorMode } from './Constants';
 import { MoveNavigator } from './MoveNavigator';
+import { Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
 
 
 export interface DumbMoveProps {
@@ -17,6 +18,7 @@ export interface DumbMoveProps {
     currentMove: Move,
     onChangePos: (move: Move) => void,
     onChangeKey: (move: string) => void,
+    toolbars?: React.ReactNode,
 }
 
 export interface DumbMoveState {
@@ -64,7 +66,6 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
     }
 
     componentDidMount() {
-        console.log('mount');
         this.ensureActiveItemVisible();
     }
 
@@ -117,7 +118,7 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
         }
     }
 
-    protected toggleEvals = (e: React.MouseEvent<HTMLButtonElement>) => {
+    protected toggleEvals = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { state } = this;
         this.setState({
             ...state,
@@ -129,17 +130,10 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
         const { props, state, toggleEvals } = this;
 
         if (!!props.hasEvals) {
-            const btnClass = classNames(
-                "btn btn-default",
-                {
-                    active: state.evals
-                }
-            );
-
             return (
-                <div className="btn-group move-nav my-2">
-                    <button className={btnClass}  onClick={toggleEvals}><i className="xi-info-c"></i></button>
-                </div>
+                <ButtonGroup toggle>
+                    <ToggleButton variant="default" type="checkbox" checked={state.evals} value={1} onChange={toggleEvals}><i className="xi-info-c"></i></ToggleButton>
+                </ButtonGroup>
             );
         } else {
             return null;
@@ -148,12 +142,17 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
 
     protected renderNav= (pos: NavigatorMode) => {
         const { props, renderToggleEval } = this;
-        const { nav, currentMove, onChangePos } = props;
+        const { nav, currentMove, children, toolbars, onChangePos } = props;
 
         return nav ===  pos? (
-                <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
-                    { renderToggleEval() }
-                </MoveNavigator>
+                <React.Fragment>
+                        <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
+                        { renderToggleEval() }
+                        { children }
+                    </MoveNavigator>
+                    { toolbars }
+                </React.Fragment>
+                
         ) : null;
     }
 

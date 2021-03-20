@@ -95,8 +95,6 @@
   background-color: $color-contrast-lowest;
   border: 1px solid $color-contrast-low;
   .notification-body {
-    height: auto;
-    max-height: 350px;
     position: relative;
     overflow: hidden;
     .notification-item {

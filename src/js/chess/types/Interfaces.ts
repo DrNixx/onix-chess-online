@@ -91,15 +91,7 @@ export interface IChessTournament {
     nbSecondsForFirstMove?: number;
 }
 
-export interface IChessTitle {
-    id: string,
-    name: string
-}
-
 export interface IChessUser extends IUser {
-    aurl?: string | string[];
-    icon?: string,
-    title?: IChessTitle |string;
     perfs?: IChessPerfs;
 }
 

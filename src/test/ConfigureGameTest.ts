@@ -1,4 +1,4 @@
-import { configureGame } from '../js/ui/game/configure/ConfigureGame';
+import { configureGame } from '../js/ui/game/ConfigureGame';
 import { BoardSettings } from '../js/chess/settings/BoardSettings';
 
 var props: BoardSettings = {

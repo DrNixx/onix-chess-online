@@ -57,6 +57,7 @@ export class Frontend implements IModule {
 
 		Parallax.onInitialize();
 
+        /*
         jQuery('body').on('click', '.toggle-more-details', function (event) {
             event.stopPropagation();
             const p = jQuery(this).closest('.heading');
@@ -64,6 +65,7 @@ export class Frontend implements IModule {
                 p.toggleClass('open');
             });
         });
+        */
 
 		pg.queryElements('[data-pages-progress="circle"]').forEach((el) => {
 			new Progress(<HTMLInputElement>el, {});

@@ -1,1 +1,1 @@
-export { analyseGame } from './ui/game/analyse/AnalyseGame';
+export { analyseGame } from './ui/game/AnalyseGame';

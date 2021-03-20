@@ -3,90 +3,92 @@
 // --------------------------------------------------
 
 //Main Layout
-@import "modules/_page-loader.scss";
-@import "modules/_layout.scss";
-@import "modules/_split-view.scss";
-@import "modules/_horizontal-menu.scss";
-@import "modules/_horizontal-layout.scss";
-@import "modules/_secondary-sidebar.scss";
-@import "modules/_header.scss";
-@import "modules/_breadcrumb.scss";
-@import "modules/_sidebar.scss";
-@import "modules/_overlay-search.scss";
-@import "modules/_quick-view.scss";
-@import "modules/_scroller.scss";
+@import "modules/page-loader";
+@import "modules/layout";
+@import "modules/split-view";
+@import "modules/horizontal-menu";
+@import "modules/horizontal-layout";
+@import "modules/secondary-sidebar";
+@import "modules/header";
+@import "modules/breadcrumb";
+@import "modules/sidebar";
+@import "modules/overlay-search";
+@import "modules/quick-view";
+@import "modules/scroller";
 
 //UI Components
-@import "modules/_typography.scss";
-@import "modules/_icons.scss";
-@import "modules/_buttons.scss";
-@import "modules/_alerts.scss";
-@import "modules/_notifications.scss";
-@import "modules/_progress_indicators.scss";
-@import "modules/_tabs_accordian.scss";
-@import "modules/_modals.scss";
-@import "modules/_sliders.scss";
-@import "modules/_nestables.scss";
-@import "modules/_treeview.scss";
+@import "modules/typography";
+@import "modules/icons";
+@import "modules/buttons";
+@import "modules/alerts";
+@import "modules/notifications";
+@import "modules/progress_indicators";
+@import "modules/tabs_accordian";
+@import "modules/modals";
+@import "modules/sliders";
+@import "modules/nestables";
+@import "modules/treeview";
 
 //View
-@import "modules/_view.scss";
+@import "modules/view";
 
 //Cards
-@import "modules/_cards.scss";
+@import "modules/cards";
 
 //Form Elements
-@import "modules/checkbox.scss";
-@import "modules/radio.scss";
-@import "modules/switch.scss";
-@import "modules/form_elements.scss";
+@import "modules/checkbox";
+@import "modules/radio";
+@import "modules/switch";
+@import "modules/form_elements";
 
 //Tables
-@import "modules/_tables.scss";
+@import "modules/tables";
 
 //Charts
-@import "modules/_charts.scss";
+@import "modules/charts";
 
 //List
-@import "modules/_list.scss";
+@import "modules/list";
 
 //Social
-@import "modules/_social.scss";
+@import "modules/social";
 
 //Email
-@import "modules/_email.scss";
+@import "modules/email";
 
 //Calender
-@import "modules/_calendar.scss";
+@import "modules/calendar";
 
 //Login
-@import "modules/_login.scss";
+//@import "modules/login";
 
 //Lock screen
-@import "modules/_lock_screen.scss";
+//@import "modules/_lock_screen.scss";
 
 //Timeline
-@import "modules/_timeline.scss";
+//@import "modules/_timeline.scss";
 
 //Gallery
-@import "modules/_gallery.scss";
+//@import "modules/_gallery.scss";
 
 //Vector map
-@import "modules/_vector_map.scss";
+//@import "modules/_vector_map.scss";
 
 // Widgets
-@import "modules/_widgets.scss";
+@import "modules/widgets";
 
 //Chat
-@import "modules/_chat.scss";
+@import "modules/chat";
 
 //Misc
-@import "modules/_misc.scss";
+@import "modules/misc";
 
 //Print
-@import "modules/_print.scss";
+@import "modules/print";
 
 //Demo
-@import "modules/_demo.scss";
+//@import "modules/demo";
 
-@import "modules/_dashboard.scss";
+@import "modules/dashboard";
+
+@import "modules/animation";
