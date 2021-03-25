@@ -121,13 +121,14 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
     }
 
     private renderUsername = (user: IUser) => {
-        if (user.display && (user.display != user.name)) {
-            return (
-                <div className="small"><span>{user.name}</span></div>
-            );
-        }
+        const { compact, children } = this.props;
 
-        return null;
+        return (
+            <div className="small">
+                {(user.display && (user.display != user.name) && !compact) ? (<span>{user.name}</span>) : null}
+                { children ? (<span className="pl-5 pull-right">children</span>) : null }
+            </div>
+        );
     }
 
     private renderTitle = (user: IUser) => {

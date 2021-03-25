@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
-import { Container, Row, Col, Tab, Nav, Form, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
+import { Container, Row, Col, Tab, Nav, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
@@ -17,7 +17,6 @@ import { BoardSizeClass } from 'onix-board-assets';
 
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 
-import * as BoardActions from '../../actions/BoardActions';
 import { GameActions as ga } from '../../actions/GameActions';
 import { createCombinedGameStore, CombinedGameStore } from '../../actions/CombinedGameStore';
 import { createCombinedGameState } from '../../actions/CombinedGameState';
@@ -32,7 +31,10 @@ import { Squares } from '../../chess/types/Types';
 import { Square } from '../../chess/Square';
 import { Piece } from '../../chess/Piece';
 import { BoardToolbar } from '../components/BoardToolbar';
+import { GamePgn } from '../components/GamePgn';
 import { FenString } from '../../chess/FenString';
+import { Chat } from '../../chat/Chat';
+import { Logger } from '../../common/Logger';
 
 enum BoardMode {
     Play = 0,
@@ -212,32 +214,56 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         
     }
 
-    private onSelect = (key: cg.Key) => {
-        const { store } = this;
-        const { board, game } = store.getState();
+    private validFrom = (sq: Squares.Square) => {
+        const { props, store, state } = this;
+        const { game } = store.getState();
         const { engine } = game;
 
-        const { provisionalMove, ...other } = this.state;
+        const pos = engine.CurrentPos;
 
-        const from = Square.parse(key);
-        if (this.canMove(from)) {
-            provisionalMove.from = from;
-            provisionalMove.to = undefined;
-            provisionalMove.isValid = false;
-
-            this.setState({
-                ...other,
-                provisionalMove: provisionalMove
-            });
+        const movingPiece = pos.getPiece(sq);
+        if (!Piece.isPiece(movingPiece)) {
+            return false;
         }
-        
+
+        return Piece.color(movingPiece) == pos.WhoMove;
     };
 
-    private onMove = (orig: cg.Key, dest: cg.Key, capturedPiece?: cg.Piece) => {
-        const from = Square.parse(orig);
-        const to = Square.parse(dest);
-        
-        this.doMove(from, to);
+    private canMove = (from?: Squares.Square, to?: Squares.Square) => {
+        if (to) {
+            return true;
+        } else if (from) {
+            return this.validFrom(from);
+        } else {
+            return true;
+        }
+    };
+
+    private sendMove = () => {
+        const { store, state, isPlay } = this;
+        const { provisionalMove, ...other } = state;
+        const { game } = store.getState();
+        const { engine } = game;
+
+        const apiUrl = engine.RawData.url?.api;
+        if (isPlay && provisionalMove.from && provisionalMove.to && apiUrl) {
+            const data = {
+                from: Square.name(provisionalMove.from),
+                to: Square.name(provisionalMove.to),
+                promotion: provisionalMove.promotion,
+                draw: state.drawChecked
+            };
+
+            fetch(apiUrl, {method: "POST", mode: "cors", body: JSON.stringify(data)})
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw Error(response.statusText);
+                    }
+                })
+                .catch(function(error) {
+                    Logger.error('Looks like there was a problem when posting move: \n', error);
+                });
+        }
     };
 
     private doMove = (from?: Squares.Square, to?: Squares.Square, promote?: string) => {
@@ -282,29 +308,32 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         }
     };
 
-    private canMove = (from?: Squares.Square, to?: Squares.Square) => {
-        if (to) {
-            return true;
-        } else if (from) {
-            return this.validFrom(from);
-        } else {
-            return true;
-        }
+    private onMove = (orig: cg.Key, dest: cg.Key, capturedPiece?: cg.Piece) => {
+        const from = Square.parse(orig);
+        const to = Square.parse(dest);
+        
+        this.doMove(from, to);
     };
 
-    private validFrom = (sq: Squares.Square) => {
-        const { props, store, state } = this;
-        const { game } = store.getState();
+    private onSelect = (key: cg.Key) => {
+        const { store } = this;
+        const { board, game } = store.getState();
         const { engine } = game;
 
-        const pos = engine.CurrentPos;
+        const { provisionalMove, ...other } = this.state;
 
-        const movingPiece = pos.getPiece(sq);
-        if (!Piece.isPiece(movingPiece)) {
-            return false;
+        const from = Square.parse(key);
+        if (this.canMove(from)) {
+            provisionalMove.from = from;
+            provisionalMove.to = undefined;
+            provisionalMove.isValid = false;
+
+            this.setState({
+                ...other,
+                provisionalMove: provisionalMove
+            });
         }
-
-        return Piece.color(movingPiece) == pos.WhoMove;
+        
     };
 
     private returnToPlay = () => {
@@ -321,6 +350,10 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
             this.cg!.cancelMove();
             this.store.dispatch({ type: ga.GAME_REMOVE_PROVISIONAL } as ga.RemoveProvisional);
         });
+    };
+
+    private moveClick = () => {
+        
     };
 
     private modeTurnOn = (newMode: BoardMode) => {
@@ -411,7 +444,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
     };
 
     private moveForm = () => {
-        const { state, drawCheck, changeFrom, changeTo, returnToPlay, canMove } = this;
+        const { state, drawCheck, changeFrom, changeTo, returnToPlay, canMove, moveClick } = this;
         const { confirmMove, drawChecked, provisionalMove, manualFrom, manualTo } = state;
 
         const fromVal = manualFrom ?? (provisionalMove?.from ? Square.name(provisionalMove.from) : "");
@@ -431,7 +464,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                         <input aria-label="Move from" type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
                         <span className="px-2">&mdash;</span>
                         <input aria-label="Move to" type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
-                        <Button variant="success" className="ml-2" disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
+                        <Button variant="success" className="ml-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
                         <Button variant="default" className="ml-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{_("game", "reset_button")}</Button>
                     </div>
                 ) : ""}
@@ -459,9 +492,55 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         );
     };
 
+    private renderToolbar = () => {
+        const { store, modeTurnOn } = this;
+        const { game } = store.getState();
+        const { engine } = game;
+
+        const fen = FenString.fromPosition(engine.CurrentPos);
+
+        let analink = `https://live.chess-online.com/analysis/${fen}?ccid=${engine.GameId}`;
+        if (!engine.RawData.game?.advance) {
+            analink += `&ha=${engine.GameId}`;
+        }
+
+        return (
+            <React.Fragment>
+                <div className="btn-group">
+                    <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
+                </div>
+
+                <div className="btn-group">
+                    <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
+                    <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
+                    <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
+                </div>
+                <div className="btn-group">
+                    <button aria-label="next game" className="btn btn-default" title="next game" onClick={() => {}}><i className="xi-next-game"></i></button>
+                </div>
+            </React.Fragment>
+        );
+    };
+
+    private renderNotes = () => {
+        return (
+            <div>Notes</div>    
+        );
+    };
+
     private renderControls = () => {
-        const { state, store, analyseForm, conditionalForm, moveForm, confirmToggler, isPlay } = this;
-        const { board } = store.getState();
+        const { props, state, store, analyseForm, conditionalForm, moveForm, confirmToggler, renderToolbar, isPlay } = this;
+        const { board: boardCfg } = props;
+        const { game, board } = store.getState();
+        const { engine } = game;
+
+        let chatChannel = `gamechat:${engine.GameId}`;
+        if (engine.isMyGame()) {
+            chatChannel = "$" + chatChannel;
+        }
+
+        const fen = FenString.fromPosition(engine.CurrentPos);
+        const pgn = engine.RawData.pgn;
 
         let toolbar: JSX.Element;
         switch (state.mode) {
@@ -476,7 +555,8 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         }
 
         return (
-            <div className="controls flex-grow-1 d-flex flex-column">
+            <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
+                <BoardToolbar store={store} configUrl={boardCfg.configUrl}>{renderToolbar()}</BoardToolbar>
                 <Tab.Container defaultActiveKey="moves">
                     <Nav variant="tabs" className="nav-tabs-simple">
                         <Nav.Item>
@@ -484,6 +564,13 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link eventKey="info">{_("game", "infoTab")}</Nav.Link>
+                        </Nav.Item>
+                        {engine.RawData.game?.advance ? (<Nav.Item><Nav.Link eventKey="fenpgn">FEN &amp; PGN</Nav.Link></Nav.Item>) : null}
+                        <Nav.Item>
+                            <Nav.Link eventKey="chat">Чат</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="notes">Заметки</Nav.Link>
                         </Nav.Item>
                     </Nav>
                     <Tab.Content className="p-0">
@@ -499,8 +586,15 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                                 </div>
                             </div>
                         </Tab.Pane>
-                        <Tab.Pane eventKey="info">
+                        <Tab.Pane eventKey="info" className="pt-4">
                             <GameInfo store={this.store} />
+                        </Tab.Pane>
+                        {engine.RawData.game?.advance ? (<Tab.Pane eventKey="fenpgn" className="pt-4"><GamePgn fen={fen} pgn={pgn} /></Tab.Pane>) : null}
+                        <Tab.Pane eventKey="chat">
+                            <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="notes" className="pt-4">
+                            {this.renderNotes()}
                         </Tab.Pane>
                     </Tab.Content>
                 </Tab.Container>
@@ -508,46 +602,11 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         );
     };
 
-    private renderToolbar = () => {
-        const { store, modeTurnOn } = this;
-        const { game } = store.getState();
-        const { engine } = game;
-
-        const fen = FenString.fromPosition(engine.CurrentPos);
-
-        let analink = `https://live.chess-online.com/analysis/${fen}?ccid=${engine.GameId}"`;
-        if (!engine.RawData.game?.advance) {
-            analink += `&ha=${engine.GameId}`;
-        }
-
-        return (
-            <React.Fragment>
-                <div className="btn-group">
-                    <button aria-label="resign" className="btn btn-link" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
-                </div>
-
-                <div className="btn-group ml-auto ml-md-0 mt-0 mt-md-auto">
-                    <button aria-label="inboard analyse" className="btn btn-link" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
-                    <a aria-label="external analyse" className="btn btn-link" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
-                    <button aria-label="conditional" className="btn btn-link" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
-                </div>
-                <div className="btn-group ml-auto ml-md-0 mt-0 mt-md-auto">
-                    <button aria-label="next game" className="btn btn-link" title="next game" onClick={() => {}}><i className="xi-next-game"></i></button>
-                </div>
-            </React.Fragment>
-        );
-    };
-
     render() {
-        const { props, store, renderToolbar } = this;
-        const { board: boardCfg } = props;
+        const { props, store } = this;
         const { board, game } = store.getState();
         const { square, piece, size, coordinates, is3d } = board;
         
-        if (this.cg) {
-            // this.cg.set(this.generateConfig());
-        }
-
         const containerClass = [
             square,
             BoardSizeClass[size],
@@ -588,7 +647,6 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                                     </Row>
                                 </div>
                             </div>
-                            <BoardToolbar store={store} configUrl={boardCfg.configUrl}>{renderToolbar()}</BoardToolbar>
                             { this.renderControls() }
                         </div>
                     </Col>

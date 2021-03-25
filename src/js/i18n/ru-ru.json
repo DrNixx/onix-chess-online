@@ -11,7 +11,9 @@
         "days": "{d, plural, one{# день} few{# дня} many{# дней} other{# дня}}",
         "hours": "{h, plural, one{# час} few{# часа} many{# часов} other{# часа}}",
         "minutes": "{i, plural, one{# минута} few{# минуты} many{# минут} other{# минуты}}",
-        "seconds": "{s, plural, one{# секунда} few{# секунды} many{# секунд} other{# секунды}}"
+        "seconds": "{s, plural, one{# секунда} few{# секунды} many{# секунд} other{# секунды}}",
+        "ago": "назад",
+        "just_now": "Только что"
     },
     "timer": {
         "lessone": "менее 1",

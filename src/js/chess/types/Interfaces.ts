@@ -202,14 +202,22 @@ export interface ITreePart extends IMovePart {
     glyphs?: IGlyph[];
 }
 
+export interface gameUrls {
+    socket?: string;
+    board?: string;
+    api?: string;
+}
+
 export interface IGameData {
     game?: IChessGame;
     tournament?: IChessTournament;
     clock?: IBlitzClock;
     correspondence?: ICorrespondenceClock | IAdvanceClock;
+    observer?: number;
     player?: IChessPlayer;
     opponent?: IChessPlayer; 
     orientation: Colors.Name;
+    url?: gameUrls;
     analysis?: IGameAnalysis;
     treeParts?: ITreePart[];
     steps?: IMovePart[];

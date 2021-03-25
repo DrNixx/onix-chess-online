@@ -259,7 +259,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
                 </div>
                 <div className="col-md-4">
                     <div>
-                        <UserName user={message.poster} size={'Tiny'} compact={true} />
+                        <UserName user={message.poster} size={'Tiny'} compact={false} />
                     </div>
                 </div>
             </div>

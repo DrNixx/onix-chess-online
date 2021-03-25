@@ -120,11 +120,13 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
     };
 
     private renderControls = () => {
-        const { store } = this;
+        const { props, store } = this;
+        const { board: boardCfg } = props;
         const { board } = store.getState();
 
         return (
-            <div className="controls flex-grow-1 d-flex flex-column">
+            <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
+                <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                 <Tab.Container defaultActiveKey="moves">
                     <Nav variant="tabs" className="nav-tabs-simple">
                         <Nav.Item>
@@ -156,7 +158,6 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
 
     render() {
         const { props, store, flipBoard } = this;
-        const { board: boardCfg } = props;
         const { board, game } = store.getState();
         const { square, piece, size, coordinates, is3d } = board;
         
@@ -210,7 +211,6 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
                                     </Row>
                                 </div>
                             </div>
-                            <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                             { this.renderControls() }
                         </div>
                     </Col>

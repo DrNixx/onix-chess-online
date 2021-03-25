@@ -63,7 +63,7 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
 
             that.observer.observe(that.elRef!);
         }
-    }
+    };
 
     componentDidMount() {
         this.ensureActiveItemVisible();

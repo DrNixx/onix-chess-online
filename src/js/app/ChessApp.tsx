@@ -52,10 +52,10 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     }
 
     componentDidMount() {
-        const { ui, wsHost, token, secret, channel, modules } = this.props;
+        const { ui, wsHost, token, secret, channel, modules, uid } = this.props;
 
         if (ui) {
-            this.ui = new Frontend();
+            this.ui = new Frontend(uid);
             this.ui.init();
         }
 
@@ -111,9 +111,9 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
             this.stream.subscribe(channel, this.onAlertMessage);
         }
 
-        this.stream.subscribe("$chat:2-3", function(messageCtx) {
-            Logger.debug(messageCtx);
-        });
+        //this.stream.subscribe("$chat:2-3", function(messageCtx) {
+        //    Logger.debug(messageCtx);
+        //});
 
         this.stream.connect();
     };

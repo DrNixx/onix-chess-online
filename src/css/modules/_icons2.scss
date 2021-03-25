@@ -2670,18 +2670,3 @@ $font-rand: '?44bfc146';
         opacity: 0.9;
     }
 }
-
-/* Fix */
-.xi-reply::before {
-    top: 0.16rem;
-}
-.xi-reply-quote:before {
-    top: .18rem;
-}
-.xi-refresh::before {
-    top: -0.02rem;
-}
-
-.xi-timer::before {
-  top: 0.18rem;
-}

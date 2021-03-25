@@ -35,28 +35,6 @@
   }
 }
 
-.team-member-item {
-  width: 100%;
-
-  &.card {
-    .card-header {
-      min-height: unset;
-    }
-  }
-
-  @include breakpoint($mq-small) {
-    width: 48%;
-  }
-
-  @include breakpoint($mq-medium) {
-    width: 48%;
-  }
-
-  @include breakpoint($mq-large) {
-    width: 18rem;
-  }
-}
-
 .members {
   .stacked {
     display: inline-block;

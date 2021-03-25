@@ -15,7 +15,6 @@ import { IGameData, IMovePart, ITreePart, IChessPlayer, IChessOpening, IGameAnal
 import { FenString } from './FenString';
 import { plyToColor, plyToTurn, turnToPly } from './Common';
 import { EvalItem } from './EvalItem';
-import { colors } from 'chessground/types';
 
 export enum ChessRatingType {
     None = 0,
@@ -149,6 +148,7 @@ const defaultGameData: IGameData = {
 
 export class Chess {
     private data: IGameData;
+    private observer?: number;
     private savedMove: Move | null = null;
     private savedPos: Position | null = null;
     private savedPlyCount: number = 0;
@@ -168,6 +168,9 @@ export class Chess {
 
     public Fen?: string;
     
+    public get ObserverId() {
+        return this.observer;
+    }
     
     /**
      * If game in play mode - Color of current player
@@ -337,7 +340,8 @@ export class Chess {
     }
 
     public init() {
-        const { game, player, opponent, analysis, steps, treeParts } = this.data;
+        const { data } = this;
+        const { game, player, opponent, analysis, steps, treeParts } = data;
         if (game) {
             this.GameId = game.id;
             this.Event = game.event;
@@ -350,9 +354,11 @@ export class Chess {
                 this.Eco = game.opening;
             }
 
+            
             this.player = (game.player == "black") ? Color.Black : Color.White;
         }
 
+        this.observer = data.observer;
         this.assignPlayer(player);
         this.assignPlayer(opponent);
 
@@ -810,6 +816,18 @@ export class Chess {
         }
 
         return "?";
+    }
+
+    public isMyGame = () => {
+        if (this.observer) {
+            return (this.White?.user?.id == this.observer) || (this.Black?.user?.id == this.observer);
+        }
+
+        return false;
+    }
+
+    public isNewGame = () => {
+        return (!this.White?.user?.id) || (!this.Black?.user?.id);
     }
 
     public static plyToTurn(ply: number) {

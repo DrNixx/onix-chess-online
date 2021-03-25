@@ -50,6 +50,13 @@ gulp.task("site", site, function () {
     console.log('Building site...');
 });
 
+let siteStyle = series(parallel(siteFonts, siteImg, siteStyles));
+gulp.task("site:style", siteStyle, function () {
+    console.log('Building site...');
+});
+
+
+
 gulp.task('site:server', parallel('site', siteWatch, siteServer));
 
 gulp.task('sass:watch', function () {

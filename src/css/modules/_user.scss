@@ -1,3 +1,8 @@
+@import '../mixins';
+@import 'node_modules/breakpoint-sass/stylesheets/breakpoint';
+@import "../media-queries";
+@import "../directions";
+
 $tiny-size: 32px;
 $tiny-border: 2px;
 
@@ -305,3 +310,28 @@ $color-online-none: #333;
 .username-popup {
     width: 276px;
 }
+
+.user-card-mini {
+    width: 100%;
+    margin-bottom: 1rem;
+    @include margin-right(.5rem);
+    border: 1px solid hsla(0, 0%, 87.8%, .7);
+  
+    &.card {
+      .card-header {
+        min-height: unset;
+      }
+    }
+  
+    @include breakpoint($mq-small) {
+      width: 48%;
+    }
+  
+    @include breakpoint($mq-medium) {
+      width: 48%;
+    }
+  
+    @include breakpoint($mq-large) {
+      width: 18rem;
+    }
+  }

@@ -11,7 +11,9 @@
         "days": "{d,plural,one{# day} few{# days} many{# days} other{# days}}",
         "hours": "{h,plural,one{# hour} few{# hours} many{# hours} other{# hours}}",
         "minutes": "{i,plural,one{# minute} few{# minutes} many{# minutes} other{# minutes}}",
-        "seconds": "{s,plural,one{# second} few{# seconds} many{# seconds} other{# seconds}}"
+        "seconds": "{s,plural,one{# second} few{# seconds} many{# seconds} other{# seconds}}",
+        "ago": "ago",
+        "just_now": "Just now"
     },
     "timer": {
         "lessone": "less 1",

@@ -7,7 +7,6 @@ import { Container, Row, Col, Tabs, Tab, FormGroup, FormLabel, Nav } from 'react
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
-import { notify } from 'pages-ts';
 import { BoardSizeClass } from 'onix-board-assets';
 
 import { i18n, _ } from '../../i18n/i18n';
@@ -25,15 +24,13 @@ import { createCombinedGameState } from '../../actions/CombinedGameState';
 import { renderPlayer, renderResult } from './GameUtils';
 import { GameInfo } from './GameInfo';
 
-import { copy } from '../CopyToClipboard';
-import { TextWithCopy } from '../controls/TextWithCopy';
-
 import { ChessMoves } from '../components/ChessMoves';
 import { MovesMode, NavigatorMode } from '../components/Constants';
 import { Captures } from '../components/Captures';
 import { AnalyseGraphAsync } from '../components/AnalyseGraphAsync';
 import { MovesGraphAsync } from '../components/MovesGraphAsync';
 import { BoardToolbar } from '../components/BoardToolbar';
+import { GamePgn } from '../components/GamePgn';
 
 
 interface GameState {
@@ -136,11 +133,13 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
     }
 
     private renderControls = () => {
-        const { store } = this;
+        const { store, props } = this;
+        const { board: boardCfg } = props;
         const { board } = store.getState();
 
         return (
-            <div className="controls flex-grow-1 d-flex flex-column">
+            <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
+                <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                 <Tab.Container defaultActiveKey="info">
                     <Nav variant="tabs" className="nav-tabs-simple">
                         <Nav.Item>
@@ -241,35 +240,9 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
         const fen = FenString.fromPosition(engine.CurrentPos);
         const pgn = engine.RawData.pgn;
 
-        const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
-            if (copy(pgn)) {
-                notify({
-                    message: _("core", "copied"),
-                    position: "bottom-right",
-                    style: 'simple' 
-                });
-            }
-        };
-
         return (
             <Tab.Pane eventKey="fenpgn">
-                <Row>
-                    <Col md={12}>
-                        <FormGroup>
-                            <FormLabel>{_("chess", "fen")}</FormLabel>
-                            <TextWithCopy value={fen} placeholder={_("chess", "fen")} />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md={12}>
-                        <div className="pgn-text">
-                            <Scrollbar trackYProps={{style: {width: 5}}}>
-                                <pre onClick={copyPgn} className="py-0 pl-0">{pgn}</pre>
-                            </Scrollbar>
-                        </div>
-                    </Col>
-                </Row>
+                <GamePgn fen={fen} pgn={pgn} />
             </Tab.Pane>
         );
     };
@@ -311,7 +284,6 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
 
     render() {
         const { props, store, flipBoard } = this;
-        const { board: boardCfg } = props;
         const { board, game } = store.getState();
         const { engine } = game;
         const { square, piece, size, coordinates, is3d } = board;
@@ -366,7 +338,6 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
                                     </Row>
                                 </div>
                             </div>
-                            <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                             { this.renderControls() }
                         </div>
                     </Col>

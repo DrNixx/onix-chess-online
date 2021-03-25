@@ -618,9 +618,9 @@
 /* Landscape view of all tablet devices */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
   .page-sidebar .sidebar-menu .menu-items ul {
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
   }
   .page-container {
     .page-content-wrapper {
@@ -872,8 +872,8 @@
 
       .email-content-wrapper {
         overflow: auto;
-        padding: 0;
-        height: calc(100% - 50px);
+        padding: 50px 0 0;
+        height: calc(100% - 110px);
         .email-content {
           width: 90%;
         }

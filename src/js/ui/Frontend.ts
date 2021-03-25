@@ -7,6 +7,7 @@ import { equalHeight } from './Functions';
 import { IModule } from '../app/IModule';
 import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
+import { simpleChat } from '../chat/Chat';
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
     return (isString(selector)) ? jQuery(selector) : selector;
@@ -27,7 +28,7 @@ export class Frontend implements IModule {
 
     public content: Content;
 
-    constructor() {
+    constructor(private uid?: number | string) {
         this.window = jQuery(window);
         this.body = jQuery("body");
         this.scrollup = jQuery(".scrollup");
@@ -124,15 +125,8 @@ export class Frontend implements IModule {
             return '<div id="'+ divId +'"><div class="text-center"><div class="progress-circle-indeterminate m-t-45" /></div></div>';
         };
 
-        const popover = jQuery('[data-mini]');
-        popover.on('click', function(ev) {
-            ev.preventDefault();
-        });
-
-        popover.popover({
-            html: true,
-            trigger: "focus",
-            sanitize: false,
+        jQuery("[data-mini]").popover({
+            container: "body",
             template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
             content: function() {
                 const $that: JQuery<Element> = jQuery(this);
@@ -144,14 +138,40 @@ export class Frontend implements IModule {
                     $that.data('popupId', popupId);
                     return userNamePopup($that, $that.data("mini"), popupId);
                 }
-            }
+            }, 
+            html: true, 
+            sanitize: false,
+            trigger: "click"
+        }).on("click", function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }).on('inserted.bs.popover', function () {
+            jQuery(".popover").on("click", function (event) {
+                event.stopPropagation();
+            })
         });
-
+        
+        jQuery(document).on("click", function() {
+            jQuery("[data-mini]").popover('hide');
+        });
         // }}} Popover
 
         jQuery().scrollbar && jQuery('.scrollable').scrollbar({
             ignoreOverlay: false
         });
+
+        // {{{ Chat 
+        if (this.uid) {
+            pg.queryElements('[data-simple-chat]').forEach((el) => {
+                const channel = el.dataset['simpleChat'];
+                const apiUrl = el.dataset['apiUrl'];
+                if (channel && apiUrl) {
+                    simpleChat({ channel: channel, apiUrl: apiUrl, messages: [] }, el);
+                }
+            });
+        }
+        
+        // }}} Chat
     }
 
     /**

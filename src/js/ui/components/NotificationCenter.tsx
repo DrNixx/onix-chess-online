@@ -80,7 +80,6 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     }
 
     componentDidMount() {
-        Logger.debug('Notification mount');
         const that = this;
         if (appInstance) {
             const { stream } = appInstance;
@@ -248,7 +247,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         return (
             <Dropdown>
                 <Dropdown.Toggle as="a" href="#" className="header-icon btn-icon-link" bsPrefix="notification">
-                    <i className="pg-icon">world</i>
+                    <i className="xi-alert"></i>
                     { hasEvents ? (<span className="bubble"></span>) : "" }
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu notification-toggle">

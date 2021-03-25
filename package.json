@@ -10,6 +10,8 @@
     "welcome:prod": "cross-env NODE_ENV=production gulp welcome",
     "site:dev": "cross-env NODE_ENV=development gulp site",
     "site:server": "cross-env NODE_ENV=development gulp site:server",
+    "site:style:dev": "cross-env NODE_ENV=development gulp site:style",
+    "site:style:prod": "cross-env NODE_ENV=production gulp site:style",
     "site:prod": "cross-env NODE_ENV=production gulp site",
     "start": "cross-env NODE_ENV=development gulp",
     "webpack": "webpack --config webpack.config.js",
