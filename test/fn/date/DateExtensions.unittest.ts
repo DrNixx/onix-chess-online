@@ -1,9 +1,10 @@
 import { expect } from "chai";
-import "../../../src/js/fn/date/DateExtensions";
+import { DateExtensions } from "../../../src/js/fn/date/DateExtensions";
 
 describe('fn/date/DateExtensions', function() {
     describe('#addDays()', function() {
         it('test add days to date', function() {
+            DateExtensions();
             const d = new Date(2020, 2, 10, 12, 0, 0)
             const d2 = d.addDays(5);
             expect(d.getDate()).to.equal(10);
@@ -13,6 +14,8 @@ describe('fn/date/DateExtensions', function() {
 
     describe('#diff()', function() {
         it('test diff two date', function() {
+            DateExtensions();
+            
             function examine_diff(start_date: Date|string, end_date: Date|string, expect_spec: string, expect_days: number) {
                 let start: Date;
                 let end: Date;
