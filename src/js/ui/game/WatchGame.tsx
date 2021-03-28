@@ -26,6 +26,7 @@ import { Captures } from '../components/Captures';
 import { renderPlayer, renderTimer } from './GameUtils';
 import { GameInfo } from './GameInfo';
 import { BoardToolbar } from '../components/BoardToolbar';
+import { Chat } from '../../chat/Chat';
 
 interface GameState {
 }
@@ -119,8 +120,44 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
         this.store.dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
     };
 
+    private renderChatTab = () => {
+        const { store } = this;
+        const { game } = store.getState();
+
+        if (game.engine.ObserverId) {
+            return (
+                <Nav.Item>
+                    <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
+                </Nav.Item>
+            );
+        }
+
+        return null;
+    };
+
+    private renderChatContent = () => {
+        const { store } = this;
+        const { game } = store.getState();
+        const { engine } = game;
+
+        if (engine.ObserverId) {
+            let chatChannel = `gamechat:${engine.GameId}`;
+            if (engine.isMyGame()) {
+                chatChannel = "$" + chatChannel;
+            }
+
+            return (
+                <Tab.Pane eventKey="chat">
+                    <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
+                </Tab.Pane>
+            );
+        }
+
+        return null;
+    };
+
     private renderControls = () => {
-        const { props, store } = this;
+        const { props, store, renderChatTab, renderChatContent } = this;
         const { board: boardCfg } = props;
         const { board } = store.getState();
 
@@ -128,13 +165,14 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
             <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
                 <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
                 <Tab.Container defaultActiveKey="moves">
-                    <Nav variant="tabs" className="nav-tabs-simple">
+                    <Nav variant="tabs" className="nav-tabs-simple" onSelect={(eventKey: any, event: React.SyntheticEvent<unknown>) => { (event.target as HTMLElement).blur(); }}>
                         <Nav.Item>
                             <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link eventKey="info">{_("game", "infoTab")}</Nav.Link>
                         </Nav.Item>
+                        { renderChatTab() }
                     </Nav>
                     <Tab.Content className="p-0">
                         <Tab.Pane eventKey="moves">
@@ -150,6 +188,7 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
                         <Tab.Pane eventKey="info">
                             <GameInfo store={this.store} />
                         </Tab.Pane>
+                        { renderChatContent() }
                     </Tab.Content>
                 </Tab.Container>
             </div>

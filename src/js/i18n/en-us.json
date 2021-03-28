@@ -116,7 +116,12 @@
 
         "send_draw": "Предложить ничью",
         "move_button": "Move",
-        "reset_button": "Reset"
+        "reset_button": "Reset",
+
+        "chatTab": "Chat",
+        "notesTab": "Notes", 
+
+        "postpone_rest": "There have {n} of vacation time left"
     },
     "analyse": {
         "title": "Computer analysis",

@@ -558,7 +558,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
             <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
                 <BoardToolbar store={store} configUrl={boardCfg.configUrl}>{renderToolbar()}</BoardToolbar>
                 <Tab.Container defaultActiveKey="moves">
-                    <Nav variant="tabs" className="nav-tabs-simple">
+                    <Nav variant="tabs" className="nav-tabs-simple" onSelect={(eventKey: any, event: React.SyntheticEvent<unknown>) => { (event.target as HTMLElement).blur(); }}>
                         <Nav.Item>
                             <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
                         </Nav.Item>
@@ -567,10 +567,10 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                         </Nav.Item>
                         {engine.RawData.game?.advance ? (<Nav.Item><Nav.Link eventKey="fenpgn">FEN &amp; PGN</Nav.Link></Nav.Item>) : null}
                         <Nav.Item>
-                            <Nav.Link eventKey="chat">Чат</Nav.Link>
+                            <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="notes">Заметки</Nav.Link>
+                            <Nav.Link eventKey="notes">{_("game", "notesTab")}</Nav.Link>
                         </Nav.Item>
                     </Nav>
                     <Tab.Content className="p-0">

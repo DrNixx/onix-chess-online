@@ -115,7 +115,12 @@
 
         "send_draw": "Предложить ничью",
         "move_button": "Ходить",
-        "reset_button": "Сброс"
+        "reset_button": "Сброс",
+
+        "chatTab": "Чат",
+        "notesTab": "Заметки", 
+
+        "postpone_rest": "Осталось {n} отпуска"
     },
     "analyse": {
         "title": "Компьютерный анализ",

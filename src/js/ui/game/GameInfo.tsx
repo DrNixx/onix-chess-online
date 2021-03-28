@@ -304,7 +304,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
             result = (
                 <Row>
                     <Col className="mb-1" md={12}>
-                        <span className="lead bold">
+                        <span className="bold">
                             <a href={url}><span className="p-r-5">
                                 <OverlayTrigger
                                     key={tournament.id}
@@ -323,7 +323,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
             result = (
                 <Row>
                     <Col className="mb-1" md={12}>
-                        <span className="lead bold">{game.event}</span>
+                        <span className="bold">{game.event}</span>
                     </Col>
                 </Row>
             );

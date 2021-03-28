@@ -60,6 +60,7 @@ export interface IChessGame {
     fen?: string;
     // Current user as played color
     player?: Colors.Name;
+    mover?: Colors.Name;
     turns: number;
     startedAtTurn: number;
     status: IGameStatus;
@@ -91,8 +92,14 @@ export interface IChessTournament {
     nbSecondsForFirstMove?: number;
 }
 
+export interface IPostpone {
+    end: number;
+    rest: number;
+};
+
 export interface IChessUser extends IUser {
     perfs?: IChessPerfs;
+    postpone?: IPostpone;
 }
 
 export interface IChessPlayer {
@@ -214,6 +221,7 @@ export interface IGameData {
     clock?: IBlitzClock;
     correspondence?: ICorrespondenceClock | IAdvanceClock;
     observer?: number;
+    owner?: number;
     player?: IChessPlayer;
     opponent?: IChessPlayer; 
     orientation: Colors.Name;

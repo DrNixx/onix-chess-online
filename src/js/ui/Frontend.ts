@@ -2,12 +2,14 @@ import toSafeInteger from 'lodash/toSafeInteger';
 import isString from 'lodash/isString';
 import { nanoid } from 'nanoid';
 import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
+import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Notification';
 import { Content } from './Content';
 import { equalHeight } from './Functions';
 import { IModule } from '../app/IModule';
 import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
 import { simpleChat } from '../chat/Chat';
+
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
     return (isString(selector)) ? jQuery(selector) : selector;
@@ -211,6 +213,24 @@ export class Frontend implements IModule {
             jQuery("html, body").animate({ scrollTop: 0 }, 700);
             return false;
         });
+    }
+
+    public notifyError(options: INotificationOptions) {
+        options.type = options.type ?? "error";
+        options.style = options.style ??  "bar";
+        options.position = options.position ?? "top";
+        options.showClose = true;
+        options.timeout = 15000;
+
+        notifyBase(options);
+    }
+
+    public notifyInfo(options: INotificationOptions) {
+        options.type = options.type ?? "info";
+        options.style = options.style ??  "simple";
+        options.position = options.position ?? "bottom-right";
+
+        notifyBase(options);
     }
 
     private adjustSizes() {

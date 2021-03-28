@@ -1,8 +1,6 @@
 @import 'node_modules/breakpoint-sass/stylesheets/breakpoint';
 @import '../media-queries';
 
-
-
 .widget {
     &.ar-custom {
         position: relative;
@@ -32,6 +30,10 @@
         }
     }
 
+    .gamelist-wrapper {
+        max-height: 60vh !important;
+    }
+
     @include breakpoint($mq-medium) {
         &.puzzle {
             &:before {
@@ -56,12 +58,6 @@
         &.arena-tv {
             &:before {
                 padding-top: calc(130% - #{$layout-gutter-sm});
-            }
-        }
-
-        &#active_games_list {
-            .scrollable {
-                max-height: 75vh;
             }
         }
     }
