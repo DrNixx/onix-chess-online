@@ -54,11 +54,15 @@ export interface NotificationCenterProps {
 
 export interface NotificationCenterState {
     hasEvents: boolean,
+    countEvents: number,
     notifications: INotify[]
     details: Map<string, boolean>
 }
 
 export class NotificationCenter extends React.Component<NotificationCenterProps, NotificationCenterState> {
+    private originalTitle?: string;
+
+
     public static defaultProps: NotificationCenterProps = {
         language: 'ru-ru',
         apiUrl: '/api/notify/notify-center',
@@ -74,6 +78,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 
         this.state = {
             hasEvents: false,
+            countEvents: 0,
             notifications: [],
             details: new Map<string, boolean>(),
         };
@@ -81,6 +86,8 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 
     componentDidMount() {
         const that = this;
+        that.originalTitle = document.title;
+
         if (appInstance) {
             const { stream } = appInstance;
             if (stream) {
@@ -144,7 +151,8 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { ...state } = this.state;
 
         state.notifications = data;
-        state.hasEvents = data.filter((n) => !n.read).length > 0;
+        state.countEvents = data.filter((n) => !n.read).length; 
+        state.hasEvents = state.countEvents > 0;
 
         this.setState(state);
     }
@@ -242,20 +250,30 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     render() {
         const { props, state, renderList, markReadAll, reloadList } = this;
         const { i18n } = props;
-        const { hasEvents } = state;
+        const { hasEvents, countEvents } = state;
 
+        if (this.originalTitle) {
+            if (hasEvents) {
+                document.title = `(${countEvents}) ${this.originalTitle}`;
+            } else {
+                document.title = this.originalTitle;   
+            }
+        }
+
+
+        // { hasEvents ? (<span className="bubble"></span>) : "" }
         return (
-            <Dropdown>
+            <Dropdown className="notification-center">
                 <Dropdown.Toggle as="a" href="#" className="header-icon btn-icon-link" bsPrefix="notification">
-                    <i className="xi-alert"></i>
-                    { hasEvents ? (<span className="bubble"></span>) : "" }
+                    <i data-icon="" data-count={countEvents} className={ hasEvents ? "active" : ""} />
+                    
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu notification-toggle">
                     <div className="notification-panel">
                         
-                            <Scrollbar className="notification-body" style={{ height: 350 }} trackYProps={{style: {width: 5}}}>
-                                { renderList() }
-                            </Scrollbar>
+                        <Scrollbar className="notification-body" style={{ height: 350 }} trackYProps={{style: {width: 5}}}>
+                            { renderList() }
+                        </Scrollbar>
                         
                         <div className="notification-footer text-center">
                             <a href="#" className="" onClick={(e) => markReadAll(e) }>{ i18n.readAll }</a>

@@ -2,7 +2,7 @@
 
 $icon-fonts-ext: 'https://live.chess-online.com/assets/font/';
 $icon-fonts-folder: '#{$base-cdn-url}fonts/';
-$font-rand: '?44bfc146';
+$font-rand: '?44bfc150';
 
 @function local-font($path, $id: "") {
     @return url(#{$icon-fonts-folder}#{$path}#{$font-rand}#{$id})

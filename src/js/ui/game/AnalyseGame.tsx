@@ -151,7 +151,7 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
 
         if (engine.ObserverId) {
             let chatChannel = `gamechat:${engine.GameId}`;
-            if (engine.isMyGame()) {
+            if (engine.isMyGame) {
                 chatChannel = "$" + chatChannel;
             }
 

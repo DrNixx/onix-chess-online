@@ -61,6 +61,10 @@
                 top: 5px;
             }
         }
+
+        & + div {
+            width: calc(100% -16px);
+        }
     }
 }
 

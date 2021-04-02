@@ -165,7 +165,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
     private themUser = (user: IUser) => {
         return (
             <div className="message-header">
-                <UserName user={user} size="Small" showInfo={true} compact={true} popover={false} />
+                <UserName user={user} size="Tiny" showInfo={true} compact={true} popover={false} />
             </div>
         );
     };

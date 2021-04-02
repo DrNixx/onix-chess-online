@@ -393,7 +393,7 @@ export class Position {
             const fromRank = Square.rank(from);
             const toRank = Square.rank(to);
             const epLeft = Square.move(to, LEFT);
-            const epRight = Square.move(to, LEFT);
+            const epRight = Square.move(to, RIGHT);
             if ((fromRank === 1) &&
                 (toRank === 3) &&
                 (
@@ -401,6 +401,7 @@ export class Position {
                     (Square.isSquare(epRight) && (this.brd[epRight] === Piece.BPawn)))) {
                 this.EpTarget = Square.move(from, UP);
             }
+
             if ((fromRank === 6) &&
                 (toRank === 4) &&
                 (

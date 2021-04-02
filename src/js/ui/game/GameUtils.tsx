@@ -23,7 +23,7 @@ export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, positio
 
     if (player) {
         return (
-            <UserName user={player.user} size="Small" />
+            <UserName user={player.user} size="Tiny" />
         );
     }
 

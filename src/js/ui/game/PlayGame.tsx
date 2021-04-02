@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
-import { Container, Row, Col, Tab, Nav, Button, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
+import { Container, Row, Col, Tab, Nav, Button, ButtonToolbar, ButtonGroup, Card, Form } from 'react-bootstrap';
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
@@ -35,6 +35,7 @@ import { GamePgn } from '../components/GamePgn';
 import { FenString } from '../../chess/FenString';
 import { Chat } from '../../chat/Chat';
 import { Logger } from '../../common/Logger';
+import { Chess } from '../../chess/Chess';
 
 enum BoardMode {
     Play = 0,
@@ -49,6 +50,19 @@ interface ProvisionalMove {
     isValid?: boolean;
 }
 
+interface PlayGameProps extends GameProps {
+    i18n?: {
+        canJoin: string;
+        canJoinNote: string;
+        waitJoin: string;
+        waitJoinNote: string;
+        waitOpponent: string;
+        waitOpponentNote: string;
+        acceptChallenge: string;
+        acceptChallengeNote: string;
+    }
+}
+
 interface GameState {
     mode: BoardMode;
     manualFrom?: string;
@@ -58,8 +72,20 @@ interface GameState {
     provisionalMove: ProvisionalMove;
 }
 
-class PlayGameComponent extends React.Component<GameProps, GameState> {
-    public static defaultProps: GameProps = defaultProps;
+class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
+    public static defaultProps: PlayGameProps = {
+        ...defaultProps,
+        i18n: {
+            canJoin: "Join to game",
+            canJoinNote: "You can join this game",
+            waitJoin: "Waiting for opponent join",
+            waitJoinNote: "The game will become available after any opponent join to your game",
+            waitOpponent: "Waiting for a response from the opponent",
+            waitOpponentNote: "The game will become available after the opponent accepts your challenge",
+            acceptChallenge: "Accept challenge",
+            acceptChallengeNote: "You must accept or reject the challenge",
+        }
+    };
 
     private storeUnsubscribe?: Unsubscribe = undefined;
 
@@ -81,7 +107,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         return this.state.mode === BoardMode.Conditional;
     }
 
-    constructor(props: GameProps) {
+    constructor(props: PlayGameProps) {
         super(props);
 
         i18n.register();
@@ -166,7 +192,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
                 lastMove: game.lastMove,
                 check: game.isCheck,
                 turnColor: turnColor,
-                viewOnly: isPlay ? (wm !== engine.Player) : false,
+                viewOnly: isPlay ? (!engine.isStarted || (wm !== engine.Player)) : false,
                 movable: {
                     free: false,
                     color: isPlay ? Color.toName(engine.Player) : 'both',
@@ -219,14 +245,18 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         const { game } = store.getState();
         const { engine } = game;
 
-        const pos = engine.CurrentPos;
+        if (engine.isStarted) {
+            const pos = engine.CurrentPos;
 
-        const movingPiece = pos.getPiece(sq);
-        if (!Piece.isPiece(movingPiece)) {
-            return false;
+            const movingPiece = pos.getPiece(sq);
+            if (!Piece.isPiece(movingPiece)) {
+                return false;
+            }
+
+            return Piece.color(movingPiece) == pos.WhoMove;
         }
-
-        return Piece.color(movingPiece) == pos.WhoMove;
+        
+        return false;
     };
 
     private canMove = (from?: Squares.Square, to?: Squares.Square) => {
@@ -399,6 +429,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         });
     }
 
+    //#region From - To handler
     private changeFrom = (e: React.ChangeEvent) => {
         const { provisionalMove, manualFrom, ...other } = this.state;
 
@@ -442,61 +473,73 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
             manualTo: val
         });
     };
+    //#endregion From - To handler
 
-    private moveForm = () => {
-        const { state, drawCheck, changeFrom, changeTo, returnToPlay, canMove, moveClick } = this;
-        const { confirmMove, drawChecked, provisionalMove, manualFrom, manualTo } = state;
+    //#region Toolbar + forms
+    private moveForm = (engine: Chess) => {
+        if (engine.isStarted) {
+            const { state, drawCheck, changeFrom, changeTo, returnToPlay, canMove, moveClick } = this;
+            const { confirmMove, drawChecked, provisionalMove, manualFrom, manualTo } = state;
 
-        const fromVal = manualFrom ?? (provisionalMove?.from ? Square.name(provisionalMove.from) : "");
-        const toVal = manualTo ?? (provisionalMove?.to ? Square.name(provisionalMove.to) : "");
-        const disableForm = !canMove();
+            const fromVal = manualFrom ?? (provisionalMove?.from ? Square.name(provisionalMove.from) : "");
+            const toVal = manualTo ?? (provisionalMove?.to ? Square.name(provisionalMove.to) : "");
+            const disableForm = !canMove();
 
-        return (
-            <ButtonToolbar className="mb-2 justify-content-end">
-                <div>
-                    <div className="form-check primary">
-                        <input type="checkbox" id="sendDraw" checked={drawChecked} onChange={drawCheck} disabled={disableForm} />
-                        <label htmlFor="sendDraw">{_("game", "send_draw")}</label>
+            return (
+                <ButtonToolbar className="mb-2 justify-content-end">
+                    <div>
+                        <div className="form-check primary">
+                            <input type="checkbox" id="sendDraw" checked={drawChecked} onChange={drawCheck} disabled={disableForm} />
+                            <label htmlFor="sendDraw">{_("game", "send_draw")}</label>
+                        </div>
                     </div>
-                </div>
-                { confirmMove ?  (
-                    <div className="ml-auto pl-4 move-form">
-                        <input aria-label="Move from" type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
-                        <span className="px-2">&mdash;</span>
-                        <input aria-label="Move to" type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
-                        <Button variant="success" className="ml-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
-                        <Button variant="default" className="ml-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{_("game", "reset_button")}</Button>
-                    </div>
-                ) : ""}
-            </ButtonToolbar>
-        );
+                    { confirmMove ?  (
+                        <div className="ml-auto pl-4 move-form">
+                            <input aria-label="Move from" type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
+                            <span className="px-2">&mdash;</span>
+                            <input aria-label="Move to" type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
+                            <Button variant="success" className="ml-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
+                            <Button variant="default" className="ml-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{_("game", "reset_button")}</Button>
+                        </div>
+                    ) : ""}
+                </ButtonToolbar>
+            );
+        } else {
+            return null;
+        }
     };
 
-    private analyseForm = () => {
-        return (
-            <ButtonToolbar>
-                <ButtonGroup className="mx-auto p-4">
-                    <Button onClick={this.returnToPlay}>Закрыть анализ</Button>
-                </ButtonGroup>
-            </ButtonToolbar>
-        );
+    private analyseForm = (started: Boolean) => {
+        if (started) {
+            return (
+                <ButtonToolbar>
+                    <ButtonGroup className="mx-auto p-4">
+                        <Button onClick={this.returnToPlay}>Закрыть анализ</Button>
+                    </ButtonGroup>
+                </ButtonToolbar>
+            );
+        } else {
+            return null;
+        }
     };
 
-    private conditionalForm = () => {
-        return (
-            <ButtonToolbar>
-                <ButtonGroup className="mx-auto p-4">
-                    <Button onClick={this.returnToPlay}>Закрыть запись вариантов</Button>
-                </ButtonGroup>
-            </ButtonToolbar>
-        );
+    private conditionalForm = (started: Boolean) => {
+        if (started) {
+            return (
+                <ButtonToolbar>
+                    <ButtonGroup className="mx-auto p-4">
+                        <Button onClick={this.returnToPlay}>Закрыть запись вариантов</Button>
+                    </ButtonGroup>
+                </ButtonToolbar>
+            );
+        } else {
+            return null;
+        }
     };
 
-    private renderToolbar = () => {
-        const { store, modeTurnOn } = this;
-        const { game } = store.getState();
-        const { engine } = game;
-
+    private renderToolbar = (engine: Chess) => {
+        const { modeTurnOn } = this;
+        
         const fen = FenString.fromPosition(engine.CurrentPos);
 
         let analink = `https://live.chess-online.com/analysis/${fen}?ccid=${engine.GameId}`;
@@ -504,22 +547,153 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
             analink += `&ha=${engine.GameId}`;
         }
 
+        const items: JSX.Element[] = [];
+        if (engine.isStarted) {
+            items.push(
+                <React.Fragment>
+                    <div className="btn-group">
+                        <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
+                    </div>
+                    <div className="btn-group">
+                        <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
+                        <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
+                        <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
+                    </div>
+                </React.Fragment>    
+            );
+        }
+
         return (
             <React.Fragment>
-                <div className="btn-group">
-                    <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
-                </div>
-
-                <div className="btn-group">
-                    <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
-                    <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
-                    <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
-                </div>
+                { items }
                 <div className="btn-group">
                     <button aria-label="next game" className="btn btn-default" title="next game" onClick={() => {}}><i className="xi-next-game"></i></button>
                 </div>
             </React.Fragment>
         );
+    };
+    //#endregion Toolbar + forms
+
+    //#region Moves
+    private renderMovesTab = (engine: Chess) => {
+        if (engine.isStarted) {
+            return (
+                <Nav.Item>
+                    <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
+                </Nav.Item>
+            );
+        }
+
+        return null;
+    };
+
+    private renderMovesPane  = (engine: Chess) => {
+        if (engine.isStarted) {
+            const { props, state, store, isPlay, confirmToggler, analyseForm, conditionalForm, moveForm } = this;
+            const { board } = store.getState();
+
+            let toolbar: JSX.Element | null;
+            switch (state.mode) {
+                case BoardMode.Analyse:
+                    toolbar = analyseForm(engine.isStarted);
+                    break;
+                case BoardMode.Conditional:
+                    toolbar = conditionalForm(engine.isStarted);
+                    break;
+                default:
+                    toolbar = moveForm(engine);
+            }
+
+            return (
+                <Tab.Pane eventKey="moves">
+                    <div className="d-flex flex-column h-100">
+                        <div className="board-height auto-overflow">
+                            <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={store} hasEvals={false} toolbars={toolbar} >
+                                { isPlay ? confirmToggler() : "" }
+                            </ChessMoves>
+                        </div>
+                        <div className="mt-2 pt-2 border-top">
+                            <Captures store={store} piece={board.piece!} />
+                        </div>
+                    </div>
+                </Tab.Pane>
+            );
+        }
+
+        return null;
+    };
+    //#endregion Moves
+
+    //#region PGN
+    private renderPgnTab = (engine: Chess) => {
+        if (engine.isStarted && engine.RawData.game?.advance) {
+            return (
+                <Nav.Item>
+                    <Nav.Link eventKey="fenpgn">FEN &amp; PGN</Nav.Link>
+                </Nav.Item>
+            );
+        }
+
+        return null;
+    };
+
+    private renderPgnPane  = (engine: Chess) => {
+        if (engine.isStarted && engine.RawData.game?.advance) {
+            const fen = FenString.fromPosition(engine.CurrentPos);
+            const pgn = engine.RawData.pgn;
+            return (
+                <Tab.Pane eventKey="fenpgn" className="pt-4">
+                    <GamePgn fen={fen} pgn={pgn} />
+                </Tab.Pane>
+            );
+        }
+
+        return null;
+    };
+    //#endregion PGN
+
+    //#region Chat
+    private renderChatTab = (engine: Chess) => {
+        if (engine.isStarted) {
+            return (
+                <Nav.Item>
+                    <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
+                </Nav.Item>
+            );
+        }
+
+        return null;
+    };
+
+    private renderChatPane  = (engine: Chess) => {
+        if (engine.isStarted) {
+            let chatChannel = `gamechat:${engine.GameId}`;
+            if (engine.isMyGame) {
+                chatChannel = "$" + chatChannel;
+            }
+
+            return (
+                <Tab.Pane eventKey="chat">
+                    <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
+                </Tab.Pane>
+            );
+        }
+
+        return null;
+    };
+    //#endregion Chat
+
+    //#region Notes
+    private renderNotesTab = (engine: Chess) => {
+        if (engine.isStarted) {
+            return (
+                <Nav.Item>
+                    <Nav.Link eventKey="notes">{_("game", "notesTab")}</Nav.Link>
+                </Nav.Item>
+            );
+        }
+
+        return null;
     };
 
     private renderNotes = () => {
@@ -528,74 +702,165 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
         );
     };
 
+    private renderNotesPane = (engine: Chess) => {
+        if (engine.isStarted) {
+            return (
+                <Tab.Pane eventKey="notes" className="pt-4">
+                    {this.renderNotes()}
+                </Tab.Pane>
+            );
+        }
+
+        return null;
+    };
+    //#endregion Notes
+
+
+    private acceptGame = (engine: Chess) => {
+        const { csrfTokenName, csrfTokenValue } = this.props.board;
+        const apiUrl = engine.RawData.url?.api;
+
+        if (apiUrl) {
+            const data: any = {};
+
+            if (csrfTokenName) {
+                data[csrfTokenName] = csrfTokenValue;
+            }
+            
+            fetch(apiUrl, {method: "PUT", mode: "cors", body: JSON.stringify(data)})
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw Error(response.statusText);
+                    }
+                })
+                .catch(function(error) {
+                    Logger.error('Looks like there was a problem when accept game: \n', error);
+                });    
+        }
+    };
+
+    private rejectGame = (engine: Chess) => {
+        const { csrfTokenName, csrfTokenValue } = this.props.board;
+        const apiUrl = engine.RawData.url?.api;
+
+        if (apiUrl) {
+            const data: any = {};
+
+            if (csrfTokenName) {
+                data[csrfTokenName] = csrfTokenValue;
+            }
+
+            fetch(apiUrl, {method: "DELETE", mode: "cors", body: JSON.stringify(data)})
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw Error(response.statusText);
+                    }
+                })
+                .catch(function(error) {
+                    Logger.error('Looks like there was a problem when reject game: \n', error);
+                });    
+        }
+    };
+
+    private infoAddForm = (engine: Chess) => {
+        const { props, acceptGame, rejectGame } = this;
+        let form: JSX.Element | null = null;
+
+        if (!engine.isStarted) {
+            if (engine.isChallengeFromMe) {
+                return (
+                    <Card className="w-75 mx-auto mt-4" bg="info">
+                        <Card.Header className="separator">
+                            <Card.Title>{props.i18n?.waitOpponent}</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.waitOpponentNote}</p>
+                        </Card.Body>
+                    </Card>
+                );
+            } else if (engine.isChallengeToMe) {
+                return (
+                    <Card className="w-75 mx-auto mt-4" bg="contrast">
+                        <Card.Header className="separator">
+                            <Card.Title>{props.i18n?.acceptChallenge}</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.acceptChallengeNote}</p>
+                            <br/>
+                            <Row className="mt-2">
+                                <Col xs={6} className="text-right">
+                                    <Button variant="primary" onClick={() => acceptGame(engine)}>{ _("core", "accept") }</Button>
+                                </Col>
+                                <Col xs={6} className="text-left">
+                                    <Button variant="warning" onClick={() => rejectGame(engine)}>{ _("core", "decline") }</Button>
+                                </Col>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                );    
+            } else if (engine.isNewGame && engine.isMyGame) {
+                return (
+                    <Card className="w-75 mx-auto mt-4" bg="info">
+                        <Card.Header className="separator">
+                            <Card.Title>{props.i18n?.waitJoin}</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.waitJoinNote}</p>
+                        </Card.Body>
+                    </Card>
+                );
+            } else if (engine.isNewGame && !engine.isMyGame) {
+                return (
+                    <Card className="w-75 mx-auto mt-4" bg="contrast">
+                        <Card.Header className="separator">
+                            <Card.Title>{props.i18n?.canJoin}</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.canJoinNote}</p>
+                            <br/>
+                            <Row className="mt-2">
+                                <Col xs={12} className="text-center">
+                                    <Button variant="primary" onClick={() => acceptGame(engine)}>{ _("core", "join") }</Button>
+                                </Col>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                );    
+            }
+        }
+
+        return form;
+    }
+
     private renderControls = () => {
-        const { props, state, store, analyseForm, conditionalForm, moveForm, confirmToggler, renderToolbar, isPlay } = this;
+        const { props, store, renderToolbar, renderMovesTab, renderMovesPane, renderPgnTab, renderPgnPane, renderChatTab, renderChatPane, renderNotesTab, renderNotesPane, infoAddForm } = this;
         const { board: boardCfg } = props;
-        const { game, board } = store.getState();
+        const { game } = store.getState();
         const { engine } = game;
 
-        let chatChannel = `gamechat:${engine.GameId}`;
-        if (engine.isMyGame()) {
-            chatChannel = "$" + chatChannel;
-        }
-
-        const fen = FenString.fromPosition(engine.CurrentPos);
-        const pgn = engine.RawData.pgn;
-
-        let toolbar: JSX.Element;
-        switch (state.mode) {
-            case BoardMode.Analyse:
-                toolbar = analyseForm();
-                break;
-            case BoardMode.Conditional:
-                toolbar = conditionalForm();
-                break;
-            default:
-                toolbar = moveForm();
-        }
+        const defaultKey = engine.isStarted ? "moves" : "info";
 
         return (
             <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
-                <BoardToolbar store={store} configUrl={boardCfg.configUrl}>{renderToolbar()}</BoardToolbar>
-                <Tab.Container defaultActiveKey="moves">
+                <BoardToolbar store={store} configUrl={boardCfg.configUrl}>{renderToolbar(engine)}</BoardToolbar>
+                <Tab.Container defaultActiveKey={defaultKey}>
                     <Nav variant="tabs" className="nav-tabs-simple" onSelect={(eventKey: any, event: React.SyntheticEvent<unknown>) => { (event.target as HTMLElement).blur(); }}>
-                        <Nav.Item>
-                            <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
-                        </Nav.Item>
+                        { renderMovesTab(engine) }
                         <Nav.Item>
                             <Nav.Link eventKey="info">{_("game", "infoTab")}</Nav.Link>
                         </Nav.Item>
-                        {engine.RawData.game?.advance ? (<Nav.Item><Nav.Link eventKey="fenpgn">FEN &amp; PGN</Nav.Link></Nav.Item>) : null}
-                        <Nav.Item>
-                            <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="notes">{_("game", "notesTab")}</Nav.Link>
-                        </Nav.Item>
+                        { renderPgnTab(engine) }
+                        { renderChatTab(engine) }
+                        { renderNotesTab(engine) }
                     </Nav>
                     <Tab.Content className="p-0">
-                        <Tab.Pane eventKey="moves">
-                            <div className="d-flex flex-column h-100">
-                                <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={false} toolbars={toolbar} >
-                                        { isPlay ? confirmToggler() : "" }
-                                    </ChessMoves>
-                                </div>
-                                <div className="mt-2 pt-2 border-top">
-                                    <Captures store={this.store} piece={this.props.board.piece!} />
-                                </div>
-                            </div>
-                        </Tab.Pane>
+                        { renderMovesPane(engine) }
                         <Tab.Pane eventKey="info" className="pt-4">
-                            <GameInfo store={this.store} />
+                            <GameInfo store={this.store}>{ infoAddForm(engine) }</GameInfo>
                         </Tab.Pane>
-                        {engine.RawData.game?.advance ? (<Tab.Pane eventKey="fenpgn" className="pt-4"><GamePgn fen={fen} pgn={pgn} /></Tab.Pane>) : null}
-                        <Tab.Pane eventKey="chat">
-                            <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="notes" className="pt-4">
-                            {this.renderNotes()}
-                        </Tab.Pane>
+                        { renderPgnPane(engine) }
+                        { renderChatPane(engine) }
+                        { renderNotesPane(engine) }
                     </Tab.Content>
                 </Tab.Container>
             </div>
@@ -603,7 +868,7 @@ class PlayGameComponent extends React.Component<GameProps, GameState> {
     };
 
     render() {
-        const { props, store } = this;
+        const { store } = this;
         const { board, game } = store.getState();
         const { square, piece, size, coordinates, is3d } = board;
         

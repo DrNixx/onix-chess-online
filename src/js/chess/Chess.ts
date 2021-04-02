@@ -11,7 +11,7 @@ import { Square } from './Square';
 import { Position, ChessPositionStd, SanCheckLevel, GenerateMode } from './Position';
 import { Move } from './Move';
 import { SimpleMove } from './SimpleMove';
-import { IGameData, IMovePart, ITreePart, IChessPlayer, IChessOpening, IGameAnalysis } from './types/Interfaces';
+import { IGameData, IMovePart, ITreePart, IChessPlayer, IChessOpening, IGameAnalysis, IGameStatus } from './types/Interfaces';
 import { FenString } from './FenString';
 import { plyToColor, plyToTurn, turnToPly } from './Common';
 import { EvalItem } from './EvalItem';
@@ -149,6 +149,8 @@ const defaultGameData: IGameData = {
 export class Chess {
     private data: IGameData;
     private observer?: number;
+    private owner?: number;
+    private status?: IGameStatus;
     private savedMove: Move | null = null;
     private savedPos: Position | null = null;
     private savedPlyCount: number = 0;
@@ -346,6 +348,8 @@ export class Chess {
             this.GameId = game.id;
             this.Event = game.event;
 
+            this.status = game.status;
+
             if (game.status.result) {
                 this.Result = game.status.result;
             }
@@ -354,11 +358,11 @@ export class Chess {
                 this.Eco = game.opening;
             }
 
-            
             this.player = (game.player == "black") ? Color.Black : Color.White;
         }
 
         this.observer = data.observer;
+        this.owner = data.owner;
         this.assignPlayer(player);
         this.assignPlayer(opponent);
 
@@ -818,7 +822,7 @@ export class Chess {
         return "?";
     }
 
-    public isMyGame = () => {
+    public get isMyGame() {
         if (this.observer) {
             return (this.White?.user?.id == this.observer) || (this.Black?.user?.id == this.observer);
         }
@@ -826,8 +830,24 @@ export class Chess {
         return false;
     }
 
-    public isNewGame = () => {
-        return (!this.White?.user?.id) || (!this.Black?.user?.id);
+    public get isStarted() {
+        return (this.status?.name == "started");
+    }
+
+    public get isNewGame() {
+        return (!this.White?.user?.id) || (!this.Black?.user?.id) && (this.status?.name == "new");
+    }
+
+    public get isChallenge() {
+        return (this.status?.name == "wait");
+    }
+
+    public get isChallengeFromMe() {
+        return (this.status?.name == "wait") && (!!this.observer) && (this.observer == this.owner);
+    }
+
+    public get isChallengeToMe() {
+        return (this.status?.name == "wait") && (!!this.observer) && (this.observer != this.owner);
     }
 
     public static plyToTurn(ply: number) {

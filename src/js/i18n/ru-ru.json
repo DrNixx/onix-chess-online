@@ -3,7 +3,10 @@
         "save": "Сохранить",
         "send": "Отправить",
         "cancel": "Отмена",
-        "copied": "Скопировано"
+        "copied": "Скопировано",
+        "join": "Присоединиться",
+        "accept": "Принять",
+        "decline": "Отклонить"
     },
     "datetime": {
         "years": "{y, plural, one{# год} few{# года} many{# лет} other{# года}}",
@@ -46,6 +49,7 @@
     "game": {       
         "movesTab": "Ходы",
         "infoTab": "Информация",
+        "createDate": "Создана",
         "startDate": "Начата",
         "completeDate": "Завершена",
         "completeState": "Игра завершена",
@@ -71,7 +75,7 @@
 
         "resCreated": "Партия создана",
         "resNew": "Новая партия",
-        "resWait": "Ожидание соперника",
+        "resWait": "Согласование вызова",
         "resAborted": "Партия прервана",
         "resStarted": "Партия началась",
         "resPaused": "Игра приостановлена",

@@ -27,7 +27,11 @@ export interface IUserNameState {
 export class UserName extends React.Component<IUserNameProps, IUserNameState> {
     public static defaultProps: IUserNameProps = {
         language: 'ru-ru',
-        user: { name: '?' },
+        user: { 
+            id: undefined,
+            name: '?',
+            display: '?' 
+        },
         size: 'Medium',
         icon: Icons.NONE,
         showInfo: true,
@@ -161,16 +165,23 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         const display = user.display ?? user.name;
 
-        if (popover) {
+        if (popover && user.id) {
             return (
                 <OverlayTrigger rootClose={true} trigger="click" placement="auto" onToggle={this.onPopupToggle} overlay={this.popoverElement()}>
                     <span className={classNames(unClass)}>{display}</span>
                 </OverlayTrigger>
             );
         } else {
-            return(
-                <a href={userLink} className={classNames(unClass)}>{display}</a>
-            );
+            if (user.id) {
+                return(
+                    <a href={userLink} className={classNames(unClass)}>{display}</a>
+                );
+            } else {
+                return(
+                    <span className={classNames(unClass)}>{display}</span>
+                );
+            }
+            
         }
     };
 
@@ -196,14 +207,15 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         if (user) {
             const userLink = `/${language}/@/${user.id}`;
+            const picClass = classNames(size?.toLowerCase(), "rounded upic")
             return (
                 <div className="username-block">
                     <div className="upic-wrapper">
-                        <div className="tiny rounded upic"
+                        <div className={picClass}
                              data-online-mark="0"
                              data-user-raw="1"
                              data-online-time={user.online ? user.online : 'none'}
-                             data-user-id={user.id}><a href={userLink}><Avatar user={user} size={size} /></a>
+                             data-user-id={user.id}><a href={user.id ? userLink : "#"}><Avatar user={user} size={size} /></a>
                         </div>
                     </div>
                     { this.renderInfo(user, userLink) }

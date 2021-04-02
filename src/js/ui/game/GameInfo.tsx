@@ -43,9 +43,16 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
         }
 
         if (!result) {
-            result = (
-                <span>{_("game", "startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleString()}</span></span>
-            );
+            if (engine.isStarted) {
+                result = (
+                    <span>{_("game", "startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleString()}</span></span>
+                );
+            } else {
+                result = (
+                    <span>{_("game", "createDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleString()}</span></span>
+                );
+            }
+            
         }
 
         return (
@@ -220,14 +227,17 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
     private renderTC = (engine: ChessEngine) => {
         let result: JSX.Element | null = null;
         const { correspondence, clock } = engine.RawData;
-        if (isAdvanceClock(correspondence)) {
-            const canPP = (correspondence.can_pause) ? "canPostpone" : "noPostpone";
+
+        const gameClock = correspondence ?? clock;
+        
+        if (isAdvanceClock(gameClock)) {
+            const canPP = (gameClock.can_pause) ? "canPostpone" : "noPostpone";
             const ppClass = [
                 "label", 
                 "ml-2",
                 {
-                    "label-default": correspondence.can_pause,
-                    "label-warning": !correspondence.can_pause,
+                    "label-default": gameClock.can_pause,
+                    "label-warning": !gameClock.can_pause,
                 }
             ];
             
@@ -235,7 +245,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
                 <Row>
                     <Col className="mb-1" md={12}>
                         <span>
-                            <span>{_("game", "timeControl")}</span>: <span className="label">{correspondence.limit}</span>
+                            <span>{_("game", "timeControl")}</span>: <span className="label">{gameClock.limit}</span>
                             <span className={classNames(ppClass)}>{_("game", canPP)}</span>
                         </span>
                     </Col>
@@ -334,26 +344,22 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
 
     render() {
         const { props, renderResult, renderDates, renderState, renderRZ, renderTC, renderName } = this;
-        const { store } = props;
+        const { store, children } = props;
         const { game } = store.getState();
         const { engine } = game;
 
         return (
             <Card className="card-transparent">
-                {renderResult(engine)}    
-                {renderState(engine)}
+                { renderResult(engine) }    
+                { renderState(engine) }
                 <Row>
                     <Col className="mb-1" md={12}>{ renderDates(engine) }</Col>
                 </Row>
-                {renderRZ(engine)}
-                {renderTC(engine)}
-                {renderName(engine)}
+                { renderRZ(engine) }
+                { renderTC(engine) }
+                { renderName(engine) }
+                { children }
             </Card>
         );
-
-/*
-Простая партия
-Турнир: нет
-*/
     }
 }

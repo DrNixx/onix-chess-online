@@ -3,7 +3,10 @@
         "save": "Save",
         "send": "Send",
         "cancel": "Cancel",
-        "copied": "Copiado"
+        "copied": "Copiado",
+        "join": "Join",
+        "accept": "Accept",
+        "decline": "Decline"
     },
     "datetime": {
         "years": "{y,plural,one{# year} few{# years} many{# years} other{# years}}",
@@ -46,6 +49,7 @@
     "game": {       
         "movesTab": "Moves",
         "infoTab": "Information",
+        "createDate": "Created",
         "startDate": "Started",
         "completeDate": "Completed",
         "completeState": "Game complete",
@@ -71,7 +75,7 @@
 
         "resCreated": "Game created",
         "resNew": "New game",
-        "resWait": "Wait for opponent",
+        "resWait": "Accepting a challenge",
         "resAborted": "Game aborted",
         "resStarted": "Game started",
         "resPaused": "Game paused",

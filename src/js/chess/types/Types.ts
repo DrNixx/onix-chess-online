@@ -30,14 +30,14 @@ export namespace Squares {
     export type Fyle = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
     export type FyleChar = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h";
 
-    export type A1 = 0x00; export type A2 = 0x01; export type A3 = 0x02; export type A4 = 0x03; export type A5 = 0x04; export type A6 = 0x05; export type A7 = 0x06; export type A8 = 0x07;
-    export type B1 = 0x08; export type B2 = 0x09; export type B3 = 0x0a; export type B4 = 0x0b; export type B5 = 0x0c; export type B6 = 0x0d; export type B7 = 0x0e; export type B8 = 0x0f;
-    export type C1 = 0x10; export type C2 = 0x11; export type C3 = 0x12; export type C4 = 0x13; export type C5 = 0x14; export type C6 = 0x15; export type C7 = 0x16; export type C8 = 0x17;
-    export type D1 = 0x18; export type D2 = 0x19; export type D3 = 0x1a; export type D4 = 0x1b; export type D5 = 0x1c; export type D6 = 0x1d; export type D7 = 0x1e; export type D8 = 0x1f;
-    export type E1 = 0x20; export type E2 = 0x21; export type E3 = 0x22; export type E4 = 0x23; export type E5 = 0x24; export type E6 = 0x25; export type E7 = 0x26; export type E8 = 0x27;
-    export type F1 = 0x28; export type F2 = 0x29; export type F3 = 0x2a; export type F4 = 0x2b; export type F5 = 0x2c; export type F6 = 0x2d; export type F7 = 0x2e; export type F8 = 0x2f;
-    export type G1 = 0x30; export type G2 = 0x31; export type G3 = 0x32; export type G4 = 0x33; export type G5 = 0x34; export type G6 = 0x35; export type G7 = 0x36; export type G8 = 0x37;
-    export type H1 = 0x38; export type H2 = 0x39; export type H3 = 0x3a; export type H4 = 0x3b; export type H5 = 0x3c; export type H6 = 0x3d; export type H7 = 0x3e; export type H8 = 0x3f;
+    export type A1 = 0x00; export type A2 = 0x08; export type A3 = 0x10; export type A4 = 0x18; export type A5 = 0x20; export type A6 = 0x28; export type A7 = 0x30; export type A8 = 0x38;
+    export type B1 = 0x01; export type B2 = 0x09; export type B3 = 0x11; export type B4 = 0x19; export type B5 = 0x21; export type B6 = 0x29; export type B7 = 0x31; export type B8 = 0x39;
+    export type C1 = 0x02; export type C2 = 0x0a; export type C3 = 0x12; export type C4 = 0x1a; export type C5 = 0x22; export type C6 = 0x2a; export type C7 = 0x32; export type C8 = 0x3a;
+    export type D1 = 0x03; export type D2 = 0x0b; export type D3 = 0x13; export type D4 = 0x1b; export type D5 = 0x23; export type D6 = 0x2b; export type D7 = 0x33; export type D8 = 0x3b;
+    export type E1 = 0x04; export type E2 = 0x0c; export type E3 = 0x14; export type E4 = 0x1c; export type E5 = 0x24; export type E6 = 0x2c; export type E7 = 0x34; export type E8 = 0x3c;
+    export type F1 = 0x05; export type F2 = 0x0d; export type F3 = 0x15; export type F4 = 0x1d; export type F5 = 0x25; export type F6 = 0x2d; export type F7 = 0x35; export type F8 = 0x3d;
+    export type G1 = 0x06; export type G2 = 0x0e; export type G3 = 0x16; export type G4 = 0x1e; export type G5 = 0x26; export type G6 = 0x2e; export type G7 = 0x36; export type G8 = 0x3e;
+    export type H1 = 0x07; export type H2 = 0x0f; export type H3 = 0x17; export type H4 = 0x1f; export type H5 = 0x27; export type H6 = 0x2f; export type H7 = 0x37; export type H8 = 0x3f;
 
     export type Square = 
         A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8 |
