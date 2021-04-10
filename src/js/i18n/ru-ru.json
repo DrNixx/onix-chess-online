@@ -117,6 +117,8 @@
         "moves_mode_list": "список",
         "moves_mode_table": "таблица",
 
+        "cancel_game": "Прервать партию",
+
         "send_draw": "Предложить ничью",
         "move_button": "Ходить",
         "reset_button": "Сброс",

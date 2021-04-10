@@ -118,6 +118,8 @@
         "moves_mode_list": "list",
         "moves_mode_table": "table",
 
+        "cancel_game": "Cancel game",
+
         "send_draw": "Предложить ничью",
         "move_button": "Move",
         "reset_button": "Reset",

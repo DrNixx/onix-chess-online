@@ -4,11 +4,3 @@ export * from './app/index';
 export * from './events/index';
 
 export { notificationCenter } from './ui/components/NotificationCenter';
-
-// export { GameProps} from './chess/settings/GameProps';
-// export { watchGame } from './ui/game/watch/WatchGame';
-// export { analyseGame } from './ui/game/analyse/AnalyseGame';
-// export { configureGame } from './ui/game/configure/ConfigureGame';
-// export { PositionSetup } from './ui/chess/PosBuilder';
-
-// export { forumWidget } from './ui/components/ForumWidget';

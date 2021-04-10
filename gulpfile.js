@@ -3,6 +3,7 @@ const { series, parallel, watch } = require('gulp');
 const plugins = require('gulp-load-plugins')({
     rename: {
         'gulp-if': 'gif',
+        'gulp-dart-sass': 'sass',
         'nunjucks-api': 'nunjucksApi'
     }
 });

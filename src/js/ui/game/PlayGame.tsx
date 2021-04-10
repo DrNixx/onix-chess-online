@@ -806,6 +806,12 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                         </Card.Header>
                         <Card.Body>
                             <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.waitJoinNote}</p>
+                            <br/>
+                            <Row className="mt-2">
+                                <Col xs={12} className="text-center">
+                                    <Button variant="warning" onClick={() => rejectGame(engine)}>{ _("game", "cancel_game") }</Button>
+                                </Col>
+                            </Row>
                         </Card.Body>
                     </Card>
                 );
