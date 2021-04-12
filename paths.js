@@ -15,6 +15,7 @@ module.exports = {
             scripts: base + "/site" + assets + "/js",
             styles: base + "/site" + assets + "/css",
             board: base + "/site" + assets + "/bs",
+            deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\chess" + suffix,
         },
 
         src: {

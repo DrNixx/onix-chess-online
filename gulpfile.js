@@ -45,14 +45,20 @@ const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
 const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
 const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
 const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
+const siteDeploy = getTask('', 'deploy', PATHS_OPTIONS.site);
 
-let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteHtml, siteStyles, siteWebpack));
+let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteHtml, siteStyles, siteWebpack), siteDeploy);
 gulp.task("site", site, function () {
     console.log('Building site...');
 });
 
 let siteStyle = series(parallel(siteFonts, siteImg, siteStyles));
 gulp.task("site:style", siteStyle, function () {
+    console.log('Building site...');
+});
+
+let siteDeployTask = series(siteDeploy);
+gulp.task("site:deploy", siteDeployTask, function () {
     console.log('Building site...');
 });
 

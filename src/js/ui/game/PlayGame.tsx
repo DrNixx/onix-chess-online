@@ -284,7 +284,15 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                 draw: state.drawChecked
             };
 
-            fetch(apiUrl, {method: "POST", mode: "cors", body: JSON.stringify(data)})
+            fetch(
+                apiUrl, {
+                    method: "POST", 
+                    mode: "cors", 
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(data)
+                })
                 .then(function(response) {
                     if (!response.ok) {
                         throw Error(response.statusText);
@@ -727,7 +735,15 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                 data[csrfTokenName] = csrfTokenValue;
             }
             
-            fetch(apiUrl, {method: "PUT", mode: "cors", body: JSON.stringify(data)})
+            fetch(
+                apiUrl, {
+                    method: "PUT", 
+                    mode: "cors", 
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(data)
+                })
                 .then(function(response) {
                     if (!response.ok) {
                         throw Error(response.statusText);
@@ -750,11 +766,21 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                 data[csrfTokenName] = csrfTokenValue;
             }
 
-            fetch(apiUrl, {method: "DELETE", mode: "cors", body: JSON.stringify(data)})
+            fetch(
+                apiUrl, {
+                    method: "DELETE", 
+                    mode: "cors", 
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(data)
+                })
                 .then(function(response) {
                     if (!response.ok) {
                         throw Error(response.statusText);
                     }
+
+                    window.location.href = "/";
                 })
                 .catch(function(error) {
                     Logger.error('Looks like there was a problem when reject game: \n', error);
@@ -775,6 +801,12 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                         </Card.Header>
                         <Card.Body>
                             <p className="mt-3"><i className="xi-hourglass xi-3x mr-2 pull-left"></i>{props.i18n?.waitOpponentNote}</p>
+                            <br/>
+                            <Row className="mt-2">
+                                <Col xs={12} className="text-center">
+                                    <Button variant="warning" onClick={() => rejectGame(engine)}>{ _("game", "cancel_challenge") }</Button>
+                                </Col>
+                            </Row>
                         </Card.Body>
                     </Card>
                 );

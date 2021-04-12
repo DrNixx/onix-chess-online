@@ -118,6 +118,7 @@
         "moves_mode_table": "таблица",
 
         "cancel_game": "Прервать партию",
+        "cancel_challenge": "Прервать вызов",
 
         "send_draw": "Предложить ничью",
         "move_button": "Ходить",

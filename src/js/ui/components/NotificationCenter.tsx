@@ -3,52 +3,22 @@ import * as ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { notify } from 'pages-ts';
 import { appInstance } from '../../app/IApplication';
-import { IUser } from '../../app/IUser';
 import { Avatar } from '../user/Avatar';
 import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Scrollbar } from 'react-scrollbars-custom';
-
-export interface INotify {
-    id: string,
-    read: boolean,
-    ago: number,
-    timeAgo: string,
-    content?: INotifyContent | INotifyPmContent | INotifyMoveContent,
-}
-
-export interface INotifyContent {
-    type: string;
-}
-
-export interface INotifyPmContent extends INotifyContent
-{
-    sender: IUser;
-
-    id: number;
-
-    subject: string;
-
-    text: string;
-}
-
-export interface INotifyMoveContent extends INotifyContent
-{
-    id: number;
-
-    opponent: IUser;
-
-    san: string;
-}
+import { IChallengeCancelContent, IChallengeNewContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
 
 export interface NotificationCenterProps {
     language: string;
     apiUrl: string,
     i18n: {
         readAll: string,
-        newMessage: string,
         markRead: string,
+        newMessage: string,
+        challengeNew: string,
+        challengeCancel: string,
     }
 }
 
@@ -68,8 +38,10 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         apiUrl: '/api/notify/notify-center',
         i18n: {
             readAll: 'Mark all as read',
+            markRead: 'Mark as read',
             newMessage: 'New message',
-            markRead: 'Mark as read'
+            challengeNew: "New challenge",
+            challengeCancel: "Cancel challenge",
         }
     }
 
@@ -166,24 +138,26 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         this.setState(state);
     };
 
+    private renderMarkRead = (notify: INotify) => {
+        const { i18n } = this.props;
+
+        if (notify.read) {
+            return (<div className="option"><span className="mark"></span></div>);
+        } else {
+            return (
+                <OverlayTrigger placement="right" overlay={<Tooltip id={`notify-tooltip-${notify.id}`}>{i18n.markRead}</Tooltip>}>
+                    <div className="option" data-toggle="tooltip" data-placement="left" title={i18n.markRead}>
+                        <a href="#" className="mark" onClick={(e) => this.markRead(e, notify.id)}></a>
+                    </div>
+                </OverlayTrigger>
+            );
+        }
+    };
+
     private renderPmItem = (notify: INotify, content: INotifyPmContent) => {
-        const { props, state, toggleDetail } = this;
+        const { props, state, toggleDetail, renderMarkRead } = this;
         const { i18n } = props;
         const { details } = state;
-
-        const renderMarkRead = () => {
-            if (notify.read) {
-                return (<div className="option"><span className="mark"></span></div>);
-            } else {
-                return (
-                    <OverlayTrigger placement="right" overlay={<Tooltip id={`notify-tooltip-${notify.id}`}>{i18n.markRead}</Tooltip>}>
-                        <div className="option" data-toggle="tooltip" data-placement="left" title={i18n.markRead}>
-                            <a href="#" className="mark" onClick={(e) => this.markRead(e, notify.id)}></a>
-                        </div>
-                    </OverlayTrigger>
-                );
-            }
-        };
 
         const itemClass = classNames("notification-item", "clearfix", {
             "unread": !notify.read
@@ -224,20 +198,74 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                         </div>
                     </CSSTransition>
                 </div>
-                { renderMarkRead() }
+                { renderMarkRead(notify) }
+            </div>
+        );
+    };
+
+    private renderChallengeNew = (notify: INotify, content: IChallengeNewContent) => {
+        const { props, state, renderMarkRead } = this;
+        const { i18n } = props;
+
+        const itemClass = classNames("notification-item", "clearfix", {
+            "unread": !notify.read
+        });
+
+        return (
+            <div className={itemClass} key={notify.id}>
+                <div className="heading">
+                    <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                        <Avatar user={content.opponent} size="Tiny" />
+                    </div>
+                    <a href={`/${content.id}`} className="text-complete pull-left">
+                        <span className="bold">{i18n.challengeNew}</span>
+                        <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                    </a>
+                    <span className="pull-right time">{ notify.timeAgo }</span>
+                </div>
+                { renderMarkRead(notify) }
+            </div>
+        );
+    };
+
+    private renderChallengeCancel = (notify: INotify, content: IChallengeCancelContent) => {
+        const { props, state, renderMarkRead } = this;
+        const { i18n } = props;
+
+        const itemClass = classNames("notification-item", "clearfix", {
+            "unread": !notify.read
+        });
+
+        return (
+            <div className={itemClass} key={notify.id}>
+                <div className="heading">
+                    <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                        <Avatar user={content.opponent} size="Tiny" />
+                    </div>
+                    <span className="text-complete pull-left">
+                        <span className="bold">{i18n.challengeCancel}</span>
+                        <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                    </span>
+                    <span className="pull-right time">{ notify.timeAgo }</span>
+                </div>
+                { renderMarkRead(notify) }
             </div>
         );
     };
 
     private renderList = () => {
-        const { state, renderPmItem } = this;
+        const { state, renderPmItem, renderChallengeNew, renderChallengeCancel } = this;
 
         const items: JSX.Element[] = [];
 
         state.notifications.forEach((n) => {
             if (n.content) {
                 if (n.content.type == "privateMessage") {
-                    items.push(renderPmItem(n, n.content as INotifyPmContent))
+                    items.push(renderPmItem(n, n.content as INotifyPmContent));
+                } else if (n.content.type == "challengeNew") {
+                    items.push(renderChallengeNew(n, n.content as IChallengeNewContent));
+                } else if (n.content.type == "challengeCancel") {
+                    items.push(renderChallengeCancel(n, n.content as IChallengeCancelContent));
                 } else if (n.content.type == "gameMove") {
     
                 }

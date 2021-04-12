@@ -119,6 +119,7 @@
         "moves_mode_table": "table",
 
         "cancel_game": "Cancel game",
+        "cancel_challenge": "Cancel challenge",
 
         "send_draw": "Send draw",
         "move_button": "Move",
