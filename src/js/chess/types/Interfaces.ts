@@ -232,3 +232,9 @@ export interface IGameData {
     finalFen?: string;
     pgn?: string;
 }
+
+export interface IGameMessage {
+    c: string;
+    t?: number;
+    m?: string;
+}

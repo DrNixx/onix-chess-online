@@ -5,7 +5,7 @@ export interface INotify {
     read: boolean,
     ago: number,
     timeAgo: string,
-    content?: INotifyContent | INotifyPmContent | INotifyMoveContent,
+    content?: INotifyContent,
 }
 
 export interface INotifyContent {
@@ -31,6 +31,27 @@ export interface IChallengeNewContent extends INotifyContent
 }
 
 export interface IChallengeCancelContent extends INotifyContent
+{
+    id: number;
+
+    opponent: IUser;
+}
+
+export interface IChallengeDeclineContent extends INotifyContent
+{
+    id: number;
+
+    opponent: IUser;
+}
+
+export interface IChallengeAcceptContent extends INotifyContent
+{
+    id: number;
+
+    opponent: IUser;
+}
+
+export interface IJoinAcceptContent extends INotifyContent
 {
     id: number;
 

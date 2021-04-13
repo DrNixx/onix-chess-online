@@ -27,81 +27,92 @@
 }
 
 .push-on-sidebar-open {
-    -webkit-transition: -webkit-transform 0.25s ease;
     transition: transform 0.25s ease;
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* Thumbnail for icons and profile pics
 ------------------------------------
 */
 .thumbnail-wrapper {
-    display: inline-block;
+    display: block;
     overflow: hidden;
     float: left;
+
     &.circular {
         @include border-radius(50%);
     }
+
     &.bordered {
         border-width: 4px;
         border-style: solid;
+        
         &.d16 {
-            @include square(16+4 * 1px);
+            @include square(16 + 4 * 1px);
             & > * {
                 line-height: 12px;
             }
         }
+
         &.d24 {
-            @include square(24+4 * 1px);
+            @include square(24 + 4 * 1px);
             & > * {
                 line-height: 24px;
             }
         }
+
         &.d32 {
-            @include square(32+4 * 1px);
+            @include square(32 + 4 * 1px);
             & > * {
                 line-height: 28px;
             }
         }
+
         &.d48 {
-            @include square(36+4 * 1px);
+            @include square(36 + 4 * 1px);
             & > * {
                 line-height: 36px;
             }
         }
     }
+
     &.d16 {
         @include square(16px);
         & > * {
             line-height: 16px;
         }
     }
+
     &.d24 {
         @include square(24px);
         & > * {
             line-height: 24px;
         }
     }
+
     &.d32 {
         @include square(32px);
         & > * {
             line-height: 32px;
         }
     }
+
     &.d39 {
         @include square(39px);
         & > * {
             line-height: 39px;
         }
     }
+
     &.d48 {
         @include square(36px);
         & > * {
             line-height: 36px;
         }
     }
-    & > * {
-        vertical-align: middle;
+
+    & > img {
+        vertical-align: unset;
         width: 100%;
         height: 100%;
         text-align: center;
@@ -441,18 +452,20 @@
 .b-rad-lg {
     @include border-radius(7px);
 }
+
 .no-border {
     border: none !important;
 }
+
 .no-shadow {
     box-shadow: none !important;
 }
+
 /** Profile Wrappers **/
 .profile-img-wrapper {
-    display: inline-block;
+    display: block;
     float: left;
     border-radius: 100px 100px 100px 100px;
-    display: inline-block;
     height: 35px;
     overflow: hidden;
     width: 35px;
@@ -460,10 +473,12 @@
     -moz-flex: 1;
     flex: 1;
 }
+
 .profile-img-wrapper.big {
     height: 68px;
     width: 68px;
 }
+
 .profile-img-wrapper.with-left-space-custom {
     @include margin-left( 7px );
 }
@@ -668,9 +683,11 @@ $aspectMap: ("1-1": 100%, "2-1": calc(50% - #{$layout-gutter-sm}), "1-2": calc(1
         border-collapse: collapse;
         table-layout: fixed;
     }
+
     .row-sm-height {
         // display:table-row;
     }
+    
     .col-sm-height {
         // display:table-cell !important;
         // float:none !important;

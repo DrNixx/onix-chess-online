@@ -8,7 +8,7 @@ import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';
 import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Scrollbar } from 'react-scrollbars-custom';
-import { IChallengeCancelContent, IChallengeNewContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
+import { IChallengeAcceptContent, IChallengeCancelContent, IChallengeDeclineContent, IChallengeNewContent, IJoinAcceptContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
 
 export interface NotificationCenterProps {
     language: string;
@@ -19,6 +19,9 @@ export interface NotificationCenterProps {
         newMessage: string,
         challengeNew: string,
         challengeCancel: string,
+        challengeDecline: string,
+        challengeAccept: string,
+        joinAccept: string,
     }
 }
 
@@ -41,7 +44,10 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
             markRead: 'Mark as read',
             newMessage: 'New message',
             challengeNew: "New challenge",
-            challengeCancel: "Cancel challenge",
+            challengeCancel: "Challenge canceled",
+            challengeDecline: "Challenge declined",
+            challengeAccept: "Challenge accepted",
+            joinAccept: "Joined to a game",
         }
     }
 
@@ -92,7 +98,9 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 
     private markReadAll = (e: React.MouseEvent) => {
         e.preventDefault();
-        fetch(this.props.apiUrl, {method: "DELETE"}).then(() => {});
+        fetch(this.props.apiUrl, {method: "DELETE"}).then(() => {
+            document.body.click();
+        });
     }
 
     private reloadList = (e: React.MouseEvent) => {
@@ -154,8 +162,18 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         }
     };
 
+    private timeAgo = (notify: INotify) => {
+        return (
+            <div className="lh-normal">
+                <div className="text-right">
+                    <span className="time">{ notify.timeAgo }</span>
+                </div>
+            </div>
+        );
+    };
+
     private renderPmItem = (notify: INotify, content: INotifyPmContent) => {
-        const { props, state, toggleDetail, renderMarkRead } = this;
+        const { props, state, toggleDetail, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
         const { details } = state;
 
@@ -183,12 +201,8 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             </div>
                         </div>
                     </div>
-                    <div className="lh-normal">
-                        <div className="text-right">
-                            <span className="time">{ notify.timeAgo }</span>
-                        </div>
-                    </div>
-
+                    { timeAgo(notify) }
+                    
                     <CSSTransition in={detailVisible} classNames="slide-down" timeout={500}>
                         <div className="more-details">
                             <div className="more-details-inner">
@@ -204,7 +218,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     };
 
     private renderChallengeNew = (notify: INotify, content: IChallengeNewContent) => {
-        const { props, state, renderMarkRead } = this;
+        const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
         const itemClass = classNames("notification-item", "clearfix", {
@@ -214,14 +228,16 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         return (
             <div className={itemClass} key={notify.id}>
                 <div className="heading">
-                    <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                        <Avatar user={content.opponent} size="Tiny" />
+                    <div className="clearfix">
+                        <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                            <Avatar user={content.opponent} size="Tiny" />
+                        </div>
+                        <a href={`/${content.id}`} className="text-complete pull-left">
+                            <span className="bold">{i18n.challengeNew}</span>
+                            <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                        </a>
                     </div>
-                    <a href={`/${content.id}`} className="text-complete pull-left">
-                        <span className="bold">{i18n.challengeNew}</span>
-                        <span className="fs-12 m-l-10">{content.opponent.display}</span>
-                    </a>
-                    <span className="pull-right time">{ notify.timeAgo }</span>
+                    { timeAgo(notify) }                    
                 </div>
                 { renderMarkRead(notify) }
             </div>
@@ -229,7 +245,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     };
 
     private renderChallengeCancel = (notify: INotify, content: IChallengeCancelContent) => {
-        const { props, state, renderMarkRead } = this;
+        const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
         const itemClass = classNames("notification-item", "clearfix", {
@@ -239,14 +255,97 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         return (
             <div className={itemClass} key={notify.id}>
                 <div className="heading">
-                    <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                        <Avatar user={content.opponent} size="Tiny" />
+                    <div className="clearfix">
+                        <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                            <Avatar user={content.opponent} size="Tiny" />
+                        </div>
+                        <span className="text-complete pull-left">
+                            <span className="bold">{i18n.challengeCancel}</span>
+                            <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                        </span>
                     </div>
-                    <span className="text-complete pull-left">
-                        <span className="bold">{i18n.challengeCancel}</span>
-                        <span className="fs-12 m-l-10">{content.opponent.display}</span>
-                    </span>
-                    <span className="pull-right time">{ notify.timeAgo }</span>
+                    { timeAgo(notify) }
+                </div>
+                { renderMarkRead(notify) }
+            </div>
+        );
+    };
+
+    private renderChallengeDecline = (notify: INotify, content: IChallengeDeclineContent) => {
+        const { props, renderMarkRead, timeAgo } = this;
+        const { i18n } = props;
+
+        const itemClass = classNames("notification-item", "clearfix", {
+            "unread": !notify.read
+        });
+
+        return (
+            <div className={itemClass} key={notify.id}>
+                <div className="heading">
+                    <div className="clearfix">
+                        <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                            <Avatar user={content.opponent} size="Tiny" />
+                        </div>
+                        <span className="text-complete pull-left">
+                            <span className="bold">{i18n.challengeDecline}</span>
+                            <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                        </span>
+                    </div>
+                    { timeAgo(notify) }
+                </div>
+                { renderMarkRead(notify) }
+            </div>
+        );
+    };
+
+    private renderChallengeAccept = (notify: INotify, content: IChallengeAcceptContent) => {
+        const { props, renderMarkRead, timeAgo } = this;
+        const { i18n } = props;
+
+        const itemClass = classNames("notification-item", "clearfix", {
+            "unread": !notify.read
+        });
+
+        return (
+            <div className={itemClass} key={notify.id}>
+                <div className="heading">
+                    <div className="clearfix">
+                        <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                            <Avatar user={content.opponent} size="Tiny" />
+                        </div>
+                        <a href={`/${content.id}`} className="text-complete pull-left">
+                            <span className="bold">{i18n.challengeAccept}</span>
+                            <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                        </a>
+                    </div>
+                    { timeAgo(notify) }                    
+                </div>
+                { renderMarkRead(notify) }
+            </div>
+        );
+    };
+
+    private renderJoinAccept = (notify: INotify, content: IJoinAcceptContent) => {
+        const { props, renderMarkRead, timeAgo } = this;
+        const { i18n } = props;
+
+        const itemClass = classNames("notification-item", "clearfix", {
+            "unread": !notify.read
+        });
+
+        return (
+            <div className={itemClass} key={notify.id}>
+                <div className="heading">
+                    <div className="clearfix">
+                        <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
+                            <Avatar user={content.opponent} size="Tiny" />
+                        </div>
+                        <a href={`/${content.id}`} className="text-complete pull-left">
+                            <span className="bold">{i18n.joinAccept}</span>
+                            <span className="fs-12 m-l-10">{content.opponent.display}</span>
+                        </a>
+                    </div>
+                    { timeAgo(notify) }                    
                 </div>
                 { renderMarkRead(notify) }
             </div>
@@ -254,7 +353,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     };
 
     private renderList = () => {
-        const { state, renderPmItem, renderChallengeNew, renderChallengeCancel } = this;
+        const { state, renderPmItem, renderChallengeNew, renderChallengeCancel, renderChallengeDecline, renderChallengeAccept, renderJoinAccept } = this;
 
         const items: JSX.Element[] = [];
 
@@ -266,6 +365,12 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                     items.push(renderChallengeNew(n, n.content as IChallengeNewContent));
                 } else if (n.content.type == "challengeCancel") {
                     items.push(renderChallengeCancel(n, n.content as IChallengeCancelContent));
+                } else if (n.content.type == "challengeDecline") {
+                    items.push(renderChallengeDecline(n, n.content as IChallengeDeclineContent));
+                } else if (n.content.type == "challengeAccept") {
+                    items.push(renderChallengeAccept(n, n.content as IChallengeAcceptContent));
+                } else if (n.content.type == "joinGame") {
+                    items.push(renderJoinAccept(n, n.content as IJoinAcceptContent));
                 } else if (n.content.type == "gameMove") {
     
                 }
@@ -294,11 +399,9 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
             <Dropdown className="notification-center">
                 <Dropdown.Toggle as="a" href="#" className="header-icon btn-icon-link" bsPrefix="notification">
                     <i data-icon="" data-count={countEvents} className={ hasEvents ? "active" : ""} />
-                    
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu notification-toggle">
                     <div className="notification-panel">
-                        
                         <Scrollbar className="notification-body" style={{ height: 350 }} trackYProps={{style: {width: 5}}}>
                             { renderList() }
                         </Scrollbar>

@@ -36,6 +36,8 @@ import { FenString } from '../../chess/FenString';
 import { Chat } from '../../chat/Chat';
 import { Logger } from '../../common/Logger';
 import { Chess } from '../../chess/Chess';
+import { appInstance } from '../../app/IApplication';
+import { IGameMessage } from '../../chess/types/Interfaces';
 
 enum BoardMode {
     Play = 0,
@@ -124,16 +126,17 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
     }
 
     componentDidMount() {
-        const { store, onMove, onSelect } = this;
+        const that = this;
+        const { store, onMove, onSelect } = that;
         const { board, game }  = store.getState();
 
-        this.storeUnsubscribe = this.store.subscribe(() =>
-            this.updateState()
+        that.storeUnsubscribe = that.store.subscribe(() =>
+            that.updateState()
         );
 
         
-        this.cg = Chessground(this.boardElement!, {
-            ...this.generateConfig(),
+        that.cg = Chessground(that.boardElement!, {
+            ...that.generateConfig(),
             resizable: true,
             highlight: {
                 lastMove: true,
@@ -146,7 +149,20 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
             },
         });
 
-        window.addEventListener("resize", this.redrawBoard);
+        window.addEventListener("resize", that.redrawBoard);
+
+        const id = game.engine.GameId;
+        if (appInstance && id) {
+            const { stream } = appInstance;
+            const channel = `game:${id}`;
+            if (stream) {
+                stream.subscribe(channel, function(ctx: any) {
+                    if (ctx?.data) {
+                        that.gameMessage(ctx?.data as IGameMessage);
+                    }
+                });
+            }
+        }
     }
 
     componentWillUnmount() {
@@ -162,6 +178,14 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         }
         
     }
+
+    private gameMessage = (msg: IGameMessage) => {
+        if (msg.c == "delete") {
+            window.location.href = "/";
+        } else if (msg.c == "reload") {
+            window.location.reload();
+        }
+    };
 
     private generateConfig = (): CgConfig => {
         const { store, isPlay, isAnalyse, isConditional } = this;
@@ -558,23 +582,23 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         const items: JSX.Element[] = [];
         if (engine.isStarted) {
             items.push(
-                <React.Fragment>
-                    <div className="btn-group">
-                        <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
-                    </div>
-                    <div className="btn-group">
-                        <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
-                        <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
-                        <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
-                    </div>
-                </React.Fragment>    
+                <div className="btn-group" key="resign-group">
+                    <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
+                </div>
+            );
+            items.push(
+                <div className="btn-group"  key="gametools-group">
+                    <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
+                    <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
+                    <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
+                </div>
             );
         }
 
         return (
             <React.Fragment>
                 { items }
-                <div className="btn-group">
+                <div className="btn-group" key="next-game-group">
                     <button aria-label="next game" className="btn btn-default" title="next game" onClick={() => {}}><i className="xi-next-game"></i></button>
                 </div>
             </React.Fragment>
@@ -779,8 +803,6 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                     if (!response.ok) {
                         throw Error(response.statusText);
                     }
-
-                    window.location.href = "/";
                 })
                 .catch(function(error) {
                     Logger.error('Looks like there was a problem when reject game: \n', error);
