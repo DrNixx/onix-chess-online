@@ -538,13 +538,15 @@ export class Chess {
             }
         }
 
-        const move = this.currentMove.Prev;
+        let move = this.currentMove.Prev;
         const thisFen = move.fen;
-        let rc = 1;
+        let rc = 0;
         while (!move.START_MARKER) {
             if (thisFen === move.fen) { 
                 rc++; 
             }
+
+            move = move.Prev;
         }
 
         state.IsPosRepeation = rc >= 3;
@@ -822,6 +824,19 @@ export class Chess {
         return "?";
     }
 
+    public get isMyMove() {
+        const cm = this.currentMove;
+        return (cm.END_MARKER || (cm.Next && cm.Next.END_MARKER)) && (this.CurrentPos.WhoMove === this.myColor);
+    }
+
+    public get myColor() {
+        if (this.isMyGame) {
+            return (this.White?.user?.id == this.observer) ? Color.White : Color.Black;
+        }
+
+        return Color.None;
+    }
+
     public get isMyGame() {
         if (this.observer) {
             return (this.White?.user?.id == this.observer) || (this.Black?.user?.id == this.observer);
@@ -832,6 +847,10 @@ export class Chess {
 
     public get isStarted() {
         return (this.status?.name == "started");
+    }
+
+    public get isFinished() {
+        return (this.Result != GameResult.Color.None);
     }
 
     public get isNewGame() {

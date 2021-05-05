@@ -45,11 +45,11 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
         if (!result) {
             if (engine.isStarted) {
                 result = (
-                    <span>{_("game", "startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleString()}</span></span>
+                    <span>{_("game", "startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
                 );
             } else {
                 result = (
-                    <span>{_("game", "createDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleString()}</span></span>
+                    <span>{_("game", "createDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
                 );
             }
             
@@ -268,7 +268,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
     private renderRZ = (engine: ChessEngine) => {
         let result: JSX.Element | null = null;
         const { game } = engine.RawData;
-        if (game) {
+        if (game && game.insite) {
             const rated = (game.rated) ? "ratedGame" : "unratedGame";
             if (game.speed == "correspondence") {
                 const varName = (game.advance) ? "varAdvance" : "varCorrs";

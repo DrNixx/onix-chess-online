@@ -694,6 +694,28 @@ $aspectMap: ("1-1": 100%, "2-1": calc(50% - #{$layout-gutter-sm}), "1-2": calc(1
     }
 }
 
+@mixin maxWidth($size) {
+    .mw-#{$size}-100 {
+        max-width: 100% !important;
+    }
+
+    .mw-#{$size}-75 {
+        max-width: 75% !important;
+    }
+
+    .mw-#{$size}-50 {
+        max-width: 50% !important;
+    }
+
+    .mw-#{$size}-25 {
+        max-width: 25% !important;
+    }
+}
+
+@include breakpoint($mq-small) {
+    @include maxWidth("sm");
+}
+
 @include breakpoint($mq-medium) {
     .container-md-height {
         display: table;
@@ -703,14 +725,19 @@ $aspectMap: ("1-1": 100%, "2-1": calc(50% - #{$layout-gutter-sm}), "1-2": calc(1
         border-collapse: collapse;
         table-layout: fixed;
     }
+
     .row-md-height {
         display: table-row;
     }
+
     .col-md-height {
         display: table-cell !important;
         float: none !important;
     }
+
+    @include maxWidth("md");
 }
+
 @include breakpoint($mq-large) {
     .container-lg-height {
         display: table;
@@ -720,18 +747,23 @@ $aspectMap: ("1-1": 100%, "2-1": calc(50% - #{$layout-gutter-sm}), "1-2": calc(1
         border-collapse: collapse;
         table-layout: fixed;
     }
+    
     .row-lg-height {
         display: table-row;
     }
+
     .col-lg-height {
         display: table-cell !important;
         float: none !important;
     }
+
+    @include maxWidth("lg");
 }
 
-//IE Fixes
-.windows {
-    .d-flex {
-        -ms-flex-wrap: wrap;
-    }
+@include breakpoint($mq-x-large) {
+    @include maxWidth("xl");
+}
+
+@include breakpoint($mq-xx-large) {
+    @include maxWidth("xxl");
 }

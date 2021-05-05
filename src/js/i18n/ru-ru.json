@@ -6,7 +6,8 @@
         "copied": "Скопировано",
         "join": "Присоединиться",
         "accept": "Принять",
-        "decline": "Отклонить"
+        "decline": "Отклонить",
+        "confirm_action": "Подтвердите действие"
     },
     "datetime": {
         "years": "{y, plural, one{# год} few{# года} many{# лет} other{# года}}",
@@ -120,12 +121,23 @@
         "cancel_game": "Прервать партию",
         "cancel_challenge": "Прервать вызов",
 
+        "move_from": "Откуда",
+        "move_to": "Куда",
         "send_draw": "Предложить ничью",
+        "do_resign": "Сдаться",
+        "do_resign_confirm": "Вы действительно хотите сдаться?",
+        "inboard_analyse": "Анализ на текущей доске",
+        "close_analyse": "Закрыть режим анализа",
+        "external_analyse": "Анализ в другом окне",
+        "conditional": "Ввод вариантов",
+        "close_conditional": "Закрыть режим записи вариантов", 
         "move_button": "Ходить",
         "reset_button": "Сброс",
 
         "chatTab": "Чат",
         "notesTab": "Заметки", 
+
+        "next_game": "Следующая партия",
 
         "postpone_rest": "Осталось {n} отпуска"
     },

@@ -1,1 +1,1 @@
-export { PositionSetup } from './ui/chess/PosBuilder';
+export { setupPosition } from './ui/chess/PosBuilder';

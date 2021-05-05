@@ -1,0 +1,41 @@
+{% extends "./ext/base.nunj" %}
+{% from "parts/piecesBoard.nunj" import piecesBoard %}
+{% block title %}UI test {{ super() }}{% endblock title %}
+
+{% block stylesheets %}
+	{{ super() }}
+	<link rel="stylesheet" href="assets/css/setup-position.css" />
+	<style>
+		
+	</style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div id="config-view" class="reset-select-apperance"></div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+	{{ super() }}
+	<script src="assets/js/chess-online.475.js"></script>
+	<script src="assets/js/chess-online.976.js"></script>
+	<script src="assets/js/chess-online.811.js"></script>
+	<script src="assets/js/chess-online.setup.js"></script>
+	<script>
+		const module = {
+			init: function() {
+				const props = {
+					size: 4,
+					piece: "alpha",
+					square: "cedar",
+					coordinates: true,
+				};
+				setup.setupPosition(props, document.getElementById("config-view"));
+			}
+		};
+
+    	app_props.modules.push(module);
+	</script>
+{% endblock scripts %}
+

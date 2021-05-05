@@ -129,8 +129,8 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         return (
             <div className="small">
-                {(user.display && (user.display != user.name) && !compact) ? (<span>{user.name}</span>) : null}
-                { children ? (<span className="pl-5 pull-right">children</span>) : null }
+                {(user.display && (user.display != '?') && (user.display != user.name) && !compact) ? (<span>{user.name}</span>) : null}
+                { children ? (<span className="pl-4 pull-right">{children}</span>) : null }
             </div>
         );
     }
@@ -163,7 +163,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
             unClass.push(user.status);
         }
 
-        const display = user.display ?? user.name;
+        const display = (user.display && (user.display != '?')) ? user.display : user.name;
 
         if (popover && user.id) {
             return (

@@ -6,7 +6,8 @@
         "copied": "Copiado",
         "join": "Join",
         "accept": "Accept",
-        "decline": "Decline"
+        "decline": "Decline",
+        "confirm_action": "Confirm your action"
     },
     "datetime": {
         "years": "{y,plural,one{# year} few{# years} many{# years} other{# years}}",
@@ -121,12 +122,23 @@
         "cancel_game": "Cancel game",
         "cancel_challenge": "Cancel challenge",
 
-        "send_draw": "Send draw",
+        "move_from": "Move from",
+        "move_to": "Move to",
+        "send_draw": "Offer draw",
+        "do_resign": "Do resign",
+        "do_resign_confirm": "Are you sure you want to resign?",
+        "inboard_analyse": "Inboard analyse",
+        "close_analyse": "Close analyse mode",
+        "external_analyse": "External analyse",
+        "conditional": "Input conditional moves",
+        "close_conditional": "Close variants recording mode", 
         "move_button": "Move",
         "reset_button": "Reset",
 
         "chatTab": "Chat",
         "notesTab": "Notes", 
+
+        "next_game": "Next game",
 
         "postpone_rest": "There have {n} of vacation time left"
     },

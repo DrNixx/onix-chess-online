@@ -7,4 +7,6 @@
     <p><a href="watch.html">Watch game</a></p>
 	<p><a href="analyse.html">Analyse game</a></p>
     <p><a href="configure.html">Configure board</a></p>
+    <p><a href="builder.html">Position builder</a></p>
+    <p><a href="pgn.html">PGN viewer</a></p>
 {% endblock content %}

@@ -962,6 +962,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     }
 }
 
-export const PositionSetup = (props: PosBuilderProps, container: HTMLElement) => {
+export const setupPosition = (props: PosBuilderProps, container: HTMLElement) => {
     ReactDOM.render(React.createElement(PosBuilder, props), container);
 };

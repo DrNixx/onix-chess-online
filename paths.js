@@ -77,6 +77,11 @@ module.exports = {
                 setup: {
                     import: path.resolve(__dirname, "./src/js/setup.ts"),
                     dependOn: "onix",
+                },
+
+                pgn: {
+                    import: path.resolve(__dirname, "./src/js/pgn.ts"),
+                    dependOn: "onix",
                 }
             },
             

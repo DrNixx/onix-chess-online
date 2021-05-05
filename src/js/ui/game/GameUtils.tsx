@@ -7,8 +7,6 @@ import { Chess as ChessEngine } from "../../chess/Chess";
 import { IChessPlayer, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
 import { UserName } from '../user/UserName';
-import * as BoardActions from '../../actions/BoardActions';
-import { CombinedGameStore } from '../../actions/CombinedGameStore';
 
 
 export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
@@ -22,9 +20,16 @@ export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, positio
     }
 
     if (player) {
-        return (
-            <UserName user={player.user} size="Tiny" />
-        );
+        if (player.rating) {
+            return (
+                <UserName user={player.user} size="Tiny">{player.rating}</UserName>
+            );
+        } else {
+            return (
+                <UserName user={player.user} size="Tiny" />
+            );
+        }
+        
     }
 
     return null;   

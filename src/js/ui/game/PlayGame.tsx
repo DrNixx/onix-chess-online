@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
-import { Container, Row, Col, Tab, Nav, Button, ButtonToolbar, ButtonGroup, Card, Form } from 'react-bootstrap';
+import { Container, Row, Col, Tab, Nav, Button, ButtonToolbar, ButtonGroup, Card, Form, Modal } from 'react-bootstrap';
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
@@ -72,13 +72,14 @@ interface GameState {
     confirmMove: boolean;
     drawChecked: boolean;
     provisionalMove: ProvisionalMove;
+    confirmResign: boolean;
 }
 
 class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
     public static defaultProps: PlayGameProps = {
         ...defaultProps,
         i18n: {
-            canJoin: "Join to game",
+            canJoin: "Join to а game",
             canJoinNote: "You can join this game",
             waitJoin: "Waiting for opponent join",
             waitJoinNote: "The game will become available after any opponent join to your game",
@@ -119,6 +120,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         this.store = createCombinedGameStore(state);
         this.state = {
             mode: BoardMode.Play,
+            confirmResign: false,
             confirmMove: state.board.confirmMove,
             drawChecked: false,
             provisionalMove: {}
@@ -284,29 +286,38 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
     };
 
     private canMove = (from?: Squares.Square, to?: Squares.Square) => {
-        if (to) {
-            return true;
-        } else if (from) {
+        const { store } = this;
+        const { game } = store.getState();
+        const { engine } = game;
+
+        if (to !== undefined) {
+            return from !== undefined;
+        } else if (from !== undefined) {
             return this.validFrom(from);
         } else {
-            return true;
+            return !this.isPlay || engine.CurrentMove.provisional || (engine.isStarted && !engine.isFinished && engine.isMyMove);
         }
     };
 
     private sendMove = () => {
-        const { store, state, isPlay } = this;
+        const { props, store, state, isPlay } = this;
+        const { csrfTokenName, csrfTokenValue } = props.board;
         const { provisionalMove, ...other } = state;
         const { game } = store.getState();
         const { engine } = game;
 
         const apiUrl = engine.RawData.url?.api;
         if (isPlay && provisionalMove.from && provisionalMove.to && apiUrl) {
-            const data = {
+            const data: any = {
                 from: Square.name(provisionalMove.from),
                 to: Square.name(provisionalMove.to),
                 promotion: provisionalMove.promotion,
                 draw: state.drawChecked
             };
+
+            if (csrfTokenName) {
+                data[csrfTokenName] = csrfTokenValue;
+            }
 
             fetch(
                 apiUrl, {
@@ -355,7 +366,14 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                                 this.store.dispatch({ type: ga.GAME_ADD_PROVISIONAL, sm: sm } as ga.AddProvisional);
                             });
                         } else {
-        
+                            this.setState({
+                                ...other,
+                                provisionalMove: provisionalMove,
+                                manualFrom: undefined,
+                                manualTo: undefined
+                            }, () => {
+                                this.sendMove();
+                            });
                         }
                     }
                 } else {
@@ -414,8 +432,11 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         });
     };
 
+    /**
+     * Do move with confirm
+     */
     private moveClick = () => {
-        
+        this.sendMove();
     };
 
     private modeTurnOn = (newMode: BoardMode) => {
@@ -527,9 +548,9 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                     </div>
                     { confirmMove ?  (
                         <div className="ml-auto pl-4 move-form">
-                            <input aria-label="Move from" type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
+                            <input aria-label={_("game", "move_from")} type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
                             <span className="px-2">&mdash;</span>
-                            <input aria-label="Move to" type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
+                            <input aria-label={_("game", "move_to")} type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
                             <Button variant="success" className="ml-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
                             <Button variant="default" className="ml-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{_("game", "reset_button")}</Button>
                         </div>
@@ -546,7 +567,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
             return (
                 <ButtonToolbar>
                     <ButtonGroup className="mx-auto p-4">
-                        <Button onClick={this.returnToPlay}>Закрыть анализ</Button>
+                        <Button onClick={this.returnToPlay}>{_("game", "close_analyse")}</Button>
                     </ButtonGroup>
                 </ButtonToolbar>
             );
@@ -560,7 +581,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
             return (
                 <ButtonToolbar>
                     <ButtonGroup className="mx-auto p-4">
-                        <Button onClick={this.returnToPlay}>Закрыть запись вариантов</Button>
+                        <Button onClick={this.returnToPlay}>{_("game", "close_conditional")}</Button>
                     </ButtonGroup>
                 </ButtonToolbar>
             );
@@ -569,8 +590,80 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         }
     };
 
+    private showResignDialog = () => {
+        const { confirmResign, ...other } = this.state;
+        this.setState({
+            ...other,
+            confirmResign: true
+        });
+    };
+
+    private resignDialog = (engine: Chess) => {
+        const that = this;
+        const { state } = that;
+
+        const hideResignDialog = () => {
+            const { confirmResign, ...other } = state;
+            that.setState({
+                ...other,
+                confirmResign: false
+            });
+        };
+    
+        const doResign = () => {
+            const { props, isPlay } = this;
+            const { csrfTokenName, csrfTokenValue } = props.board;
+
+            const apiUrl = engine.RawData.url?.api;
+            if (isPlay && apiUrl) {
+                const data: any = {
+                    mode: "resign"
+                };
+
+                if (csrfTokenName) {
+                    data[csrfTokenName] = csrfTokenValue;
+                }
+    
+                fetch(
+                    apiUrl, {
+                        method: "POST",
+                        mode: "cors",
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw Error(response.statusText);
+                        }
+                    })
+                    .catch(function(error) {
+                        Logger.error('Looks like there was a problem when send resign command: \n', error);
+                    });
+            }
+
+            hideResignDialog();
+        };
+
+        return (
+            <Modal centered={true} size="sm" show={state.confirmResign} onHide={hideResignDialog}>
+                <Modal.Header closeButton>
+                    <Modal.Title as="h5">{_("core", "confirm_action")}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{_("game", "do_resign_confirm")}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={hideResignDialog}>{_("core", "cancel")}</Button>
+                    <Button variant="warning" onClick={doResign}>{_("game", "do_resign")}</Button>
+                </Modal.Footer>
+            </Modal>
+        );
+    };
+
+    
+
     private renderToolbar = (engine: Chess) => {
-        const { modeTurnOn } = this;
+        const { modeTurnOn, showResignDialog } = this;
         
         const fen = FenString.fromPosition(engine.CurrentPos);
 
@@ -583,14 +676,14 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         if (engine.isStarted) {
             items.push(
                 <div className="btn-group" key="resign-group">
-                    <button aria-label="resign" className="btn btn-warning" title="resign" onClick={() => {}}><i className="xi-resign"></i></button>
+                    <button aria-label={_("game", "do_resign")} className="btn btn-warning" title={_("game", "do_resign")} onClick={showResignDialog}><i className="xi-resign"></i></button>
                 </div>
             );
             items.push(
                 <div className="btn-group"  key="gametools-group">
-                    <button aria-label="inboard analyse" className="btn btn-default" title="inboard analyse" onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
-                    <a aria-label="external analyse" className="btn btn-default" title="external analyse" href={analink}><i className="xi-analysis"></i></a>
-                    <button aria-label="conditional" className="btn btn-default" title="conditional" onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
+                    <button aria-label={_("game", "inboard_analyse")} className="btn btn-default" title={_("game", "inboard_analyse")} onClick={() => modeTurnOn(BoardMode.Analyse)}><i className="xi-onboard"></i></button>
+                    <a aria-label={_("game", "external_analyse")} className="btn btn-default" title={_("game", "external_analyse")} href={analink}><i className="xi-analysis"></i></a>
+                    <button aria-label={_("game", "conditional")} className="btn btn-default" title={_("game", "conditional")} onClick={() => modeTurnOn(BoardMode.Conditional)}><i className="xi-qtree"></i></button>
                 </div>
             );
         }
@@ -599,7 +692,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
             <React.Fragment>
                 { items }
                 <div className="btn-group" key="next-game-group">
-                    <button aria-label="next game" className="btn btn-default" title="next game" onClick={() => {}}><i className="xi-next-game"></i></button>
+                    <button aria-label={_("game", "next_game")} className="btn btn-default" title={_("game", "next_game")} onClick={() => {}}><i className="xi-next-game"></i></button>
                 </div>
             </React.Fragment>
         );
@@ -747,7 +840,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
     };
     //#endregion Notes
 
-
+    //#region Accept-reject form
     private acceptGame = (engine: Chess) => {
         const { csrfTokenName, csrfTokenValue } = this.props.board;
         const apiUrl = engine.RawData.url?.api;
@@ -891,6 +984,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
 
         return form;
     }
+    //#endregion Accept-reject form
 
     private renderControls = () => {
         const { props, store, renderToolbar, renderMovesTab, renderMovesPane, renderPgnTab, renderPgnPane, renderChatTab, renderChatPane, renderNotesTab, renderNotesPane, infoAddForm } = this;
@@ -923,6 +1017,7 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
                         { renderNotesPane(engine) }
                     </Tab.Content>
                 </Tab.Container>
+                {this.resignDialog(engine)}
             </div>
         );
     };
