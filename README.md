@@ -1,8 +1,15 @@
 # Chess-Online.Com frontent
 
-Chess-Online.Com frontent
+Chess-Online.Com frontend
 Frontend is written in [TypeScript](https://www.typescriptlang.org/) and [React](https://github.com/facebook/react/), using [Sass](https://sass-lang.com/) to generate CSS.
 It use [centrifugo](https://github.com/centrifugal/centrifuge-js) and native Chess-Online.Com API for comunicate with Chess-Online.Com servers.
+
+## Run dev server
+
+```bash
+npm run site:server
+```
+
 
 ## Supported browsers
 
