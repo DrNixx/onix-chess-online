@@ -139,7 +139,6 @@ class PlayGameComponent extends React.Component<PlayGameProps, GameState> {
         
         that.cg = Chessground(that.boardElement!, {
             ...that.generateConfig(),
-            resizable: true,
             highlight: {
                 lastMove: true,
                 check: true

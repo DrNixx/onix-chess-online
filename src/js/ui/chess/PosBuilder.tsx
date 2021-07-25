@@ -178,7 +178,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
             turnColor: Color.toName(whoMove!),
             coordinates: !!coordinates,
             autoCastle: false,
-            resizable: true,
             movable: {
                 free: true,
                 color: 'both'

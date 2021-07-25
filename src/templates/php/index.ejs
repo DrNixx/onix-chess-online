@@ -22,7 +22,7 @@ class ChessWelcomeAsset extends AssetBundle
 
     public function init()
     {
-        $this->setSourcePath(dirname(__DIR__).DIRECTORY_SEPARATOR.'assets'));
+        $this->setSourcePath(dirname(__DIR__).DIRECTORY_SEPARATOR.'assets');
         if (YII_ENV == 'prod') {
             $this->setSourcePath(Yii::getAlias('@ui/build/welcome'));
         } else {

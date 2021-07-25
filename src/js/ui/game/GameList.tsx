@@ -117,7 +117,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
         });
 
         if (data.nextInterval > 0) {
-            this.timeout = setTimeout(this.fetchGamesData, data.nextInterval * 1000);
+            this.timeout = window.setTimeout(this.fetchGamesData, data.nextInterval * 1000);
         }
     }
 

@@ -72,7 +72,6 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
             coordinates: board.coordinates,
             turnColor: Color.toName(game.engine.ToMove),
             viewOnly: true,
-            resizable: true,
             lastMove: game.lastMove,
             check: game.isCheck,
             highlight: {

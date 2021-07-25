@@ -68,7 +68,6 @@ class ConfigureGameComponent extends React.Component<BoardSettings, {}> {
 
         this.cg = Chessground(this.boardElement!, {
             ...generateConfig(),
-            resizable: true,
             highlight: {
                 lastMove: true,
                 check: true
@@ -117,7 +116,6 @@ class ConfigureGameComponent extends React.Component<BoardSettings, {}> {
             orientation: orientation,
             coordinates: coordinates,
             viewOnly: false,
-            resizable: true,
             movable: {
                 free: false,
                 color: 'both',

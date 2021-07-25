@@ -1,3 +1,5 @@
+@use "sass:math";
+
 //--------------------------------
 // Normal
 //--------------------------------
@@ -162,7 +164,7 @@
 }
 
 @function blend-screen-color($foreground, $background) {
-  @return (255 - ( ( (255 - $foreground) * (255 - $background)) / 256));
+  @return (255 - ( math.div(( (255 - $foreground) * (255 - $background)), 256)));
 }
 
 //--------------------------------
@@ -546,9 +548,9 @@
 	$-local-green: green(rgba($c, 1.0));
 	$-local-blue: blue(rgba($c, 1.0));
 
-	@return (0.2126 * $-local-red  +
+	@return math.div((0.2126 * $-local-red  +
 			 0.7152 * $-local-green +
-			 0.0722 * $-local-blue) / 255;
+			 0.0722 * $-local-blue), 255);
 }
 
 @function make-shade($color, $mix-percentage, $saturation-shift, $hue-shift, $level){
@@ -568,20 +570,20 @@
 	$color-hue: $hue-shift;
 
 	@if(saturation($color-mix) > 5){
-		$color-saturate: saturate($color-mix, $saturation-shift / $divider)
+		$color-saturate: saturate($color-mix, math.div($saturation-shift, $divider))
 	}
 
 	@if($level < 0){
 		@if(luma(adjust-hue($color, $hue-shift)) > luma($color)){
-			$color-hue: ($hue-shift / $divider);
+			$color-hue: math.div($hue-shift, $divider);
 		}@else{
-			$color-hue: -($hue-shift / $divider);
+			$color-hue: -(math.div($hue-shift, $divider));
 		}
 	} @else if($level > 0){
 		@if(luma(adjust-hue($color, $hue-shift)) > luma($color)){
-			$color-hue: -($hue-shift / $divider);
+			$color-hue: -(math.div($hue-shift, $divider));
 		}@else{
-			$color-hue: ($hue-shift / $divider);
+			$color-hue: math.div($hue-shift, $divider);
 		}
 	}
 	@return adjust-hue($color-saturate, $color-hue);
@@ -590,9 +592,11 @@
 
 // Legibility standards, WCAG 2.0 - Returns black or white text color
 @function text-contrast($background-color) {
-	$color-brightness: round((red($background-color) * 299) + (green($background-color) * 587) + (blue($background-color) * 114) / 1000);
-	$light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114) / 1000);
-	@if abs($color-brightness) < ($light-color / 2){
+	//$color-brightness: round((red($background-color) * 299) + (green($background-color) * 587) + (blue($background-color) * 114) / 1000);
+	//$light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114) / 1000);
+  $color-brightness: round(math.div(((red($background-color) * 299) + (green($background-color) * 587) + (blue($background-color) * 114)), 1000));
+	$light-color: round(math.div(((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114)), 1000));
+	@if abs($color-brightness) < math.div($light-color, 2){
 	  @return $f-color-light;
 	}
 	@else {

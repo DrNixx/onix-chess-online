@@ -204,7 +204,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         });
 
         if (data.nextInterval > 0) {
-            this.timeout = setTimeout(this.fetchForumData, data.nextInterval * 1000);
+            this.timeout = window.setTimeout(this.fetchForumData, data.nextInterval * 1000);
         }
     }
 

@@ -1,3 +1,5 @@
+@use "sass:math";
+
 /*------------------------------------------------------------------
 [21. Calendar App]
 */
@@ -355,7 +357,7 @@ Events / .event-container
 					background: $color-contrast-lowest;
 					.tcell{
 						padding: 10px;
-						height: $cell-height/2 * 1px;
+						height: math.div($cell-height, 2) * 1px;
 						position: relative;
 						.weekday{
 							font-size: 12px;
@@ -402,7 +404,7 @@ Events / .event-container
 						background: $color-contrast-lowest;
 						padding: 0 10px;
 						.cell-inner{
-							height: $cell-height/2 * 1px;
+							height: math.div($cell-height, 2) * 1px;
 							position: relative;
 							&:first-child{
 								border-bottom: 1px dotted $color-contrast-low;
@@ -485,7 +487,7 @@ Events / .event-container
 			}
 			.event-start-time, .event-end-time{
 				font-size: 12px;
-				color: rgba(0, 0, 0, $mix-percentage-contrast-medium/100);
+				color: rgba(0, 0, 0, math.div($mix-percentage-contrast-medium, 100));
 			}
 			.event-title{
 				font-size: 14px;
@@ -547,9 +549,9 @@ Events / .event-container
 			}
 			&.slot-15{
 				.tble .trow .tcell {
-					height: 100/4 * 1px;
+					height: math.div(100, 4) * 1px;
 					.cell-inner{
-						height: 100/4 * 1px;
+						height: math.div(100, 4) * 1px;
 						border-bottom: 1px solid $color-contrast-low;
 						&:last-child{
 							border-bottom: 1px solid $color-contrast-low;
@@ -562,7 +564,7 @@ Events / .event-container
 			}
 		}
 		.allday-cell{
-			height: $cell-height/2 * 1px;
+			height: math.div($cell-height, 2) * 1px;
 			display: inline-block;
 			width: 50px;
 			@include float(left);

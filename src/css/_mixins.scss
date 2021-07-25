@@ -1,3 +1,4 @@
+@use "sass:math";
 
 @mixin clearfix() {
   &:before,
@@ -412,7 +413,7 @@
 }
 
 @function fade($color, $opacity){
-  @return fade-out($color, 1- ($opacity/100))
+  @return fade-out($color, 1 - math.div($opacity, 100))
 }
 
 
@@ -497,7 +498,7 @@
   -moz-background-size: $size $size;
   background-size: $size $size;
   -webkit-background-size: $size + 1 $size + 1;
-  background-position:0 0, $size / 2 $size / 2;
+  background-position:0 0, math.div($size, 2) math.div($size, 2);
 }
 
 @mixin ribbon($from, $to, $text, $pos: left) {
@@ -606,12 +607,12 @@ $rem-base: 16px !default;
 // STRIP UNIT
 // It strips the unit of measure and returns it
 @function strip-unit($num) {
-  @return $num / ($num * 0 + 1);
+  @return math.div($num, ($num * 0 + 1));
 }
 
 // CONVERT TO REM
 @function convert-to-rem($value, $base-value: $rem-base)  {
-  $value: strip-unit($value) / strip-unit($base-value) * 1rem;
+  $value: math.div(strip-unit($value), strip-unit($base-value)) * 1rem;
   @if ($value == 0rem) { $value: 0; } // Turn 0rem into 0
   @return $value;
 }

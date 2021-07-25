@@ -1,3 +1,5 @@
+@use "sass:math";
+
 /*------------------------------------------------------------------
 [9. Progress Indicators]
 */
@@ -171,7 +173,8 @@
   margin: 0 auto;
   position: relative;
   width: $size;
-  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+
   &.progress-circle-warning {
     .pie .half-circle {
       border-color: $color-warning;
@@ -209,14 +212,14 @@
     }
   }
   .pie {
-    clip: rect(0, $size, $size, $size / 2);
+    clip: rect(0, $size, $size, math.div($size, 2));
     height: $size;
     position: absolute;
     width: $size;
     .half-circle {
       border: $border solid $color-contrast-high;
       border-radius: 50%;
-      clip: rect(0, $size / 2, $size, 0);
+      clip: rect(0, math.div($size, 2), $size, 0);
       height: $size;
       position: absolute;
       width: $size;

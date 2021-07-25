@@ -22,7 +22,7 @@
 	<script src="assets/js/chess-online.976.js"></script>
 	<script src="assets/js/chess-online.890.js"></script>
 	<script src="assets/js/chess-online.811.js"></script>
-	<script src="assets/js/chess-online.15.js"></script>
+	<script src="assets/js/chess-online.237.js"></script>
 	<script src="assets/js/chess-online.pgn.js"></script>
 	<script>
 		var module = {
