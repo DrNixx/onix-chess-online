@@ -77,6 +77,12 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                                 position: "bottom-right",
                                 style: 'simple' 
                             });
+                        } else if (ctx?.data?.c == "telegram") {
+                            if (window.location.href.indexOf('settings/telegram') !== -1) {
+                                window.location.reload();
+                            }
+
+                            return;
                         }
 
                         that.fetchNotifyData();
