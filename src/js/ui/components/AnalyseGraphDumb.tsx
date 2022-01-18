@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Unsubscribe } from 'redux';
 import { SafeAnchor, Container, Row, Col } from 'react-bootstrap';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';

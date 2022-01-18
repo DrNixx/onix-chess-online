@@ -1,5 +1,5 @@
-import * as React from 'react';
-import classNames from 'classnames';
+import React from 'react';
+import clsx from "clsx";
 import { SafeAnchor } from 'react-bootstrap';
 import { ConnectionStatus } from '../../net/ConnectionStatus';
 
@@ -28,7 +28,7 @@ export class ConnectionInfo extends React.Component<ConnectionInfoProps, {}> {
 
         return (
             <span><SafeAnchor href="#" onClick={onClick} >
-                <div className={classNames('status-icon', classc)}></div> {name}
+                <div className={clsx('status-icon', classc)}></div> {name}
             </SafeAnchor></span>
         );
     }

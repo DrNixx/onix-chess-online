@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { MovesGraphProps } from './MovesGraphProps';
 import MovesGraphDumb from './MovesGraphDumb';
 

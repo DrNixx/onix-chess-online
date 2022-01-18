@@ -1,5 +1,5 @@
 import { fromPairs } from 'lodash';
-import * as React from 'react';
+import React from 'react';
 import { Button, ButtonGroup, ButtonToolbar } from 'react-bootstrap';
 import { Move } from '../../chess/Move';
 

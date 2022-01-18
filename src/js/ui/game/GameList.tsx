@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from "clsx";
 import React, { useEffect} from 'react';
 import * as ReactDOM from 'react-dom';
 import Scrollbar from "react-scrollbars-custom";
@@ -202,7 +202,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
                     const left = formatInterval(timestampToInterval(player.user.postpone.rest), 1)
                     return (
                         <OverlayTrigger placement="right" overlay={<Tooltip id={`timer-tooltip-${player.user.id}-${game.game!.id}`}>{_("game", "postpone_rest", {n : left})}</Tooltip>}>
-                            <i className={classNames(ppClass)} data-icon="Z"></i>
+                            <i className={clsx(ppClass)} data-icon="Z"></i>
                         </OverlayTrigger>
                     );
                 }
@@ -210,7 +210,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
         }
 
         return (
-            <i className={classNames(turnClass)} data-icon="p"></i>
+            <i className={clsx(turnClass)} data-icon="p"></i>
         );
     };
 
@@ -421,7 +421,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
         const { state, props, renderRefreshIcon, refreshClick, renderGames } = this;
         const { title } = props.i18n;
         
-        const refrechClass = classNames([
+        const refrechClass = clsx([
             'card-refresh',
             {
                 'refreshing': state.loading

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FormControl, FormControlProps } from 'react-bootstrap';
 
 const boardsData: any = require('onix-board-assets/dist/js/pieces.json');

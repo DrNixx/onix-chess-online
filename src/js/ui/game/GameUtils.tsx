@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from "clsx";
 import * as cg from 'chessground/types';
 import { _ } from '../../i18n/i18n';
 import { formatTimer } from '../../fn/date/formatTimer';
@@ -81,7 +81,7 @@ export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position
                 return null;
             }
 
-            return (<div className={classNames(timerClass)} >{timerIcon(isActive)}<span>{formatTimer(time)}</span></div>);
+            return (<div className={clsx(timerClass)} >{timerIcon(isActive)}<span>{formatTimer(time)}</span></div>);
         }
     }
 

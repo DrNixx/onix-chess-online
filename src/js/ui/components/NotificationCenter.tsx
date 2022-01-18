@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
-import classNames from 'classnames';
+import clsx from "clsx";
 import { notify } from 'pages-ts';
 import { appInstance } from '../../app/IApplication';
 import { Avatar } from '../user/Avatar';
@@ -183,12 +183,12 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { i18n } = props;
         const { details } = state;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 
         const detailVisible = !!details.get(notify.id);
-        const headingClass = classNames("heading", { "open": detailVisible });
+        const headingClass = clsx("heading", { "open": detailVisible });
 
         return (
             <div className={itemClass} key={notify.id}>
@@ -227,7 +227,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 
@@ -254,7 +254,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 
@@ -281,7 +281,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 
@@ -308,7 +308,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 
@@ -335,7 +335,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { props, renderMarkRead, timeAgo } = this;
         const { i18n } = props;
 
-        const itemClass = classNames("notification-item", "clearfix", {
+        const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
 

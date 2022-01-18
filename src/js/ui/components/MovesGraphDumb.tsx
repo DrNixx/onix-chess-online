@@ -1,5 +1,5 @@
 import toSafeInteger from 'lodash/toSafeInteger';
-import * as React from 'react';
+import React from 'react';
 import { Unsubscribe } from 'redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import { ResponsiveContainer, BarChart, Bar, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';

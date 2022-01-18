@@ -1,84 +1,56 @@
-import * as React from 'react';
-import { InputGroup, FormControl, FormControlProps, Button } from 'react-bootstrap';
-import { notify } from 'pages-ts';
+import React, {useState, useEffect} from 'react';
+import clsx from "clsx";
+import { useSnackbar } from 'notistack';
+import IconButton from '@mui/material/IconButton';
+import Input, { InputProps } from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import CopyIcon from '@mui/icons-material/CopyAll';
+
 import { copy } from '../CopyToClipboard';
 import { i18n, _ } from '../../i18n/i18n';
 
-export interface TextWithCopyProps extends FormControlProps {
-    value?: string,
-    placeholder?: string,
-    icon?: string,
-    name?: string,
+type TextWithCopyProps = InputProps & {
+    icon?: React.ReactNode;
 }
 
-export interface TextWithCopyState {
-    className: string;
-}
+const TextWithCopy: React.FC<TextWithCopyProps> = (props) => {
+    const { enqueueSnackbar } = useSnackbar();
+    const {icon, className, readOnly, endAdornment, ...other} = props;
 
-export class TextWithCopy extends React.Component<TextWithCopyProps, TextWithCopyState> {
-    public static defaultProps: TextWithCopyProps = {
-        icon: 'fa fa-copy',
-    }
+    const [elementClass, setElementClass] = useState("");
 
-    /**
-     * constructor
-     */
-    constructor(props: TextWithCopyProps) {
-        super(props);
-
+    useEffect(() => {
         i18n.register();
-        
-        this.state = { 
-            className: "",
-        };
-    }
+    },[]);
 
-    private onCopy = () => {
-        if (copy(this.props.value)) {
-            notify({
-                message: _("core", "copied"),
-                position: "bottom-right",
-                style: 'simple' 
-            });
-            
-            this.setSuccess();
+    const onCopy = () => {
+        const value = typeof props.value === 'string' ? props.value : undefined;
+        if (copy(value)) {
+            enqueueSnackbar(_("core", "copied"));
+            setElementClass("text-success");
+            setTimeout(() => setElementClass(""), 3000);
         }
-    }
+    };
 
-    private setSuccess = () => {
-        const that = this;
-        this.setState({ 
-            className: 'text-success',
-        }, function() {
-            setTimeout(that.setPrimary, 2000);
-        });
-    }
+    return (
+        <Input
+            className={clsx(elementClass, className)}
+            readOnly={true}
+            {...other}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={_("chess-ctrls", "copy_to_clipboard")}
+                  onClick={onCopy}
+                  onMouseDown={onCopy}>{icon}</IconButton>
+              </InputAdornment>
+            }
+          />
+    );
+};
 
-    private setPrimary = () => {
-        this.setState({ 
-            className: "",
-        });
-    }
-
-    render() {
-        let { id, size, placeholder, readOnly, icon, ...elementProps } = this.props;
-
-        return (
-            <InputGroup size={size}>
-                <FormControl 
-                    size={size}
-                    className={this.state.className} 
-                    {...elementProps}
-                    readOnly={true} 
-                    placeholder={placeholder} />
-                <InputGroup.Append>
-                    <Button 
-                        variant="primary" 
-                        tabIndex={-1}
-                        onClick={this.onCopy} 
-                        title={_("chess-ctrls", "copy_to_clipboard")}><i className={icon}></i></Button>
-                </InputGroup.Append>
-            </InputGroup>
-        );
-    }
+TextWithCopy.defaultProps = {
+    icon: <CopyIcon />
 }
+
+export default TextWithCopy;

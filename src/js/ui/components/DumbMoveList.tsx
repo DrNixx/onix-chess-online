@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import Scrollbar from "react-scrollbars-custom";
-import classNames from 'classnames';
+import clsx from "clsx";
 import { NavigatorMode } from './Constants';
 import { Move } from '../../chess/Move';
 import { Colors } from '../../chess/types/Types';
@@ -40,7 +40,7 @@ export class DumbMoveList extends DumbMoveElement {
             ['active']: (x.moveKey === p)
         };
 
-        const moveClasses = classNames('move', myclass, classes);
+        const moveClasses = clsx('move', myclass, classes);
 
         if (x.moveKey === p) {
             this.activeMove = uid;

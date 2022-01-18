@@ -1,5 +1,5 @@
-import * as React from 'react';
-import classNames from 'classnames';
+import React from 'react';
+import clsx from "clsx";
 import { Chess } from '../../chess/Chess';
 import { Move } from '../../chess/Move';
 import { IChessOpening } from '../../chess/types/Interfaces';

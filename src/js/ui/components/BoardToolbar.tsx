@@ -1,5 +1,5 @@
-import classNames from 'classnames';
-import * as React from 'react';
+import clsx from "clsx";
+import React from 'react';
 import { _ } from '../../i18n/i18n';
 import * as BoardActions from '../../actions/BoardActions';
 import { CombinedGameStore } from '../../actions/CombinedGameStore';
@@ -30,7 +30,7 @@ export class BoardToolbar extends React.Component<BoardToolbarProps, {}> {
             store.dispatch({ type: BoardActions.MOVE_TABLE } as BoardActions.BoardAction)
         }
 
-        const movesClass = classNames("btn btn-default", {
+        const movesClass = clsx("btn btn-default", {
             'active': !!s.board.moveTable
         })
 

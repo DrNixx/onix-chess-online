@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
-import classNames from 'classnames';
+import clsx from "clsx";
 import Scrollbar from "react-scrollbars-custom";
 import {Tab, Nav, Fade} from "react-bootstrap";
 import { OnixStorage, storage } from '../../storage';
@@ -341,7 +341,7 @@ export class ForumWidget extends React.Component<IForumWidgetProps, IForumWidget
         const { state, props, activeKey, renderRefreshIcon, refreshClick, renderTabs, renderPanes } = this;
         const { forums } = props.i18n;
 
-        const refrechClass = classNames([
+        const refrechClass = clsx([
             'card-refresh',
             {
                 'refreshing': state.loading

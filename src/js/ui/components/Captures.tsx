@@ -1,6 +1,6 @@
-import classNames from 'classnames';
+import clsx from "clsx";
 import toSafeInteger from 'lodash/toSafeInteger';
-import * as React from 'react';
+import React from 'react';
 import { GameActions } from '../../actions/GameActions';
 import { GameRelatedStore } from '../../actions/GameStore';
 import { Color } from '../../chess/Color';
@@ -64,7 +64,7 @@ export class Captures extends React.Component<CapturesProps, {}> {
                         const pc = (
                             <div key={i} data-kind="square" className="no-square">
                                 <div>
-                                    <div data-kind="piece" className={classNames(pieceClass)} onClick={pieceClick} data-ply={i} />
+                                    <div data-kind="piece" className={clsx(pieceClass)} onClick={pieceClick} data-ply={i} />
                                 </div>
                             </div>
                         );
@@ -81,7 +81,7 @@ export class Captures extends React.Component<CapturesProps, {}> {
             }
 
             return (
-                <div className={classNames("size2 captures", this.props.piece)}>
+                <div className={clsx("size2 captures", this.props.piece)}>
                     <div className="captures-white d-flex flex-row flex-wrap">{white}</div>
                     <div className="captures-black d-flex flex-row flex-wrap">{black}</div>
                 </div>

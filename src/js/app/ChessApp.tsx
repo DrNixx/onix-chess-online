@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
+import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
 import { Logger } from '../common/Logger';
 import Centrifuge from 'centrifuge';
@@ -155,7 +156,9 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     render() {
         const { status } = this.state;
         return (
-            <ConnectionInfo status={status}></ConnectionInfo>
+            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
+                <ConnectionInfo status={status} />
+            </SnackbarProvider>
         );
     }
 }

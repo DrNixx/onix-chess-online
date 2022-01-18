@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {Md5} from 'ts-md5/dist/md5';
 import { IUser } from '../../app/IUser';
 import { AvatarSizeMap, AvatarSizeType } from './Interfaces';

@@ -1,9 +1,9 @@
-import classNames from 'classnames';
-import * as React from 'react';
+import clsx from "clsx";
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
 import { Container, Row, Col, FormGroup, FormLabel, FormCheck, Form, Button } from 'react-bootstrap';
-import { BoardSize, BoardSizeClass } from 'onix-board-assets';
+import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
@@ -18,7 +18,7 @@ import { BoardSettings, defaultSettings } from '../../chess/settings/BoardSettin
 import * as BoardActions from '../../actions/BoardActions';
 import { BoardStore, createBoardStore } from '../../actions/BoardReducer';
 
-import { SizeSelector } from '../controls/SizeSelector';
+import SizeSelector from '../controls/SizeSelector';
 import { PieceSelector } from '../controls/PieceSelector';
 import { SquareSelector } from '../controls/SquareSelector';
 import { Chess } from '../../chess/Chess';
@@ -281,7 +281,7 @@ class ConfigureGameComponent extends React.Component<BoardSettings, {}> {
 
         const containerClass = [
             square,
-            BoardSizeClass[size],
+            BoardSizeClasses[size],
             { 
                 "coords-no": !coordinates,
                 "is2d": !is3d,
@@ -290,12 +290,12 @@ class ConfigureGameComponent extends React.Component<BoardSettings, {}> {
         ];
 
         return (
-            <Container fluid={true} className={classNames(containerClass)}>
+            <Container fluid={true} className={clsx(containerClass)}>
                 <Row>
                     <Col md={12}>
                         <div className="d-block d-lg-flex mb-2">
                             <div>
-                                <div className={classNames("board-container", piece)}>
+                                <div className={clsx("board-container", piece)}>
                                     <div className="py-2">
                                         <div className="main-board" ref={el => this.boardElement = el} />
                                     </div>

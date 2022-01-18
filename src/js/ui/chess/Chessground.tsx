@@ -1,11 +1,11 @@
-import * as React from 'react';
-import classNames from 'classnames';
+import React from 'react';
+import clsx from "clsx";
 import { Container, Modal, CardGroup } from 'react-bootstrap';
 import * as cg from 'chessground/types';
 import { Chessground as ChessgroundNative } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
-import { BoardSize, BoardSizeClass } from 'onix-board-assets';
+import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
 
 export interface BoardProps {
     locale?: string,
@@ -98,13 +98,13 @@ export class Chessground extends React.Component<BoardProps, BoardState> {
             "pos-builder", 
             "is2d",
             square,
-            BoardSizeClass[size],
+            BoardSizeClasses[size],
             { "coords-no": !(board.coordinates) }
         ];
 
         return (
-            <Container className={classNames(containerClass)}>
-                <div className={classNames("board-container", piece)}>
+            <Container className={clsx(containerClass)}>
+                <div className={clsx("board-container", piece)}>
                     <div className="main-board" ref={el => this.boardElement = el} />
                     { renderPromotion() }
                 </div>

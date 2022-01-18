@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import { nanoid } from 'nanoid';
 import Scrollbar from 'react-scrollbars-custom';
-import classNames from 'classnames';
+import clsx from "clsx";
 import { Move } from '../../chess/Move';
 
 import { NavigatorMode } from './Constants';
@@ -43,7 +43,7 @@ export class DumbMoveTable extends DumbMoveElement {
         };
 
         result.push(
-            <div className={classNames('move', myclass)} key={nanoid(8)}>
+            <div className={clsx('move', myclass)} key={nanoid(8)}>
                 <div className="san">...</div>
             </div>
         );
@@ -89,7 +89,7 @@ export class DumbMoveTable extends DumbMoveElement {
             evals.push(<div className="eval" key={`eval_${moveKey}`}>{sign}{ev.advantage}</div>);
         }
 
-        const moveClasses = classNames('move', myclass, classes);
+        const moveClasses = clsx('move', myclass, classes);
 
         result.push(
             <div

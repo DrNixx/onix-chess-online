@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import classNames from 'classnames';
+import clsx from "clsx";
 import { Card, Col, Row, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { sprintf } from '../../fn/string/Sprintf';
 import { _ } from '../../i18n/i18n';
@@ -246,7 +246,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
                     <Col className="mb-1" md={12}>
                         <span>
                             <span>{_("game", "timeControl")}</span>: <span className="label">{gameClock.limit}</span>
-                            <span className={classNames(ppClass)}>{_("game", canPP)}</span>
+                            <span className={clsx(ppClass)}>{_("game", canPP)}</span>
                         </span>
                     </Col>
                 </Row>
@@ -294,7 +294,7 @@ export class GameInfo extends React.Component<GameInfoProps, {}> {
                         <Row>
                             <Col className="mb-1" md={12}>
                                 <span>
-                                    <span>{_("game", "useCompHints")}</span>: <span className={classNames(ucClass)}>{_("game", compName)}</span>
+                                    <span>{_("game", "useCompHints")}</span>: <span className={clsx(ucClass)}>{_("game", compName)}</span>
                                 </span>
                             </Col>
                         </Row>

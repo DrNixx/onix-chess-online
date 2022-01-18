@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FormControl, FormControlProps } from 'react-bootstrap';
 import { i18n, _ } from '../../i18n/i18n';
 import { FenFormat, FenString } from '../../chess/FenString';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FormGroup, Row, Col, FormLabel } from 'react-bootstrap';
 import { Logger } from '../common/Logger';
 import { _ } from '../i18n/i18n';

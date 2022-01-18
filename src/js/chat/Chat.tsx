@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { _ } from '../i18n/i18n';
 import { IChatMessage } from './Interfaces';

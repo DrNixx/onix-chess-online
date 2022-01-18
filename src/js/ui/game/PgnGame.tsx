@@ -1,12 +1,12 @@
-import classNames from 'classnames';
-import * as React from 'react';
+import clsx from "clsx";
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
 import { Container, Row, Col, Tabs, Tab, Nav } from 'react-bootstrap';
 
 import { Chessground } from 'chessground';
 import { Api } from 'chessground/api';
-import { BoardSizeClass } from 'onix-board-assets';
+import { BoardSizeClasses } from 'onix-board-assets';
 
 import { i18n, _ } from '../../i18n/i18n';
 
@@ -168,7 +168,7 @@ class PgnGameComponent extends React.Component<GameProps, GameState> {
 
         const containerClass = [
             square,
-            BoardSizeClass[size],
+            BoardSizeClasses[size],
             { 
                 "coords-no": !coordinates,
                 "is2d": !is3d,
@@ -177,12 +177,12 @@ class PgnGameComponent extends React.Component<GameProps, GameState> {
         ];
 
         return (
-            <Container fluid={true} className={classNames(containerClass)}>
+            <Container fluid={true} className={clsx(containerClass)}>
                 <Row>
                     <Col md={12}>
                         <div className="d-block d-md-flex flex-wrap mb-2">
                             <div>
-                                <div className={classNames("board-container", piece)}>
+                                <div className={clsx("board-container", piece)}>
                                     <Row>
                                         <Col md={6}>
                                             {renderPlayer(game.engine, board.orientation, "top")} 

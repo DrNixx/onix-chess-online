@@ -1,6 +1,6 @@
 import React, { useEffect} from 'react';
 import { nanoid } from 'nanoid';
-import classNames from 'classnames';
+import clsx from "clsx";
 import isString from "lodash/isString";
 import {OverlayTrigger, Popover, PopoverProps} from "react-bootstrap";
 import { Logger } from '../../common/Logger';
@@ -168,17 +168,17 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         if (popover && user.id) {
             return (
                 <OverlayTrigger rootClose={true} trigger="click" placement="auto" onToggle={this.onPopupToggle} overlay={this.popoverElement()}>
-                    <span className={classNames(unClass)}>{display}</span>
+                    <span className={clsx(unClass)}>{display}</span>
                 </OverlayTrigger>
             );
         } else {
             if (user.id) {
                 return(
-                    <a href={userLink} className={classNames(unClass)}>{display}</a>
+                    <a href={userLink} className={clsx(unClass)}>{display}</a>
                 );
             } else {
                 return(
-                    <span className={classNames(unClass)}>{display}</span>
+                    <span className={clsx(unClass)}>{display}</span>
                 );
             }
             
@@ -207,7 +207,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         if (user) {
             const userLink = `/${language}/@/${user.id}`;
-            const picClass = classNames(size?.toLowerCase(), "rounded upic")
+            const picClass = clsx(size?.toLowerCase(), "rounded upic")
             return (
                 <div className="username-block">
                     <div className="upic-wrapper">

@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import toSafeInteger from 'lodash/toSafeInteger';
-import classNames from 'classnames';
+import clsx from "clsx";
 import { Row, Col, Button, FormGroup, FormControl, FormLabel, FormCheck, Container, Card } from 'react-bootstrap';
 
 import * as cg from 'chessground/types';
@@ -625,9 +625,9 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 ];
 
                 return (
-                    <div key={i} className={classNames(sqClass)}>
+                    <div key={i} className={clsx(sqClass)}>
                         <div>
-                            <div className={classNames(pieceClass)} data-kind="piece"
+                            <div className={clsx(pieceClass)} data-kind="piece"
                                 onMouseDown={onSelectSparePiece(s, "mouseup")} 
                                 onTouchStart={onSelectSparePiece(s, "touchend")} 
                                 onTouchMove={onTouchMove} {...attrs}></div>
@@ -645,7 +645,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
 
         return (
-            <div className={classNames(spareClass)}>
+            <div className={clsx(spareClass)}>
                 { renderPieces() }
             </div>
         );
@@ -784,15 +784,15 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         const cursor = selectedToCursor(selected);
                 
         return (
-            <Container className={classNames(containerClass)}>
+            <Container className={clsx(containerClass)}>
                 <Row>
                     <Col md={12}>
                         <div className="d-block d-lg-flex">
-                            <div className={classNames("board-container", piece)}>
+                            <div className={clsx("board-container", piece)}>
                                 <div className="holder-container">
                                     { renderSpare((flipped ? "white": "black"), "top") }
                                 </div>
-                                <div className={classNames(cursor)}
+                                <div className={clsx(cursor)}
                                     onTouchStart={boardEvent}
                                     onTouchMove={boardEvent}
                                     onMouseDown={boardEvent}

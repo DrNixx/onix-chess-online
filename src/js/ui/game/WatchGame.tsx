@@ -1,5 +1,5 @@
-import classNames from 'classnames';
-import * as React from 'react';
+import clsx from "clsx";
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Unsubscribe } from 'redux';
 import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
@@ -11,7 +11,7 @@ import { i18n, _ } from '../../i18n/i18n';
 
 import { Color } from '../../chess/Color';
 
-import { BoardSizeClass } from 'onix-board-assets';
+import { BoardSizeClasses } from 'onix-board-assets';
 
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 
@@ -211,7 +211,7 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
 
         const containerClass = [
             square,
-            BoardSizeClass[size],
+            BoardSizeClasses[size],
             { 
                 "coords-no": !coordinates,
                 "is2d": !is3d,
@@ -220,12 +220,12 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
         ];
 
         return (
-            <Container fluid={true} className={classNames(containerClass)}>
+            <Container fluid={true} className={clsx(containerClass)}>
                 <Row>
                     <Col md={12}>
                         <div className="d-block d-md-flex flex-wrap mb-2">
                             <div>
-                                <div className={classNames("board-container", piece)}>
+                                <div className={clsx("board-container", piece)}>
                                     <Row>
                                         <Col xs={6}>
                                             {renderPlayer(game.engine, board.orientation, "top")} 
