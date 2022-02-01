@@ -1,6 +1,8 @@
 import React from 'react';
 import clsx from "clsx";
-import { SafeAnchor } from 'react-bootstrap';
+
+import Button from "@mui/material/Button";
+
 import { ConnectionStatus } from '../../net/ConnectionStatus';
 
 export interface ConnectionInfoProps  {
@@ -27,9 +29,9 @@ export class ConnectionInfo extends React.Component<ConnectionInfoProps, {}> {
         const classc = classes[status];
 
         return (
-            <span><SafeAnchor href="#" onClick={onClick} >
-                <div className={clsx('status-icon', classc)}></div> {name}
-            </SafeAnchor></span>
+            <span><Button variant="text" href="#" onClick={onClick} >
+                <div className={clsx('status-icon', classc)} /> {name}
+            </Button></span>
         );
     }
 }

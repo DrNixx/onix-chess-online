@@ -1,7 +1,6 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 import React from 'react';
 import { Unsubscribe } from 'redux';
-import { Container, Row, Col } from 'react-bootstrap';
 import { ResponsiveContainer, BarChart, Bar, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Chess as ChessEngine } from '../../chess/Chess';
 import { MovesGraphProps } from './MovesGraphProps';
@@ -9,6 +8,9 @@ import { i18n, _ } from '../../i18n/i18n';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { GameActions } from '../../actions/GameActions';
 import { GameRelatedStore } from '../../actions/GameStore';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import {Color} from "../../chess/Color";
 
 interface IGraphData {
     turn: string|number;
@@ -156,20 +158,20 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
                     </ResponsiveContainer>
                 </div>
                 <div className="graph-totals align-self-stretch">
-                    <Container className="h-100">
-                        <Row className="h-100">
-                            <Col xs={6} lg={12} className="white py-3">
+                    <Box className="h-100">
+                        <Grid container spacing={2} className="h-100">
+                            <Grid item xs={6} lg={12} className="white py-3">
                                 <span className="h-100 d-flex justify-content-center align-items-center">
                                     <label>{formatTimer(totalWhite)}</label>
                                 </span>
-                            </Col>
-                            <Col xs={6} lg={12} className="black  py-3">
+                            </Grid>
+                            <Grid item xs={6} lg={12} className="black py-3">
                                 <span className="h-100 d-flex justify-content-center align-items-center">
                                     <label>{formatTimer(totalBlack)}</label>
                                 </span>
-                            </Col>
-                        </Row>
-                    </Container>
+                            </Grid>
+                        </Grid>
+                    </Box>
                 </div>
                 
             </div>

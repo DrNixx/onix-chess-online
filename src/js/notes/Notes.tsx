@@ -1,6 +1,5 @@
 import React from 'react';
 import Scrollbar from "react-scrollbars-custom";
-import { FormGroup, Row, Col, FormLabel } from 'react-bootstrap';
 import { _ } from '../i18n/i18n';
 import { INote } from './Interfaces';
 

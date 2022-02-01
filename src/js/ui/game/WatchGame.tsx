@@ -1,142 +1,54 @@
-import clsx from "clsx";
-import React from 'react';
+import React, {useState, useRef} from 'react';
+import {shallowEqual, useSelector} from "react-redux";
 import * as ReactDOM from 'react-dom';
-import { Unsubscribe } from 'redux';
-import { Container, Row, Col, Tab, Nav } from 'react-bootstrap';
 
-import { Chessground } from 'chessground';
-import { Api } from 'chessground/api';
+import Box from "@mui/material/Box";
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
-import { i18n, _ } from '../../i18n/i18n';
+import {Api } from 'chessground/api';
 
-import { Color } from '../../chess/Color';
+import {_} from '../../i18n/i18n';
 
-import { BoardSizeClasses } from 'onix-board-assets';
+import {GameProps, defaultProps} from '../../chess/settings/GameProps';
 
-import { GameProps, defaultProps } from '../../chess/settings/GameProps';
+import {CombinedGameState} from '../../actions/CombinedGameState';
+import {GameState} from "../../actions/GameState";
 
-import * as BoardActions from '../../actions/BoardActions';
-import { createCombinedGameStore, CombinedGameStore } from '../../actions/CombinedGameStore';
-import { createCombinedGameState } from '../../actions/CombinedGameState';
+import BoardToolbar from '../components/BoardToolbar';
+import Captures from '../components/Captures';
+import ChessMoves from '../components/ChessMoves';
+import GameInfo from './GameInfo';
+import GameWrapper from "./GameWrapper";
 
-import { ChessMoves } from '../components/ChessMoves';
 import { NavigatorMode, MovesMode } from '../components/Constants';
-import { Captures } from '../components/Captures';
-
-import { renderPlayer, renderTimer } from './GameUtils';
-import { GameInfo } from './GameInfo';
-import { BoardToolbar } from '../components/BoardToolbar';
+import { renderTimer } from './GameUtils';
 import { Chat } from '../../chat/Chat';
+import {BoardState} from "../../actions/BoardState";
+import DumbGame from "./DumbGame";
 
-interface GameState {
-}
+const WatchGame: React.VFC<GameProps> = (props) => {
+    const { board: boardCfg } = props;
 
-class WatchGameComponent extends React.Component<GameProps, GameState> {
-    public static defaultProps: GameProps = defaultProps;
+    const [tabToolbar, setTabToolbar] = useState("moves");
 
-    private storeUnsubscribe?: Unsubscribe = undefined;
+    const cgRef = useRef<Api>();
+    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
+    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
 
-    private store: CombinedGameStore;
-
-    private cg?: Api = undefined;
-
-    private boardElement: HTMLDivElement | null = null;
-
-    constructor(props: GameProps) {
-        super(props);
-
-        i18n.register();
-
-        const state = createCombinedGameState(this.props);
-
-        this.store = createCombinedGameStore(state);
-    }
-
-    componentDidMount() {
-        const { store } = this;
-        const { board, game }  = store.getState();
-
-        this.storeUnsubscribe = this.store.subscribe(() =>
-            this.updateState()
-        );
-
-        this.cg = Chessground(this.boardElement!, {
-            fen: game.fen,
-            orientation: board.orientation,
-            coordinates: board.coordinates,
-            turnColor: Color.toName(game.engine.ToMove),
-            viewOnly: true,
-            lastMove: game.lastMove,
-            check: game.isCheck,
-            highlight: {
-                lastMove: true,
-                check: true
-            },
-            events: {
-                // change: onPositionChange
-            },
-        });
-
-        window.addEventListener("resize", this.redrawBoard);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.redrawBoard);
-
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.destroy();
-        }
-
-        if (this.storeUnsubscribe) {
-            this.storeUnsubscribe();
-        }
-        
-    }
-
-    private redrawBoard = () => {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.redrawAll();
-        }
-    };
-
-    private updateState = () => {    
-        this.forceUpdate();
-    };
-
-
-    gameDisconnect = () => {
-        
-    }
-
-    loadGame = () => {
-        
-    }
-
-
-    private flipBoard = () => {
-        this.store.dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
-    };
-
-    private renderChatTab = () => {
-        const { store } = this;
-        const { game } = store.getState();
-
+    const renderChatTab = () => {
         if (game.engine.ObserverId) {
             return (
-                <Nav.Item>
-                    <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
-                </Nav.Item>
+                <Tab label={_("game", "chatTab")} value="chat" />
             );
         }
 
         return null;
     };
 
-    private renderChatContent = () => {
-        const { store } = this;
-        const { game } = store.getState();
+    const renderChatContent = () => {
         const { engine } = game;
 
         if (engine.ObserverId) {
@@ -146,119 +58,69 @@ class WatchGameComponent extends React.Component<GameProps, GameState> {
             }
 
             return (
-                <Tab.Pane eventKey="chat">
+                <TabPanel sx={{p: 0}} value="chat">
                     <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
-                </Tab.Pane>
+                </TabPanel>
             );
         }
 
         return null;
     };
 
-    private renderControls = () => {
-        const { props, store, renderChatTab, renderChatContent } = this;
-        const { board: boardCfg } = props;
-        const { board } = store.getState();
+    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabToolbar(newValue);
+    };
 
+    const renderControls = () => {
         return (
-            <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
-                <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
-                <Tab.Container defaultActiveKey="moves">
-                    <Nav variant="tabs" className="nav-tabs-simple" onSelect={(eventKey: any, event: React.SyntheticEvent<unknown>) => { (event.target as HTMLElement).blur(); }}>
-                        <Nav.Item>
-                            <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="info">{_("game", "infoTab")}</Nav.Link>
-                        </Nav.Item>
-                        { renderChatTab() }
-                    </Nav>
-                    <Tab.Content className="p-0">
-                        <Tab.Pane eventKey="moves">
+            <div className="controls flex-grow-1 d-flex flex-column ms-md-4">
+                <BoardToolbar configUrl={boardCfg.configUrl} />
+                <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={tabToolbar}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleTabChange}>
+                                <Tab label={_("game", "movesTab")} value="moves" />
+                                <Tab label={_("game", "infoTab")} value="info" />
+                                { renderChatTab() }
+                            </TabList>
+                        </Box>
+                        <TabPanel sx={{p: 0}} value="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={false} />
+                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
-                                    <Captures store={this.store} piece={this.props.board.piece!} />
+                                    <Captures piece={boardCfg.piece!} />
                                 </div>
                             </div>
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="info">
-                            <GameInfo store={this.store} />
-                        </Tab.Pane>
+                        </TabPanel>
+                        <TabPanel sx={{p: 0}} value="info">
+                            <GameInfo />
+                        </TabPanel>
                         { renderChatContent() }
-                    </Tab.Content>
-                </Tab.Container>
+                    </TabContext>
+                </Box>
             </div>
         );
     };
 
-    render() {
-        const { props, store, flipBoard } = this;
-        const { board, game } = store.getState();
-        const { square, piece, size, coordinates, is3d } = board;
-        
-        if (this.cg) {
-            this.cg.set({
-                fen: game.fen,
-                lastMove: game.lastMove,
-                check: game.isCheck,
-                orientation: board.orientation,
-                coordinates: board.coordinates,
-            });
-        }
+    return (
+        <DumbGame
+            cgRef={(api) => cgRef.current = api ?? undefined}
+            controlsLeft={renderControls()}
+            controlsTop={renderTimer(game.engine, board.orientation, "top")}
+            controlsBottom={renderTimer(game.engine, board.orientation, "bottom")} />
+    );
+};
 
-        const containerClass = [
-            square,
-            BoardSizeClasses[size],
-            { 
-                "coords-no": !coordinates,
-                "is2d": !is3d,
-                "is3d": is3d
-            }
-        ];
+WatchGame.defaultProps = defaultProps;
 
-        return (
-            <Container fluid={true} className={clsx(containerClass)}>
-                <Row>
-                    <Col md={12}>
-                        <div className="d-block d-md-flex flex-wrap mb-2">
-                            <div>
-                                <div className={clsx("board-container", piece)}>
-                                    <Row>
-                                        <Col xs={6}>
-                                            {renderPlayer(game.engine, board.orientation, "top")} 
-                                        </Col>
-                                        <Col className="text-right" xs={6}>
-                                            {renderTimer(game.engine, board.orientation, "top")} 
-                                        </Col>
-                                    </Row>
-                                    <Row className="py-2">
-                                        <Col>
-                                            <div className="main-board" ref={el => this.boardElement = el} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={6}>
-                                            {renderPlayer(game.engine, board.orientation, "bottom")}
-                                        </Col>
-                                        <Col className="text-right" xs={6}>
-                                            {renderTimer(game.engine, board.orientation, "bottom")} 
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </div>
-                            { this.renderControls() }
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
-        );
-    }
-}
-
+const GameRunner: React.VFC<GameProps> = (props) => {
+    return (
+        <GameWrapper GameComponent={WatchGame} {...props} />
+    );
+};
 
 export const watchGame = (props: GameProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(WatchGameComponent, props), container, () => { });
+    ReactDOM.render(React.createElement(GameRunner, props), container, () => { });
 };

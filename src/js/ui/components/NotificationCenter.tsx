@@ -1,12 +1,14 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
 import clsx from "clsx";
+
+import Tooltip from '@mui/material/Tooltip';
+
 import { notify } from 'pages-ts';
 import { appInstance } from '../../app/IApplication';
 import { Avatar } from '../user/Avatar';
 import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Scrollbar } from 'react-scrollbars-custom';
 import { IChallengeAcceptContent, IChallengeCancelContent, IChallengeDeclineContent, IChallengeNewContent, IJoinAcceptContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
 
@@ -156,14 +158,12 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         const { i18n } = this.props;
 
         if (notify.read) {
-            return (<div className="option"><span className="mark"></span></div>);
+            return (<div className="option"><span className="mark" /></div>);
         } else {
             return (
-                <OverlayTrigger placement="right" overlay={<Tooltip id={`notify-tooltip-${notify.id}`}>{i18n.markRead}</Tooltip>}>
-                    <div className="option" data-toggle="tooltip" data-placement="left" title={i18n.markRead}>
-                        <a href="#" className="mark" onClick={(e) => this.markRead(e, notify.id)}></a>
-                    </div>
-                </OverlayTrigger>
+                <Tooltip title={i18n.markRead}>
+                    <a href="#" className="mark" onClick={(e) => this.markRead(e, notify.id)} />
+                </Tooltip>
             );
         }
     };
@@ -203,7 +203,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                         </a>
                         <div className="pull-right">
                             <div className="thumbnail-wrapper d16 circular inline m-t-15 m-r-10" onClick={(e) => toggleDetail(e, notify.id)}>
-                                <div><i className="fa fa-angle-left"></i></div>
+                                <div><i className="fa fa-angle-left" /></div>
                             </div>
                         </div>
                     </div>
@@ -402,6 +402,8 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 
         // { hasEvents ? (<span className="bubble"></span>) : "" }
         return (
+            <></>
+            /*
             <Dropdown className="notification-center">
                 <Dropdown.Toggle as="a" href="#" className="header-icon btn-icon-link" bsPrefix="notification">
                     <i data-icon="" data-count={countEvents} className={ hasEvents ? "active" : ""} />
@@ -421,6 +423,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                     </div>
                 </Dropdown.Menu>            
             </Dropdown>
+             */
         );
     }
 }

@@ -1,52 +1,73 @@
+import React from "react";
+import {useDispatch} from "react-redux";
 import clsx from "clsx";
-import React from 'react';
-import { _ } from '../../i18n/i18n';
-import * as BoardActions from '../../actions/BoardActions';
-import { CombinedGameStore } from '../../actions/CombinedGameStore';
-import { ButtonToolbar } from 'react-bootstrap';
+import { _ } from "../../i18n/i18n";
+import * as BoardActions from "../../actions/BoardActions";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import IconButton from "@mui/material/IconButton";
+import Icon from "@mui/material/Icon";
+import {useSelector} from "react-redux";
+import {CombinedGameState} from "../../actions/CombinedGameState";
+import {BoardState} from "../../actions/BoardState";
 
 
-export interface BoardToolbarProps {
-    store: CombinedGameStore,
+type BoardToolbarProps = {
     configUrl?: string
 }
 
-export class BoardToolbar extends React.Component<BoardToolbarProps, {}> {
-    /**
-     * constructor
-     */
-    constructor(props: BoardToolbarProps) {
-        super(props);
-    }
+const BoardToolbar: React.FC<BoardToolbarProps> = (props) => {
+    const { configUrl, children } = props;
 
-    render() {
-        const { store, configUrl, children } = this.props;
-        const s = store.getState();
-        const flipBoard = () => {
-            store.dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
-        };
+    const board = useSelector<CombinedGameState, BoardState>((state) => state.board );
+    const dispatch = useDispatch();
 
-        const toggleMoves = () => {
-            store.dispatch({ type: BoardActions.MOVE_TABLE } as BoardActions.BoardAction)
-        }
+    const flipBoard = () => {
+        dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
+    };
 
-        const movesClass = clsx("btn btn-default", {
-            'active': !!s.board.moveTable
-        })
+    const toggleMoves = () => {
+        dispatch({ type: BoardActions.MOVE_TABLE } as BoardActions.BoardAction)
+    };
 
-        return (
-            <div className="mini-controls mt-0 mt-mb-3 mb-3 bg-contrast-low">
-                <ButtonToolbar className="flex-wrap justify-content-between p-1">
-                    <div className="btn-group">
-                        { configUrl ? (<a aria-label={_("game", "board_config")} className="btn btn-default" title={_("game", "board_config")} href={configUrl + "?returnUrl=" + window.location.href}><i className="xi-bddiag"></i></a>) : "" }
-                        <button aria-label={_("game", "toggle_moves")} className={movesClass} title={_("game", "toggle_moves")} onClick={toggleMoves}><i className="xi-mlist"></i></button>
-                    </div>
-                    <div className="btn-group">
-                        <button aria-label={_("game", "flip")} className="btn btn-default" title={_("game", "flip")} onClick={flipBoard}><i className="xi-refresh"></i></button>
-                    </div>
-                    {children}                
-                </ButtonToolbar>
-            </div>
-        );
-    }
-}
+    const movesClass = clsx("btn btn-default", {
+        'active': board.moveTable
+    });
+
+    return (
+        <div className="mini-controls mt-3 mt-md-0 bg-contrast-low">
+            <Box display="flex" justifyContent="space-between" flexWrap="nowrap" sx={{p: 0.5}}>
+                <Stack direction="row" alignItems="center" spacing={1} key="tbg_config">
+                    { configUrl && (
+                        <IconButton
+                            size="small"
+                            aria-label={_("game", "board_config")}
+                            title={_("game", "board_config")}
+                            href={configUrl + "?returnUrl=" + window.location.href}>
+                            <Icon baseClassName="" className="xi-bddiag" fontSize="inherit" />
+                        </IconButton>
+                    )}
+                    <IconButton
+                        size="small"
+                        aria-label={_("game", "toggle_moves")}
+                        title={_("game", "toggle_moves")}
+                        onClick={toggleMoves}>
+                        <Icon baseClassName="" className="xi-mlist" fontSize="inherit" />
+                    </IconButton>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1} key="tbg_refresh">
+                    <IconButton
+                        size="small"
+                        aria-label={_("game", "flip")}
+                        title={_("game", "flip")}
+                        onClick={flipBoard}>
+                        <Icon baseClassName="" className="xi-refresh" fontSize="inherit" />
+                    </IconButton>
+                </Stack>
+                {children}
+            </Box>
+        </div>
+    );
+};
+
+export default BoardToolbar;

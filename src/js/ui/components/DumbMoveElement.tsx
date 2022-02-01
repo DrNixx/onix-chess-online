@@ -1,12 +1,15 @@
 import React from 'react';
 import clsx from "clsx";
+
+import ToggleButton from '@mui/material/ToggleButton';
+import Icon from "@mui/material/Icon";
+
 import { Chess } from '../../chess/Chess';
 import { Move } from '../../chess/Move';
 import { IChessOpening } from '../../chess/types/Interfaces';
 
 import { NavigatorMode } from './Constants';
 import { MoveNavigator } from './MoveNavigator';
-import { Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
 
 
 export interface DumbMoveProps {
@@ -118,7 +121,7 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
         }
     }
 
-    protected toggleEvals = (e: React.ChangeEvent<HTMLInputElement>) => {
+    protected toggleEvals = () => {
         const { state } = this;
         this.setState({
             ...state,
@@ -131,9 +134,12 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
 
         if (!!props.hasEvals) {
             return (
-                <ButtonGroup toggle>
-                    <ToggleButton variant="default" type="checkbox" checked={state.evals} value={1} onChange={toggleEvals}><i className="xi-info-c"></i></ToggleButton>
-                </ButtonGroup>
+                <ToggleButton
+                    sx={{p: 0.25}}
+                    size="small"
+                    value="check"
+                    selected={state.evals}
+                    onChange={() => toggleEvals()}><Icon className="xi-info-c" /></ToggleButton>
             );
         } else {
             return null;
@@ -146,7 +152,7 @@ export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveStat
 
         return nav ===  pos? (
                 <React.Fragment>
-                        <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
+                    <MoveNavigator currentMove={currentMove} onChange={onChangePos} key={currentMove.moveKey}>
                         { renderToggleEval() }
                         { children }
                     </MoveNavigator>

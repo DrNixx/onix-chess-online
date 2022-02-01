@@ -18,11 +18,15 @@
 
 {% block scripts %}
 	{{ super() }}
-	<script src="assets/js/chess-online.475.js"></script>
-	<script src="assets/js/chess-online.976.js"></script>
-	<script src="assets/js/chess-online.890.js"></script>
-	<script src="assets/js/chess-online.811.js"></script>
-	<script src="assets/js/chess-online.configure.js"></script>
+	<script src="assets/js/chess-online.46.js"></script>
+ 	<script src="assets/js/chess-online.584.js"></script>
+ 	<script src="assets/js/chess-online.869.js"></script>
+ 	<script src="assets/js/chess-online.872.js"></script>
+ 	<script src="assets/js/chess-online.827.js"></script>
+ 	<script src="assets/js/chess-online.540.js"></script>
+ 	<script src="assets/js/chess-online.811.js"></script>
+ 	<script src="assets/js/chess-online.428.js"></script>
+ 	<script src="assets/js/chess-online.configure.js"></script>
 	<script>
 		const module = {
 			init: function() {

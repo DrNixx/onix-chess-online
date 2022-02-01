@@ -1,6 +1,10 @@
 import React from 'react';
+
+import Box from '@mui/material/Box';
+import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+
 import { Unsubscribe } from 'redux';
-import { SafeAnchor, Container, Row, Col } from 'react-bootstrap';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
 import { AnalyseGraphProps } from './AnalyseGraphProps';
 import { Chess as ChessEngine } from '../../chess/Chess';
@@ -11,7 +15,7 @@ import { AnalyseStatus, IGameData, IUserAnalysis } from '../../chess/types/Inter
 import { GameRelatedStore } from '../../actions/GameStore';
 import { GameActions } from '../../actions/GameActions';
 import { Color } from '../../chess/Color';
-import { sprintf } from '../../fn/string/Sprintf';
+import sprintf from '../../fn/string/Sprintf';
 import { toInteger } from 'lodash';
 
 export interface IAnalysisState {
@@ -191,7 +195,11 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         return (
             <div className="analysis-inprogress">
                 { _("analyse", "inprogress")}
-                { progress ? <div className="progress"><div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}}></div></div> : null }
+                { progress ? (
+                    <div className="progress">
+                        <div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}} />
+                    </div>)
+                    : null }
             </div>
         );
     }
@@ -200,7 +208,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         const { requestAnalysis } = this;
         return (
             <span className="analysis-request">
-                <SafeAnchor className="btn btn-info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ _("analyse", "request")}</SafeAnchor>
+                <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ _("analyse", "request")}</Button>
             </span>
         );
     };
@@ -220,13 +228,13 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         return (
             <ul className="list-unstyled h-100 d-flex flex-column justify-content-center text-right">
                 <li>
-                    <SafeAnchor onClick={makeLink("inaccuracy")}>{ _("analyse", "inaccuracies")}:<label>{item.inaccuracy}</label></SafeAnchor>
+                    <Button variant="text" onClick={makeLink("inaccuracy")}>{ _("analyse", "inaccuracies")}:<label>{item.inaccuracy}</label></Button>
                 </li>
                 <li>
-                    <SafeAnchor onClick={makeLink("mistake")}>{ _("analyse", "mistakes")}:<label>{item.mistake}</label></SafeAnchor>
+                    <Button variant="text" onClick={makeLink("mistake")}>{ _("analyse", "mistakes")}:<label>{item.mistake}</label></Button>
                 </li>
                 <li>
-                    <SafeAnchor onClick={makeLink("blunder")}>{ _("analyse", "blunders")}:<label>{item.blunder}</label></SafeAnchor>
+                    <Button variant="text" onClick={makeLink("blunder")}>{ _("analyse", "blunders")}:<label>{item.blunder}</label></Button>
                 </li>
                 <li>
                     { _("analyse", "averageCentipawnLoss")}:<label title={_("analyse", "averageCentipawnLossTitle")}>{item.acpl}</label>
@@ -290,16 +298,16 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
                             </ResponsiveContainer>
                         </div>
                         <div className="graph-totals align-self-stretch">
-                            <Container className="h-100">
-                                <Row className="h-100">
-                                    <Col xs={6} lg={12} className="white">
+                            <Box className="h-100">
+                                <Grid container spacing={2} className="h-100">
+                                    <Grid item xs={6} lg={12} className="white">
                                         { renderTotalItem(Color.White, white!, engine) }
-                                    </Col>
-                                    <Col xs={6} lg={12} className="black">
+                                    </Grid>
+                                    <Grid item xs={6} lg={12} className="black">
                                         { renderTotalItem(Color.Black, black!, engine) }
-                                    </Col>
-                                </Row>
-                            </Container>
+                                    </Grid>
+                                </Grid>
+                            </Box>
                         </div>
                     </div>
                 );

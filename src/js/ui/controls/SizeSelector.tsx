@@ -28,7 +28,7 @@ const SizeSelector: React.FC<SizeSelectorProps> = (props) => {
             onChange={handleChange}
         >
             {boardsData.boardSizes.map((size) => {
-                return (<MenuItem value={size.idx}>{size.name}</MenuItem>);
+                return (<MenuItem key={size.idx} value={size.idx}>{size.name}</MenuItem>);
             })}
         </Select>
     );

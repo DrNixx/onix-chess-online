@@ -26,7 +26,7 @@ const TextWithCopy: React.FC<TextWithCopyProps> = (props) => {
     const onCopy = () => {
         const value = typeof props.value === 'string' ? props.value : undefined;
         if (copy(value)) {
-            enqueueSnackbar(_("core", "copied"));
+            enqueueSnackbar(_("core", "copied"), {autoHideDuration: 1000});
             setElementClass("text-success");
             setTimeout(() => setElementClass(""), 3000);
         }
@@ -41,8 +41,7 @@ const TextWithCopy: React.FC<TextWithCopyProps> = (props) => {
               <InputAdornment position="end">
                 <IconButton
                   aria-label={_("chess-ctrls", "copy_to_clipboard")}
-                  onClick={onCopy}
-                  onMouseDown={onCopy}>{icon}</IconButton>
+                  onClick={onCopy}>{icon}</IconButton>
               </InputAdornment>
             }
           />

@@ -9,6 +9,7 @@ import { IModule } from '../app/IModule';
 import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
 import { simpleChat } from '../chat/Chat';
+import { Popover } from 'bootstrap';
 
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
@@ -127,24 +128,30 @@ export class Frontend implements IModule {
             return '<div id="'+ divId +'"><div class="text-center"><div class="progress-circle-indeterminate m-t-45" /></div></div>';
         };
 
-        jQuery("[data-mini]").popover({
-            container: "body",
-            template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
-            content: function() {
-                const $that: JQuery<Element> = jQuery(this);
-                let popupId = $that.data('popupId') ?? nanoid(8);
-                let popupData = $that.data('popupData');
-                if (popupData) {
-                    return popupData;
-                } else {
-                    $that.data('popupId', popupId);
-                    return userNamePopup($that, $that.data("mini"), popupId);
-                }
-            }, 
-            html: true, 
-            sanitize: false,
-            trigger: "click"
-        }).on("click", function(event) {
+        const userDataMiniList = <HTMLElement[]>[].slice.call(document.querySelectorAll('[data-mini]'));
+        var userDataPopoverList = userDataMiniList.map(function (el) {
+            return new Popover(el, {
+                container: "body",
+                template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
+                content: function() {
+                    const $that: JQuery<Element> = jQuery(this);
+                    let popupId = $that.data('popupId') ?? nanoid(8);
+                    let popupData = $that.data('popupData');
+                    if (popupData) {
+                        return popupData;
+                    } else {
+                        $that.data('popupId', popupId);
+                        return userNamePopup($that, $that.data("mini"), popupId);
+                    }
+                }, 
+                html: true, 
+                sanitize: false,
+                trigger: "click"
+            });
+        });
+
+        /*
+        .on("click", function(event) {
             event.stopPropagation();
             event.preventDefault();
         }).on('inserted.bs.popover', function () {
@@ -152,9 +159,10 @@ export class Frontend implements IModule {
                 event.stopPropagation();
             })
         });
+        */
         
         jQuery(document).on("click", function() {
-            jQuery("[data-mini]").popover('hide');
+            userDataPopoverList.forEach(p => p.hide());
         });
         // }}} Popover
 

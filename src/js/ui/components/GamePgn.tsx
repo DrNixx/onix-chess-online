@@ -1,58 +1,53 @@
 import React from 'react';
+
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+
 import Scrollbar from "react-scrollbars-custom";
-import { FormGroup, Row, Col, FormLabel } from 'react-bootstrap';
 import { notify } from 'pages-ts';
 import { _ } from '../../i18n/i18n';
 import { copy } from '../CopyToClipboard';
 import TextWithCopy from '../controls/TextWithCopy';
+import {useSnackbar} from "notistack";
 
 
-export interface GamePgnProps {
+
+type GamePgnProps = {
     fen: string,
     pgn?: string
 }
 
-export class GamePgn extends React.Component<GamePgnProps, {}> {
-    /**
-     * constructor
-     */
-    constructor(props: GamePgnProps) {
-        super(props);
-    }
+const GamePgn: React.VFC<GamePgnProps> = (props) => {
+    const { fen, pgn } = props;
 
-    render() {
-        const { fen, pgn } = this.props;
+    const { enqueueSnackbar } = useSnackbar();
 
-        const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
-            if (copy(pgn)) {
-                notify({
-                    message: _("core", "copied"),
-                    position: "bottom-right",
-                    style: 'simple' 
-                });
-            }
-        };
+    const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
+        if (copy(pgn)) {
+            enqueueSnackbar(_("core", "copied"), {autoHideDuration: 1000});
+        }
+    };
 
-        return (
-            <React.Fragment>
-                <Row>
-                    <Col md={12}>
-                        <FormGroup>
-                            <FormLabel>{_("chess", "fen")}</FormLabel>
-                            <TextWithCopy value={fen} placeholder={_("chess", "fen")} />
-                        </FormGroup>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md={12}>
-                        <div className="pgn-text">
-                            <Scrollbar trackYProps={{style: {width: 5}}}>
-                                <pre onClick={copyPgn} className="py-0 pl-0">{pgn}</pre>
-                            </Scrollbar>
-                        </div>
-                    </Col>
-                </Row>
-            </React.Fragment>
-        );
-    }
+    return (
+        <React.Fragment>
+            <Box sx={{padding: .5}}>
+                <FormControl variant="standard">
+                    <InputLabel shrink htmlFor="bootstrap-input">
+                        FEN
+                    </InputLabel>
+                    <TextWithCopy fullWidth value={fen} placeholder={_("chess", "fen")} />
+                </FormControl>
+            </Box>
+            <Box sx={{padding: .5}}>
+                <div className="pgn-text">
+                    <Scrollbar trackYProps={{style: {width: 5}}}>
+                        <pre onClick={copyPgn} className="py-0 ps-0">{pgn}</pre>
+                    </Scrollbar>
+                </div>
+            </Box>
+        </React.Fragment>
+    );
 }
+
+export default GamePgn;

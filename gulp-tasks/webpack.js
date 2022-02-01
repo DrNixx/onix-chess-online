@@ -1,3 +1,6 @@
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const _ = require("lodash");
 module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
     const task = function () {
         const path = require('path');
@@ -18,6 +21,18 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
                     inject: false,
                     minify: false,
                     template: './src/templates/php/index.ejs'
+                })
+            );
+        });
+
+        Object.keys(PATHS.webpack.entry).forEach((key) => {
+            common.plugins.push(
+                new HtmlWebpackPlugin({
+                    filename: '../../tpl/' + _.capitalize(key) + 'Asset.html',
+                    chunks: [key],
+                    inject: false,
+                    minify: false,
+                    template: './src/templates/tpl/index.ejs'
                 })
             );
         });

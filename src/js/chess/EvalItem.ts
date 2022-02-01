@@ -1,4 +1,4 @@
-import { sprintf } from '../fn/string/Sprintf';
+import sprintf from '../fn/string/Sprintf';
 import { i18n, _ } from '../i18n/i18n';
 import { IEval } from './types/Interfaces';
 

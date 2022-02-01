@@ -1,8 +1,16 @@
-import clsx from "clsx";
 import React, { useEffect} from 'react';
-import * as ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom';
+
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Container from '@mui/material/Container';
+import Card from "@mui/material/Card";
+import CardHeader from '@mui/material/CardHeader';
+import CircularProgress from '@mui/material/CircularProgress';
+
+import clsx from "clsx";
 import Scrollbar from "react-scrollbars-custom";
-import { Card, Container, Row, Col, OverlayTrigger, Tooltip, PopoverProps, Popover, Spinner } from 'react-bootstrap';
+import Tooltip from '@mui/material/Tooltip';
 import { _ } from '../../i18n/i18n';
 import { Logger } from '../../common/Logger';
 import { UserName } from '../user/UserName';
@@ -10,6 +18,7 @@ import { IAdvanceClock, IChessGame, IChessPlayer, IGameData } from '../../chess/
 import { formatTimer } from '../../fn/date/formatTimer';
 import { formatInterval } from '../../fn/date/formatInterval';
 import { timestampToInterval } from '../../fn/date/timestampToInterval';
+import Grid from '@mui/material/Grid';
 
 interface IListData {
     games: IGameData[],
@@ -173,11 +182,11 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
 
         if (game.tournament?.round) {
             return (
-                <OverlayTrigger placement="right" overlay={<Tooltip id={`round-tooltip-${game.game!.id}`}>{viewTournament}</Tooltip>}>
+                <Tooltip arrow title={viewTournament!}>
                     <a href={`/${language}/tournaments/round/${game.tournament.round}`}>
-                        <span className="p-l-5" title={viewTournament}><i className="xi-grid1"></i></span>
+                        <span className="p-l-5" title={viewTournament}><i className="xi-grid1" /></span>
                     </a>
-                </OverlayTrigger>
+                </Tooltip>
             );
         }
 
@@ -201,16 +210,16 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
                 if (clock.can_pause) {
                     const left = formatInterval(timestampToInterval(player.user.postpone.rest), 1)
                     return (
-                        <OverlayTrigger placement="right" overlay={<Tooltip id={`timer-tooltip-${player.user.id}-${game.game!.id}`}>{_("game", "postpone_rest", {n : left})}</Tooltip>}>
-                            <i className={clsx(ppClass)} data-icon="Z"></i>
-                        </OverlayTrigger>
+                        <Tooltip arrow title={_("game", "postpone_rest", {n : left})}>
+                            <i className={clsx(ppClass)} data-icon="Z" />
+                        </Tooltip>
                     );
                 }
             }
         }
 
         return (
-            <i className={clsx(turnClass)} data-icon="p"></i>
+            <i className={clsx(turnClass)} data-icon="p" />
         );
     };
 
@@ -284,6 +293,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
     };
 
     private popoverFen = (game: IGameData) => {
+        /*
         const UpdatingPopover = React.forwardRef(
             ({ popper, children, show: _, ...props }:  PopoverProps, ref) => {
                 useEffect(() => {
@@ -304,6 +314,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
                 <div className="p-2"><img className="w-100" src={`https://www.chess-online.com/fen.png?fen=${game.finalFen}&mv=${game.game!.lastMove}`} alt="" /></div>
             </UpdatingPopover>
         );
+         */
     }
 
     
@@ -325,35 +336,33 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
         const clock = ((game.clock as unknown) as IAdvanceClock);
 
         return (
-            <Row key={game.game!.id.toString()} className="py-1">
-                <Col md={8}>
-                    <Row>
-                        <Col xs={6}>
-                            <OverlayTrigger rootClose={true} trigger={["hover", "focus"]} placement="auto" overlay={this.popoverFen(game)}>
-                                <a href={`/${game.game!.id}`}>
-                                    {renderColorIcon(game.game!)}
-                                    <span className="p-l-5">{ game.game!.event }</span>
-                                </a>
-                            </OverlayTrigger>
+            <Grid container spacing={2}>
+                <Grid item md={8}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <a href={`/${game.game!.id}`}>
+                                {renderColorIcon(game.game!)}
+                                <span className="p-l-5">{ game.game!.event }</span>
+                            </a>
                             { renderRoundLink(game) }
-                        </Col>
-                        <Col xs={6}>
+                        </Grid>
+                        <Grid item xs={6}>
                             { renderGameStatus(game) }
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={6}>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
                             <span className="small-text hint-text" title={clock.limit}>{clock.limit}</span>
-                        </Col>
-                        <Col xs={6} className="text-right">
+                        </Grid>
+                        <Grid item xs={6} className="text-right">
                             { renderOpponentStatus(game) }
-                        </Col>
-                    </Row>
-                </Col>
-                <Col md={4}>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item md={4}>
                     { game.opponent ? (<UserName user={game.opponent.user} size="Tiny" compact={false} />) : null }
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         );
     };
 
@@ -378,41 +387,39 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
             const listHeight = games.length * 6; 
             return (
                 <React.Fragment>
-                    <Card.Body className="gamelist-wrapper px-0" style={{height: `${listHeight}em`}}>
+                    <CardContent className="gamelist-wrapper px-0" style={{height: `${listHeight}em`}}>
                         <Scrollbar trackYProps={{style: {width: 5}}}>
                             <Container className="striped">
                                 { renderList(games) }
                             </Container>
                         </Scrollbar>
-                    </Card.Body>
-                    <Card.Footer>
+                    </CardContent>
+                    <CardActions>
                         <div className="d-flex justify-content-between">
                             <div>
-                                <a href="https://www.chess-online.com/ru-ru/chess/create" className="btn btn-icon-left"><i className="xi-play-one text-blue"></i> {newGame}</a>
+                                <a href="https://www.chess-online.com/ru-ru/chess/create" className="btn btn-icon-left"><i className="xi-play-one text-blue" /> {newGame}</a>
                             </div>
                             <div>
                                 { !isPostponed ? 
-                                    (<a href="https://www.chess-online.com/user/postpones" className="btn btn-icon-left"><i className="card-icon text-orange xi-palm"></i> {takeVacation}</a>) : 
-                                    (<a href="https://www.chess-online.com/user/postpones" className="btn btn-warning btn-icon-left"><i className="card-icon xi-palm"></i> {cancelVacation}</a>)
+                                    (<a href="https://www.chess-online.com/user/postpones" className="btn btn-icon-left"><i className="card-icon text-orange xi-palm" /> {takeVacation}</a>) :
+                                    (<a href="https://www.chess-online.com/user/postpones" className="btn btn-warning btn-icon-left"><i className="card-icon xi-palm" /> {cancelVacation}</a>)
                                 }
                             </div>
                         </div>
-                    </Card.Footer>
+                    </CardActions>
                 </React.Fragment>
             )
         } else {
             return loaded ? (
-                <Card.Body>
+                <CardContent>
                     <div dangerouslySetInnerHTML={ {__html: emptyText!} } />
-                </Card.Body>
+                </CardContent>
             ) : (
-                <Card.Body>
+                <CardContent>
                     <div className="text-center">
-                        <Spinner animation="border" role="status">
-                            <span className="sr-only">{_("game", "infoLoading")}</span>
-                        </Spinner>
+                        <CircularProgress />
                     </div>
-                </Card.Body>
+                </CardContent>
             );
         }
     };
@@ -430,8 +437,8 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
 
         return (
             <Card className="widget-body no-border no-shadow full-height no-margin widget-loader-circle-lg">
-                <Card.Header className="reset-min-height">
-                    <Card.Title className="card-title"><i data-icon="Х" className="text-orange" />{title}</Card.Title>
+                <CardHeader className="reset-min-height">
+                    <h3 className="card-title"><i data-icon="Х" className="text-orange" />{title}</h3>
                     <div className="card-controls">
                         <ul>
                             <li>
@@ -444,7 +451,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
                             </li>
                         </ul>
                     </div>
-                </Card.Header>
+                </CardHeader>
                 { renderGames() }
             </Card>
         );

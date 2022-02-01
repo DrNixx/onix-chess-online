@@ -1,53 +1,40 @@
-import React from 'react';
-import { FormControl, FormControlProps } from 'react-bootstrap';
+import React, {useState} from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
+import {PiecesConfig} from 'onix-board-assets';
 
-const boardsData: any = require('onix-board-assets/dist/js/pieces.json');
+const piecesData: PiecesConfig = require('onix-board-assets/dist/js/pieces.json');
 
-export interface PieceSelectorProps extends FormControlProps {
-    defaultValue?: string;
+type PieceSelectorProps =  SelectProps<string> & {
     onChangePiece?: (piece: string) => void;
-    name?: string;
 }
 
-export class PieceSelector extends React.Component<PieceSelectorProps, {}> {
-    public static defaultProps: PieceSelectorProps = {
-        defaultValue: 'merida',
-        size: 'sm'
-    }
+const PieceSelector: React.FC<PieceSelectorProps> = (props) => {
+    const {onChange, onChangePiece, value, ...other} = props;
 
-    /**
-     * constructor
-     */
-    constructor(props: PieceSelectorProps) {
-        super(props);
-    }
+    const [piece, setPiece] = useState(value);
 
-    private onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { onChangePiece } = this.props;
-        const piece = e.target.value; 
-
-        if (onChangePiece) {
-            onChangePiece(piece);
-        }
+    const handleChange = (event: SelectChangeEvent<string>) => {
+        setPiece(event.target.value);
+        onChangePiece && onChangePiece(event.target.value);
     };
 
-    private getPieces = (): any[] => {
-        const result: any[] = [];
-        boardsData.pieceFaces.forEach((element: any) => {
-            result.push(
-                <option key={element.code} value={element.code}>{element.name}</option>
-            );
-        });
+    return (
+        <Select
+            {...other}
+            value={piece}
+            onChange={handleChange}
+        >
+            {piecesData.pieceFaces.map((piece) => {
+                return (<MenuItem key={piece.code} value={piece.code}>{piece.name}</MenuItem>);
+            })}
+        </Select>
+    );
+};
 
-        return result;
-    };
+PieceSelector.defaultProps = {
+    defaultValue: 'merida',
+    value: 'merida',
+};
 
-    render() {
-        const { defaultValue, onChangePiece, size, ...otherProps } = this.props;
-        return (
-            <FormControl as="select" size={size} onChange={this.onChange} defaultValue={defaultValue} {...otherProps}>
-                {this.getPieces()}
-            </FormControl>
-        );
-    }
-}
+export default PieceSelector;

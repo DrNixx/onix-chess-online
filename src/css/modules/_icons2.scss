@@ -87,6 +87,11 @@ $font-rand: '?44bfc150';
             -moz-osx-font-smoothing: grayscale;
         }
 
+        &.MuiIcon-root:before {
+            font-size: inherit;
+            vertical-align: baseline;
+        }
+
 
         &.smaller {
             font-size: 70%;

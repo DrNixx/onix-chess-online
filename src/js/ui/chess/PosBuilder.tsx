@@ -2,7 +2,18 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import toSafeInteger from 'lodash/toSafeInteger';
 import clsx from "clsx";
-import { Row, Col, Button, FormGroup, FormControl, FormLabel, FormCheck, Container, Card } from 'react-bootstrap';
+
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 
 import * as cg from 'chessground/types';
 import { Chessground } from 'chessground';
@@ -12,7 +23,7 @@ import { dragNewPiece } from 'chessground/drag';
 import { DrawShape } from 'chessground/draw';
 import { eventPosition, isRightButton as isRightButtonEvent } from 'chessground/util';
 
-import { BoardSize, BoardSizeClass } from 'onix-board-assets';
+import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
 import { IChessOpening } from '../../chess/types/Interfaces';
 import { Colors, Squares } from '../../chess/types/Types';
 import { Castling, CastlingSide, CastlingStr } from '../../chess/Castling';
@@ -24,16 +35,15 @@ import { Chess } from '../../chess/Chess';
 import { Color } from '../../chess/Color';
 import { Square } from '../../chess/Square';
 import { Piece } from '../../chess/Piece';
-import { SizeSelector } from '../controls/SizeSelector';
-import { SquareSelector } from '../controls/SquareSelector';
-import { PieceSelector } from '../controls/PieceSelector';
-import { WhoMoveSelector } from '../controls/WhoMoveSelector';
-import { StartPosSelector } from '../controls/StartPosSelector';
-import { TextWithCopy } from '../controls/TextWithCopy';
+import SizeSelector from '../controls/SizeSelector';
+import SquareSelector from '../controls/SquareSelector';
+import PieceSelector from '../controls/PieceSelector';
+import WhoMoveSelector from '../controls/WhoMoveSelector';
+import StartPosSelector from '../controls/StartPosSelector';
+import TextWithCopy from '../controls/TextWithCopy';
 
 import { postMessage } from '../../net/PostMessage';
-
-
+import Input from '@mui/material/Input';
 
 type Selected = "pointer" | "trash" | [cg.Color, cg.Role];
 
@@ -473,31 +483,33 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         
         return (
             <Card>
-                <Card.Header>
+                <CardHeader>
                     {_("chess", Color.toName(color))}
-                </Card.Header>
-                <Card.Body>
-                    <Row>
-                        <Col xs={5}>
-                            <FormCheck 
-                                id ="wck"
-                                type="checkbox"
-                                value={Piece.toChar(Piece.create(color, Piece.King))}
-                                onChange={this.onCastleChange}
-                                defaultChecked={cast.has(color, CastlingSide.King)}
+                </CardHeader>
+                <CardContent>
+                    <Grid container spacing={2}>
+                        <Grid item xs={5}>
+                            <FormControlLabel 
+                                control={
+                                    <Switch id ="wck" 
+                                        value={Piece.toChar(Piece.create(color, Piece.King))}
+                                        onChange={this.onCastleChange}
+                                        defaultChecked={cast.has(color, CastlingSide.King)} />
+                                } 
                                 label={Castling.K} />
-                        </Col>
-                        <Col xs={7}>
-                            <FormCheck 
-                                id ="wcq"
-                                type="checkbox"
-                                value={Piece.toChar(Piece.create(color, Piece.Queen))} 
-                                onChange={this.onCastleChange} 
-                                defaultChecked={cast.has(color, CastlingSide.Queen)}
+                        </Grid>
+                        <Grid item xs={7}>
+                            <FormControlLabel 
+                                control={
+                                    <Switch id ="wcq" 
+                                        value={Piece.toChar(Piece.create(color, Piece.Queen))}
+                                        onChange={this.onCastleChange}
+                                        defaultChecked={cast.has(color, CastlingSide.Queen)} />
+                                } 
                                 label={Castling.Q} />
-                        </Col>
-                    </Row>
-                </Card.Body>
+                        </Grid>
+                    </Grid>
+                </CardContent>
             </Card>
         );
     }
@@ -546,9 +558,9 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         };
 
         return (visible) ? (
-            <Row>
-                <Col md={12} className="py-3"><Button block={true} variant="primary" onClick={executeDialog}>{_("builder", "paste_forum_code")}</Button></Col>
-            </Row>
+            <Box className="py-3">
+                <Button variant="contained" onClick={executeDialog}>{_("builder", "paste_forum_code")}</Button>
+            </Box>
         ) : null;
     }
 
@@ -777,185 +789,178 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
             "pos-builder", 
             "is2d",
             square,
-            BoardSizeClass[size],
+            BoardSizeClasses[size],
             { "coords-no": !coordinates }
         ];
 
         const cursor = selectedToCursor(selected);
                 
         return (
-            <Container className={clsx(containerClass)}>
-                <Row>
-                    <Col md={12}>
-                        <div className="d-block d-lg-flex">
-                            <div className={clsx("board-container", piece)}>
-                                <div className="holder-container">
-                                    { renderSpare((flipped ? "white": "black"), "top") }
-                                </div>
-                                <div className={clsx(cursor)}
-                                    onTouchStart={boardEvent}
-                                    onTouchMove={boardEvent}
-                                    onMouseDown={boardEvent}
-                                    onMouseMove={boardEvent}
-                                    onContextMenu={boardEvent}>
-                                    <div className="main-board" ref={el => this.boardElement = el} />
-                                </div>
-                                <div className="holder-container">
-                                    { renderSpare((flipped ? "black": "white"), "bottom") }
-                                </div>
-
-                                {renderDialogButton(!!dialog, code)}
-                                <div>
-                                    <div className="code-row">
-                                        <Row>
-                                            <Col md={12}>
-                                                <FormGroup controlId="fen">
-                                                    <FormLabel>{_("chess", "fen")}</FormLabel>
-                                                    <TextWithCopy value={fenStr} size="sm" placeholder={_("chess", "fen")} />
-                                                </FormGroup>    
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col md={12}>
-                                                <FormGroup controlId="image_link">
-                                                    <FormLabel>{_("builder", "image_link")}</FormLabel>
-                                                    <TextWithCopy value={makeLink(fenStr, params)} size="sm" placeholder={_("builder", "image_link")} />
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col md={12}>
-                                                <FormGroup controlId="forum_code">
-                                                    <FormLabel>{_("builder", "forum_code")}</FormLabel>
-                                                    <TextWithCopy value={code} size="sm" placeholder={_("builder", "forum_code")} />
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                    </div>
-                                </div>
+            <Container maxWidth="xl" className={clsx(containerClass)}>
+                <Box>
+                    <div className="d-block d-lg-flex">
+                        <div className={clsx("board-container", piece)}>
+                            <div className="holder-container">
+                                { renderSpare((flipped ? "white": "black"), "top") }
                             </div>
-                            <div className="controls flex-grow-1 pl-lg-4">
-                                <div className="pos-sets">
-                                    <Row>
-                                        <Col md={4}>
-                                            <FormGroup controlId="size">
-                                                <FormLabel>{_("builder", "board_size")}</FormLabel>
-                                                <SizeSelector defaultValue={size} onChangeSize={this.onSizeChange} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={4}>
-                                            <FormGroup controlId="piece">
-                                                <FormLabel>{_("chess", "pieces")}</FormLabel>
-                                                <PieceSelector defaultValue={piece} onChangePiece={this.onPieceChange} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={4}>
-                                            <FormGroup controlId="square">
-                                                <FormLabel>{_("chess", "squares")}</FormLabel>
-                                                <SquareSelector defaultValue={square} onChangeSquare={this.onSquareChange} />
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                </div>
+                            <div className={clsx(cursor)}
+                                onTouchStart={boardEvent}
+                                onTouchMove={boardEvent}
+                                onMouseDown={boardEvent}
+                                onMouseMove={boardEvent}
+                                onContextMenu={boardEvent}>
+                                <div className="main-board" ref={el => this.boardElement = el} />
+                            </div>
+                            <div className="holder-container">
+                                { renderSpare((flipped ? "black": "white"), "bottom") }
+                            </div>
 
-                                <div className="pos-start">
-                                    <Row>
-                                        <Col md={8} sm={12}>
-                                            <FormGroup controlId="startpos">
-                                                <FormLabel srOnly={true}>{_("builder", "position_label")}</FormLabel>
-                                                <StartPosSelector fen={fenStr} openingsPos={openings} onChangeFen={this.onStartChange} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={4} sm={12}>
-                                            <FormGroup controlId="who_move">
-                                                <FormLabel srOnly={true}>{_("chess", "who_move")}</FormLabel>
-                                                <WhoMoveSelector defaultValue={whoMove} onChangeTurn={this.onMoverChange} />
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                </div>
-
-                                <div className="pos-params">
-                                    <div><strong>{_("builder", "pos_param")}</strong></div>
-                                    <Row>
-                                        <Col md={3} sm={6}>
-                                            <FormGroup controlId="moveNo">
-                                                <FormLabel>{_("chess", "move_no")}</FormLabel>
-                                                <FormControl 
-                                                    size="sm" 
-                                                    defaultValue={moveNo!.toString()} 
-                                                    onChange={this.onMoveNoChange} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={3} sm={6}>
-                                            <FormGroup controlId="epTarget">
-                                                <FormLabel>{_("chess", "ep_target")}</FormLabel>
-                                                <FormControl 
-                                                    size="sm"
-                                                    defaultValue={ep_target} 
-                                                    title={_("builder", "ep_target_hint")} 
-                                                    onChange={this.onEpChange} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md={6}>
-                                            <FormGroup controlId="marks">
-                                                <FormLabel>{_("builder", "marks")}</FormLabel>
-                                                <FormControl 
-                                                    size="sm"
-                                                    value={markersVal}
-                                                    title={_("builder", "marks_hint")}
-                                                    onChange={this.onMarkChange} />
-                                            </FormGroup>
-                                        </Col>
-                                    </Row>
-                                </div>
-
-                                <div className="pos-castle">
-                                    <div><strong>{_("chess", "castle")}</strong></div>
-                                    <Row>
-                                        <Col md={6}>
-                                            {this.renderCastlingGroup(Color.White, castling)}
-                                        </Col>
-                                        <Col md={6}>
-                                            {this.renderCastlingGroup(Color.Black, castling)}
-                                        </Col>
-                                    </Row>                                
-                                </div>
-                                <div className="pos-display">
-                                    <Row>
-                                        <Col md={3} sm={6}>
-                                            <FormCheck 
-                                                id ="flip" 
-                                                type="checkbox"
-                                                value="1" 
-                                                onChange={this.onFlipChange} 
-                                                defaultChecked={flipped}
-                                                label={_("builder", "display_flip")} />
-                                        </Col>
-                                        <Col md={3} sm={6}>
-                                            <FormCheck 
-                                                id ="coords" 
-                                                type="checkbox"
-                                                value="1" 
-                                                onChange={this.onCoordsChange} 
-                                                defaultChecked={coordinates}
-                                                label={_("builder", "display_coord")} />
-                                        </Col>
-                                        <Col md={3} sm={6}>
-                                            <FormCheck 
-                                                id ="turn" 
-                                                type="checkbox"
-                                                value="1" 
-                                                onChange={this.onTurnChange} 
-                                                defaultChecked={showTurn}
-                                                label={_("builder", "display_showturn")} />
-                                        </Col>
-                                    </Row>
+                            {renderDialogButton(!!dialog, code)}
+                            <div>
+                                <div className="code-row">
+                                    <Box>
+                                        <FormControl>
+                                            <InputLabel>{_("chess", "fen")}</InputLabel>
+                                            <TextWithCopy value={fenStr} size="small" placeholder={_("chess", "fen")} />
+                                        </FormControl>
+                                    </Box>
+                                    <Box>
+                                        <FormControl>
+                                            <InputLabel>{_("builder", "image_link")}</InputLabel>
+                                            <TextWithCopy value={makeLink(fenStr, params)} size="small" placeholder={_("builder", "image_link")} />
+                                        </FormControl>
+                                    </Box>
+                                    <Box>
+                                        <FormControl>
+                                            <InputLabel>{_("builder", "forum_code")}</InputLabel>
+                                            <TextWithCopy value={code} size="small" placeholder={_("builder", "forum_code")} />
+                                        </FormControl>
+                                    </Box>
                                 </div>
                             </div>
                         </div>
-                    </Col>
-                </Row>
+                        <div className="controls flex-grow-1 ps-lg-4">
+                            <div className="pos-sets">
+                                <Grid container spacing={2}>
+                                    <Grid item md={4}>
+                                        <FormControl>
+                                            <InputLabel>{_("builder", "board_size")}</InputLabel>
+                                            <SizeSelector value={size} onChangeSize={this.onSizeChange} />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={4}>
+                                        <FormControl>
+                                            <InputLabel>{_("chess", "pieces")}</InputLabel>
+                                            <PieceSelector value={piece} onChangePiece={this.onPieceChange} />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={4}>
+                                        <FormControl>
+                                            <InputLabel>{_("chess", "squares")}</InputLabel>
+                                            <SquareSelector value={square} onChangeSquare={this.onSquareChange} />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </div>
+
+                            <div className="pos-start">
+                                <Grid container spacing={2}>
+                                    <Grid item md={8} sm={12}>
+                                        <FormControl>
+                                            <InputLabel className="sr-only">{_("builder", "position_label")}</InputLabel>
+                                            <StartPosSelector
+                                                fen={fenStr}
+                                                openingsPos={openings}
+                                                onChangeFen={this.onStartChange}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={4} sm={12}>
+                                        <FormControl>
+                                            <InputLabel className="sr-only">{_("chess", "who_move")}</InputLabel>
+                                            <WhoMoveSelector value={whoMove} onChangeTurn={this.onMoverChange} />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </div>
+
+                            <div className="pos-params">
+                                <div><strong>{_("builder", "pos_param")}</strong></div>
+                                <Grid container spacing={2}>
+                                    <Grid item md={3} sm={6}>
+                                        <FormControl>
+                                            <InputLabel>{_("chess", "move_no")}</InputLabel>
+                                            <FormControl
+                                                size="small"
+                                                defaultValue={moveNo!.toString()}
+                                                onChange={this.onMoveNoChange} />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={3} sm={6}>
+                                        <FormControl>
+                                            <InputLabel>{_("chess", "ep_target")}</InputLabel>
+                                            <FormControl
+                                                size="small"
+                                                defaultValue={ep_target}
+                                                title={_("builder", "ep_target_hint")}
+                                                onChange={this.onEpChange} />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <FormControl>
+                                            <InputLabel>{_("builder", "marks")}</InputLabel>
+                                            <Input
+                                                size="small"
+                                                value={markersVal}
+                                                title={_("builder", "marks_hint")}
+                                                onChange={this.onMarkChange} />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </div>
+
+                            <div className="pos-castle">
+                                <div><strong>{_("chess", "castle")}</strong></div>
+                                <Grid container spacing={2}>
+                                    <Grid item md={6}>
+                                        {this.renderCastlingGroup(Color.White, castling)}
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        {this.renderCastlingGroup(Color.Black, castling)}
+                                    </Grid>
+                                </Grid>
+                            </div>
+                            <div className="pos-display">
+                                <Grid container spacing={2}>
+                                    <Grid item md={3} sm={6}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch defaultChecked onChange={this.onFlipChange} />
+                                            }
+                                            label={_("builder", "display_flip")}
+                                        />
+                                    </Grid>
+                                    <Grid item md={3} sm={6}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch defaultChecked onChange={this.onCoordsChange} />
+                                            }
+                                            label={_("builder", "display_coord")}
+                                        />
+                                    </Grid>
+                                    <Grid item md={3} sm={6}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch defaultChecked onChange={this.onTurnChange} />
+                                            }
+                                            label={_("builder", "display_showturn")}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </div>
+                        </div>
+                    </div>
+                </Box>
             </Container>
         );
     }

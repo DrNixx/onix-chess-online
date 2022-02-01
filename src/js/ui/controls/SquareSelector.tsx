@@ -1,51 +1,41 @@
-import React from 'react';
-import { FormControl, FormControlProps } from 'react-bootstrap';
+import React, {useState} from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
+import {BoardConfig} from 'onix-board-assets';
 
-const boardsData = require('onix-board-assets/dist/js/boards.json');
+const boardsData: BoardConfig = require('onix-board-assets/dist/js/boards.json');
 
-export interface SquareSelectorProps extends FormControlProps {
-    defaultValue?: string;
+type SquareSelectorProps = SelectProps<string> & {
     onChangeSquare?: (square: string) => void;
-    name?: string;
 }
 
-export class SquareSelector extends React.Component<SquareSelectorProps, {}> {
-    public static defaultProps: SquareSelectorProps = {
-        defaultValue: 'color-blue',
-        size: 'sm'
-    }
+const SquareSelector: React.FC<SquareSelectorProps> = (props) => {
 
-    /**
-     * constructor
-     */
-    constructor(props: SquareSelectorProps) {
-        super(props);
-    }
+    const {onChange, onChangeSquare, value, ...other} = props;
 
-    private onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { onChangeSquare } = this.props;
-        const square = e.target.value; 
+    const [square, setSquare] = useState(value);
 
-        if (onChangeSquare) {
-            onChangeSquare(square);
-        }
+    const handleChange = (event: SelectChangeEvent<string>) => {
+        setSquare(event.target.value);
+        onChangeSquare && onChangeSquare(event.target.value);
     };
 
-    private getSquares = (): any[] => {
-        const result: any[] = [];
-        boardsData.boardFiles.forEach((element: any) => {
-            result.push(<option key={element.code} value={element.code}>{element.name}</option>);
-        });
+    return (
+        <Select
+            {...other}
+            value={square}
+            onChange={handleChange}
+        >
+            {boardsData.boardFiles.map((square) => {
+                return (<MenuItem key={square.code} value={square.code}>{square.name}</MenuItem>);
+            })}
+        </Select>
+    );
+};
 
-        return result;
-    };
+SquareSelector.defaultProps = {
+    defaultValue: 'color-blue',
+    value: 'color-blue',
+};
 
-    render() {
-        const { defaultValue, onChangeSquare, size, ...otherProps } = this.props;
-        return (
-            <FormControl as="select" size={size} onChange={this.onChange} defaultValue={defaultValue} {...otherProps}>
-                {this.getSquares()}
-            </FormControl>
-        );
-    }
-}
+export default SquareSelector;

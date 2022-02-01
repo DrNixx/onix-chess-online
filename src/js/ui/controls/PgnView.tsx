@@ -47,7 +47,7 @@ export class PgnView extends React.Component<PgnViewProps, PgnViewState> {
         return (
             <div className="pgn-wrapper">
                 <div className="pgn-text">
-                    <textarea className="pgn-body" defaultValue={pgn} onChange={this.onChange} spellCheck={false}></textarea>
+                    <textarea className="pgn-body" defaultValue={pgn} onChange={this.onChange} spellCheck={false} />
                 </div>
                 {command}  
             </div>

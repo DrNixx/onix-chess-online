@@ -23,17 +23,17 @@ const formatString = (value: string, leftJustify: boolean, minWidth: number, pre
     return justify(value, '', leftJustify, minWidth, !!zeroPad);
 }
 
-export const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
+const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 	const regex = /%%|%(\d+\$)?([-+#0 ]*)(\*\d+\$|\*|\d+)?(\.(\*\d+\$|\*|\d+))?([scboxXuidfegEG])/g;
 	let i = 0;
 
 	// finalFormat()
-	var doFormat = function(substring: string, valueIndex: number, flags: string, minWidth: number | string, _: any, precision?: number | string, type?: string) {
+	let doFormat = function(substring: string, valueIndex: number, flags: string, minWidth: number | string, _: any, precision?: number | string, type?: string) {
 		if (substring == '%%') return '%';
 
 		// parse flags
-		var leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false;
-		for (var j = 0; flags && j < flags.length; j++) switch (flags.charAt(j)) {
+		let leftJustify = false, positivePrefix = '', zeroPad = false, prefixBaseX = false;
+		for (let j = 0; flags && j < flags.length; j++) switch (flags.charAt(j)) {
 			case ' ': positivePrefix = ' '; break;
 			case '+': positivePrefix = '+'; break;
 			case '-': leftJustify = true; break;
@@ -84,7 +84,7 @@ export const sprintf = (format: string, ...a: any[]) => {	// Return a formatted 
 		}
 
 		// grab value using valueIndex if required?
-		var value = valueIndex ? a[toSafeInteger(valueIndex.toString().slice(0, -1)) - 1] : a[i++];
+		let value = valueIndex ? a[toSafeInteger(valueIndex.toString().slice(0, -1)) - 1] : a[i++];
 
 		switch (type) {
 			case 's': return formatString(String(value), leftJustify, minWidth, precision, zeroPad);
@@ -96,8 +96,8 @@ export const sprintf = (format: string, ...a: any[]) => {	// Return a formatted 
 			case 'u': return formatBaseX(value, 10, prefixBaseX, leftJustify, minWidth, precision, zeroPad);
 			case 'i':
 			case 'd': {
-						var number = toSafeInteger(+value);
-						var prefix = number < 0 ? '-' : positivePrefix;
+						const number = toSafeInteger(+value);
+						const prefix = number < 0 ? '-' : positivePrefix;
 						value = prefix + padEnd(String(Math.abs(number)), precision, '0');
 						return justify(value, prefix, leftJustify, minWidth, zeroPad);
 					}
@@ -123,3 +123,5 @@ export const sprintf = (format: string, ...a: any[]) => {	// Return a formatted 
 
 	return format.replace(regex, doFormat);
 }
+
+export default sprintf;

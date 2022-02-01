@@ -1,144 +1,181 @@
-import React from 'react';
-import { FormControl, FormControlProps } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import TextField from '@mui/material/TextField';
+import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
 import { i18n, _ } from '../../i18n/i18n';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { IChessOpening } from '../../chess/types/Interfaces';
 import { Logger } from '../../common/Logger';
 
-export interface StartPosSelectorProps extends FormControlProps {
+type IChessOpeningWithKey = IChessOpening & {
+    key?: string;
+    groupName?: string;
+}
+
+type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false, false, false>,
+        "renderInput" | "options" | "loading" | "getOptionLabel" | "isOptionEqualToValue" | "groupBy" | "onClose" | "onOpen">  & {
+    label?: React.ReactElement,
     fen?: string,
     openingsPos?: IChessOpening[],
     onChangeFen?: (fen: string) => void,
-    name?: string,
 }
 
-export interface StartPosSelectorState {
-    openings: IChessOpening[],
-}
+const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
+    const {
+        label, 
+        fen, 
+        openingsPos, 
+        onChangeFen,
+        open,
+        ...other
+    } = props;
 
-export class StartPosSelector extends React.Component<StartPosSelectorProps, StartPosSelectorState> {
-    private posMap: Map<string, string> = new Map();
-
-    public static defaultProps: StartPosSelectorProps = {
-        fen: FenString.standartStart,
-        openingsPos: [],
-        size: 'sm',
-    }
-
-    /**
-     * constructor
-     */
-    constructor(props: StartPosSelectorProps) {
-        super(props);
-
-        i18n.register();
-
-        this.setPosMap(FenString.emptyBoard);
-        this.setPosMap(FenString.standartStart);
-        this.state = {
-            openings: props.openingsPos!,
-        };
-    }
-
-    componentDidMount() {
-        if (process.env.NODE_ENV === 'production') {
-            const { state } = this;
-
-            if (state.openings.length === 0) {
-                const ajaxCallback = this.ajaxCallback;
-                fetch('https://www.chess-online.com/api/position/starting-positions', {mode: "cors"})
-                    .then(function(response) {
-                        if (!response.ok) {
-                            throw Error(response.statusText);
-                        }
-                        // Read the response as json.
-                        return response.json();
-                    })
-                    .then(function(responseAsJson) {
-                        ajaxCallback(responseAsJson);
-                    })
-                    .catch(function(error) {
-                        Logger.error('Looks like there was a problem when reading openings: \n', error);
-                    });
-            } 
-        }
-    }
-
-    private ajaxCallback = (data?: any) => {
-        const { state } = this;
-
-        let openings: IChessOpening[] = [];
-        for (var i = 0; i < data.length; i++) {
-            const option = data[i];
-            this.setPosMap(option.fen);
-            openings.push(option);
-        }
-        
-        this.setState({
-            ...state,
-            openings: openings
-        });
-    }
-
-    private setPosMap = (fen: string) => {
-        let key = FenString.trim(fen, FenFormat.castlingEp);
-        this.posMap.set(key, fen);
+    const convertOpeningData = (data: IChessOpening[]): IChessOpeningWithKey[] => {
+        return [...data.map(item => {
+            const key = FenString.trim(item.fen!, FenFormat.castlingEp);
+            return {
+                ...item,
+                key: key,
+                groupName: _("chess-ctrls", "popular_opening")
+            };
+        })];
     };
 
-    private onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { onChangeFen } = this.props;
+    const [opened, setOpened] = React.useState(false);
+    const [items, setItems] = React.useState<readonly IChessOpeningWithKey[]>(convertOpeningData(openingsPos || []));
+    const isLoading = open && items.length === 0;
+
+    React.useEffect(() => {
+        i18n.register();
+    }, []);
+
+    React.useEffect(() => {
+        let active = true;
+
+        if (!isLoading) {
+            return undefined;
+        }
+
+        if (process.env.NODE_ENV !== 'production') {
+            fillOpeningData([]);
+            return undefined;
+        }
+
+        fetch('https://www.chess-online.com/api/position/starting-positions', {mode: "cors"})
+            .then(function(response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+
+                return response.json();
+            })
+            .then(function(data: IChessOpening[]) {
+                if (active) {
+                    fillOpeningData(data);
+                }
+            })
+            .catch(function(error) {
+                Logger.error('Looks like there was a problem when reading openings: \n', error);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [isLoading]);
+
+    const fillOpeningData = (data: IChessOpening[]) => {
+        const list: IChessOpeningWithKey[] = [];
+
+        list.push({
+            code: "A00.0",
+            name: _("chess-ctrls", "position_label"),
+            fen: "",
+            key: "",
+            groupName: _("chess-ctrls", "set_board")
+        });
+
+        list.push({
+            code: "A00.1",
+            name: _("chess-ctrls", "std_fen"),
+            fen: FenString.standartStart,
+            key: FenString.standartStart,
+            groupName: _("chess-ctrls", "set_board")
+        });
+
+        list.push({
+            code: "A00.2",
+            name: _("chess-ctrls", "empty_fen"),
+            fen: FenString.emptyBoard,
+            key: FenString.emptyBoard,
+            groupName: _("chess-ctrls", "set_board")
+        });
+
+        list.push({
+            code: "A00.3",
+            name: _("chess-ctrls", "get_fen"),
+            fen: "---",
+            key: "---",
+            groupName: _("chess-ctrls", "set_board")
+        });
+
+        list.push(...convertOpeningData(data));
+
+        setItems([...list]);
+    };
+
+    React.useEffect(() => {
+        if (!open) {
+            setItems([]);
+        }
+    }, [open]);
+
+    const handleChange = (e: any) => {
         let fen: string = e.target.value; 
 
         if (fen === "---") {
             fen = window.prompt(_("chess-ctrls", "paste_fen_prompt"), "") || FenString.emptyBoard;
         }
 
-        if (onChangeFen) {
-            onChangeFen(fen);
-        }
+        onChangeFen && onChangeFen(fen);
     };
 
-    private getOpenings = (openingsPos: IChessOpening[]) => {
-        if (openingsPos && openingsPos.length) {
-            let openings = [];
-            for (let i = 0; i < openingsPos.length; i++) {
-                const option = openingsPos[i];
-                openings.push(
-                    <option key={i+3} value={option.fen}>{option.name}</option>
-                );
-            }
+    return (
+        <Autocomplete
+          {...other}
+          open={opened}
+          onOpen={() => {
+            setOpened(true);
+          }}
+          onClose={() => {
+            setOpened(false);
+          }}
+          groupBy={(option) => option.groupName ?? ""}
+          isOptionEqualToValue={(option, value) => option.key === value.key}
+          getOptionLabel={(option) => option.name ?? ""}
+          options={items}
+          loading={isLoading}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={label}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
+              }}
+            />
+          )}
+        />
+    );
+};
 
-            return (
-                <optgroup label={_("chess-ctrls", "popular_opening")}>
-                    {openings}
-                </optgroup>
-            );
+StartPosSelector.defaultProps = {
+    fen: FenString.standartStart,
+    openingsPos: [],
+};
 
-        } else {
-            return null;
-        }
-    }
-    
-    render() {
-        let { fen, openingsPos, onChangeFen, size, ...otherProps } = this.props;
-        const { openings } = this.state;
-        
-        const key = FenString.trim(fen!, FenFormat.castlingEp);
-        let value = this.posMap.get(key);
-        if (value === undefined) {
-            value = "";
-        }
-        
-        return (
-            <FormControl as="select" size={size} onChange={this.onChange} value={value} {...otherProps}>
-                <optgroup label={_("chess-ctrls", "set_board")}>
-                    <option value="">{_("chess-ctrls", "position_label")}</option>
-                    <option value={FenString.standartStart}>{_("chess-ctrls", "std_fen")}</option>
-                    <option value={FenString.emptyBoard}>{_("chess-ctrls", "empty_fen")}</option>
-                    <option value="---">{_("chess-ctrls", "get_fen")}</option>
-                </optgroup>
-                {this.getOpenings(openings)}
-            </FormControl>
-        );
-    }
-}
+export default StartPosSelector;

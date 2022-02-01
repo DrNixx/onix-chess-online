@@ -75,7 +75,7 @@ export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position
 
             const timerIcon = (active: boolean) => {
                 if (active) {
-                    return (<i className="xi-time pr-2"></i>);
+                    return (<i className="xi-time pe-2" />);
                 }
 
                 return null;

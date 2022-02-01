@@ -1,7 +1,10 @@
-import { fromPairs } from 'lodash';
+import Box from '@mui/material/Box';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import React from 'react';
-import { Button, ButtonGroup, ButtonToolbar } from 'react-bootstrap';
+
 import { Move } from '../../chess/Move';
+import Button from "@mui/material/Button";
+import Stack from '@mui/material/Stack';
 
 export interface MoveNavigatorProps {
     currentMove: Move,
@@ -107,15 +110,15 @@ export class MoveNavigator extends React.Component<MoveNavigatorProps, {}> {
         const { moveFirst, movePrev, moveNext, moveLast } = this;
 
         return (
-            <ButtonToolbar className="moves-nav my-2" aria-label="Game controls" ref={(el: HTMLDivElement) => this.elRef = el}>
-                <ButtonGroup aria-label="Move navigation">
-                    <Button aria-label="First move" variant="default" disabled={currentMove.isBegin()} onClick={moveFirst}><i className="xi-page-first xi-lg"></i></Button>
-                    <Button aria-label="Previous move" variant="default" disabled={currentMove.isBegin()} onClick={movePrev}><i className="xi-page-prev xi-lg"></i></Button>
-                    <Button aria-label="Next move" variant="default" disabled={currentMove.isLast()} onClick={moveNext}><i className="xi-page-next xi-lg"></i></Button>
-                    <Button aria-label="Last move" variant="default" disabled={currentMove.isLast()} onClick={moveLast}><i className="xi-page-last xi-lg"></i></Button>
+            <Stack sx={{py: 1}} direction="row" spacing={2} aria-label="Game controls" ref={(el: HTMLDivElement) => this.elRef = el}>
+                <ButtonGroup size="small" aria-label="Move navigation">
+                    <Button aria-label="First move" disabled={currentMove.isBegin()} onClick={moveFirst}><i className="xi-page-first xi-lg" /></Button>
+                    <Button aria-label="Previous move" disabled={currentMove.isBegin()} onClick={movePrev}><i className="xi-page-prev xi-lg" /></Button>
+                    <Button aria-label="Next move" disabled={currentMove.isLast()} onClick={moveNext}><i className="xi-page-next xi-lg" /></Button>
+                    <Button aria-label="Last move" disabled={currentMove.isLast()} onClick={moveLast}><i className="xi-page-last xi-lg" /></Button>
                 </ButtonGroup>
                 { children }
-            </ButtonToolbar>
+            </Stack>
         );
     }
 }

@@ -7,8 +7,8 @@
 */
 .compose-wrapper {
     position: absolute;
-    @include left( 0 );
-    @include right( 0 );
+    @include left(0);
+    @include right(0);
     bottom: 0;
     height: 50px;
     background: $color-contrast-lowest;
@@ -45,8 +45,8 @@
     }
 
     & > .row {
-        @include margin-left( -30px );
-        @include margin-right( -30px );
+        @include margin-left(-30px);
+        @include margin-right(-30px);
     }
 }
 
@@ -63,7 +63,7 @@
         }
 
         & + div {
-            width: calc(100% -16px);
+            width: calc(100% - 16px);
         }
     }
 }

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { sprintf } from "../../../src/js/fn/string/Sprintf";
+import sprintf from "../../../src/js/fn/string/Sprintf";
 
 describe('fn/array/Sprintf', function() {
     describe('#sprintf()', function() {

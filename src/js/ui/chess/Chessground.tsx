@@ -1,11 +1,11 @@
 import React from 'react';
 import clsx from "clsx";
-import { Container, Modal, CardGroup } from 'react-bootstrap';
 import * as cg from 'chessground/types';
 import { Chessground as ChessgroundNative } from 'chessground';
 import { Api } from 'chessground/api';
 import { Config } from 'chessground/config';
 import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
+import Container from '@mui/material/Container';
 
 export interface BoardProps {
     locale?: string,
@@ -77,13 +77,7 @@ export class Chessground extends React.Component<BoardProps, BoardState> {
 
         if (inPromotion) {
             return (
-                <Modal show={inPromotion}>
-                    <Modal.Body>
-                        <div className="promotion-block">
-                            
-                        </div>
-                    </Modal.Body>
-                </Modal>
+                <></>
             );
         }
 
@@ -103,7 +97,7 @@ export class Chessground extends React.Component<BoardProps, BoardState> {
         ];
 
         return (
-            <Container className={clsx(containerClass)}>
+            <Container className={clsx(containerClass)} maxWidth="xl">
                 <div className={clsx("board-container", piece)}>
                     <div className="main-board" ref={el => this.boardElement = el} />
                     { renderPromotion() }

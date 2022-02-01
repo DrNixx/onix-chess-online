@@ -6,69 +6,57 @@ import { DumbMoveList } from './DumbMoveList';
 import { DumbMoveTable } from './DumbMoveTable';
 import { GameRelatedStore } from '../../actions/GameStore';
 import { GameActions } from '../../actions/GameActions';
+import {useDispatch, useSelector} from "react-redux";
+import {CombinedGameState} from "../../actions/CombinedGameState";
+import {GameState} from "../../actions/GameState";
 
-export interface ChessMovesProps {
+type ChessMovesProps = {
     mode: MovesMode,
     nav: NavigatorMode,
-    store: GameRelatedStore,
     hasEvals?: boolean,
     toolbars?: React.ReactNode,
 }
 
-export class ChessMoves extends React.Component<ChessMovesProps, {}> {
-    /**
-     * constructor
-     */
-    constructor(props: ChessMovesProps) {
-        super(props);
+const ChessMoves: React.FC<ChessMovesProps> = (props) => {
+    const { mode, nav, hasEvals, children, toolbars } = props;
+
+    const game = useSelector<CombinedGameState, GameState>((state) => state.game );
+    const dispatch = useDispatch();
+
+    const onChangeKey = (key: string) => {
+        dispatch({ type: GameActions.NAVIGATE_TO_KEY, move: key } as GameActions.GameAction);
     }
 
-    private onChangeKey = (key: string) => {
-        const { store } = this.props;
-        store.dispatch({ type: GameActions.NAVIGATE_TO_KEY, move: key } as GameActions.GameAction);
+    const onChangePos = (move: Move) => {
+        dispatch({ type: GameActions.NAVIGATE_TO_MOVE, move: move } as GameActions.GameAction);
     }
 
-    private onChangePos = (move: Move) => {
-        const { store } = this.props;
-        store.dispatch({ type: GameActions.NAVIGATE_TO_MOVE, move: move } as GameActions.GameAction);
-    }
+    const {engine} = game;
+    const currMove = engine.CurrentMove;
 
-    render() {
-        const { store, mode, nav, hasEvals, children, toolbars } = this.props;
-        const state = store.getState();
-        const { engine } = state.game;
-        const currMove = engine.CurrentMove;
+    return (mode === MovesMode.Table) ? (
+        <DumbMoveTable
+            startPly={engine.StartPlyCount}
+            game={engine}
+            opeinig={engine.Eco}
+            hasEvals={hasEvals}
+            currentMove={currMove}
+            nav={nav}
+            toolbars={toolbars}
+            onChangePos={onChangePos}
+            onChangeKey={onChangeKey}>{ children }</DumbMoveTable>
+    ) : (
+        <DumbMoveList
+            startPly={engine.StartPlyCount}
+            game={engine}
+            opeinig={engine.Eco}
+            hasEvals={hasEvals}
+            currentMove={currMove}
+            nav={nav}
+            toolbars={toolbars}
+            onChangePos={onChangePos}
+            onChangeKey={onChangeKey}>{ children }</DumbMoveList>
+    );
+};
 
-        if (mode === MovesMode.Table) {
-            return (
-                <DumbMoveTable 
-                    startPly={engine.StartPlyCount}
-                    game={engine}
-                    opeinig={engine.Eco}
-                    hasEvals={hasEvals}
-                    currentMove={currMove}
-                    nav={nav}
-                    toolbars={toolbars}
-                    onChangePos={this.onChangePos} 
-                    onChangeKey={this.onChangeKey}>{ children }</DumbMoveTable>
-                
-            );
-        } else if (mode === MovesMode.List) {
-            return (
-                <DumbMoveList 
-                    startPly={engine.StartPlyCount}
-                    game={engine}
-                    opeinig={engine.Eco}
-                    hasEvals={hasEvals}
-                    currentMove={currMove} 
-                    nav={nav}
-                    toolbars={toolbars}
-                    onChangePos={this.onChangePos} 
-                    onChangeKey={this.onChangeKey}>{ children }</DumbMoveList>
-            );
-        }
-
-        return null;
-    }
-
-}
+export default ChessMoves;

@@ -1,151 +1,63 @@
-import clsx from "clsx";
-import React from 'react';
-import * as ReactDOM from 'react-dom';
-import Scrollbar from "react-scrollbars-custom";
-import { Unsubscribe } from 'redux';
-import { Container, Row, Col, Tabs, Tab, FormGroup, FormLabel, Nav } from 'react-bootstrap';
+import React, {useRef, useState} from 'react';
+import {shallowEqual, useSelector, useStore} from "react-redux";
+import ReactDOM from 'react-dom';
 
-import { Chessground } from 'chessground';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
 import { Api } from 'chessground/api';
-import { BoardSizeClasses } from 'onix-board-assets';
 
-import { i18n, _ } from '../../i18n/i18n';
+import { _ } from '../../i18n/i18n';
 
-import { Color } from '../../chess/Color';
-import { Chess as ChessEngine } from '../../chess/Chess';
 import { FenString } from '../../chess/FenString';
 
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 
-import * as BoardActions from '../../actions/BoardActions';
-import { createCombinedGameStore, CombinedGameStore } from '../../actions/CombinedGameStore';
-import { createCombinedGameState } from '../../actions/CombinedGameState';
+import {CombinedGameState} from '../../actions/CombinedGameState';
 
-import { renderPlayer, renderResult } from './GameUtils';
-import { GameInfo } from './GameInfo';
-
-import { ChessMoves } from '../components/ChessMoves';
+import {renderResult} from './GameUtils';
 import { MovesMode, NavigatorMode } from '../components/Constants';
-import { Captures } from '../components/Captures';
+import BoardToolbar from '../components/BoardToolbar';
+import ChessMoves from '../components/ChessMoves';
+import Captures from '../components/Captures';
+import GameInfo from './GameInfo';
 import { AnalyseGraphAsync } from '../components/AnalyseGraphAsync';
 import { MovesGraphAsync } from '../components/MovesGraphAsync';
-import { BoardToolbar } from '../components/BoardToolbar';
-import { GamePgn } from '../components/GamePgn';
+
+import GamePgn from '../components/GamePgn';
 import { Chat } from '../../chat/Chat';
 
+import GameWrapper from "./GameWrapper";
+import {BoardState} from "../../actions/BoardState";
+import {GameState} from "../../actions/GameState";
+import {Config as CgConfig} from "chessground/config";
+import DumbGame from "./DumbGame";
 
-interface GameState {
-}
+const AnalyseGame: React.VFC<GameProps> = (props) => {
+    const { board: boardCfg } = props;
 
-class AnalyseGameComponent extends React.Component<GameProps, GameState> {
-    public static defaultProps: GameProps = defaultProps;
+    const [tabToolbar, setTabToolbar] = useState("moves");
+    const [tabAnalysis, setTabAnalysis] = useState("fenpgn");
 
-    private storeUnsubscribe?: Unsubscribe = undefined;
+    const store = useStore<CombinedGameState>();
+    const cgRef = useRef<Api>();
+    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
+    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
 
-    private store: CombinedGameStore;
-
-    private cg?: Api = undefined;
-
-    private boardElement: HTMLDivElement | null = null;
-
-    constructor(props: GameProps) {
-        super(props);
-
-        i18n.register();
-
-        const state = createCombinedGameState(this.props);
-
-        this.store = createCombinedGameStore(state);
-    }
-
-    componentDidMount() {
-        const { store } = this;
-        const { board, game }  = store.getState();
-
-        this.storeUnsubscribe = this.store.subscribe(() =>
-            this.updateState()
-        );
-
-        this.cg = Chessground(this.boardElement!, {
-            fen: game.fen,
-            orientation: board.orientation,
-            coordinates: board.coordinates,
-            turnColor: Color.toName(game.engine.ToMove),
-            viewOnly: true,
-            lastMove: game.lastMove,
-            check: game.isCheck,
-            highlight: {
-                lastMove: true,
-                check: true
-            },
-            events: {
-                // change: onPositionChange
-            },
-        });
-
-        window.addEventListener("resize", this.redrawBoard);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener("resize", this.redrawBoard);
-
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.destroy();
-        }
-
-        if (this.storeUnsubscribe) {
-            this.storeUnsubscribe();
-        }
-        
-    }
-
-    private redrawBoard = () => {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.redrawAll();
-        }
-    };
-
-    private flipBoard = () => {
-        this.store.dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
-    };
-
-    updateState = () => {
-        
-        this.forceUpdate();
-    }
-
-    private gameConnect = () => {
-        
-    }
-
-    gameDisconnect = () => {
-        
-    }
-
-    loadGame = (id: number, insite: boolean) => {
-        
-    }
-
-    private renderChatTab = () => {
-        const { store } = this;
-        const { game } = store.getState();
-
+    const renderChatTab = () => {
         if (game.engine.ObserverId) {
             return (
-                <Nav.Item>
-                    <Nav.Link eventKey="chat">{_("game", "chatTab")}</Nav.Link>
-                </Nav.Item>
+                <Tab label={_("game", "chatTab")} value="chat" />
             );
         }
 
         return null;
     };
 
-    private renderChatContent = () => {
-        const { store } = this;
-        const { game } = store.getState();
+    const renderChatContent = () => {
         const { engine } = game;
 
         if (engine.ObserverId) {
@@ -155,233 +67,161 @@ class AnalyseGameComponent extends React.Component<GameProps, GameState> {
             }
 
             return (
-                <Tab.Pane eventKey="chat">
+                <TabPanel sx={{p: 0}} value="chat">
                     <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
-                </Tab.Pane>
+                </TabPanel>
             );
         }
 
         return null;
     };
 
-    private renderControls = () => {
-        const { store, props, renderChatTab, renderChatContent } = this;
-        const { board: boardCfg } = props;
-        const { board } = store.getState();
+    const handleTabToolbarChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabToolbar(newValue);
+    };
 
+    const renderControls = () => {
         return (
-            <div className="controls flex-grow-1 d-flex flex-column ml-md-4">
-                <BoardToolbar store={store} configUrl={boardCfg.configUrl} />
-                <Tab.Container defaultActiveKey="info">
-                    <Nav variant="tabs" className="nav-tabs-simple" onSelect={(eventKey: any, event: React.SyntheticEvent<unknown>) => { (event.target as HTMLElement).blur(); }}>
-                        <Nav.Item>
-                            <Nav.Link eventKey="moves">{_("game", "movesTab")}</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="info">{_("game", "infoTab")}</Nav.Link>
-                        </Nav.Item>
-                        { renderChatTab() }
-                    </Nav>
-                    <Tab.Content className="p-0">
-                        <Tab.Pane eventKey="moves">
+            <div className="controls flex-grow-1 d-flex flex-column ms-md-4">
+                <BoardToolbar configUrl={boardCfg.configUrl} />
+
+                <Box sx={{ width: '100%', typography: 'body1' }}>
+                    <TabContext value={tabToolbar}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleTabToolbarChange}>
+                                <Tab label={_("game", "movesTab")} value="moves" />
+                                <Tab label={_("game", "infoTab")} value="info" />
+                                { renderChatTab() }
+                            </TabList>
+                        </Box>
+                        <TabPanel sx={{p: 0}} value="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} store={this.store} hasEvals={true} />
+                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
-                                    <Captures store={this.store} piece={this.props.board.piece!} />
+                                    <Captures piece={boardCfg.piece!} />
                                 </div>
                             </div>
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="info">
-                            <GameInfo store={this.store} />
-                        </Tab.Pane>
+                        </TabPanel>
+                        <TabPanel sx={{p: 0}} value="info">
+                            <GameInfo />
+                        </TabPanel>
                         { renderChatContent() }
-                    </Tab.Content>
-                </Tab.Container>
+                    </TabContext>
+                </Box>
             </div>
         );
     };
 
-    private onPlyClick = (ply: number) => {
-        const { store } = this;
-        // gameNavigateToPly(store, ply);
-    }
-
-    private renderAnalysisTab = (engine: ChessEngine) => {
-        if (engine.RawData.game?.insite) {
-            return (
-                <Nav.Item>
-                    <Nav.Link eventKey="analysis">{_("analyse", "title")}</Nav.Link>
-                </Nav.Item>
-            );
-        } else {
-            return null;
-        }
-    };
-
-    private renderAnalysis = (store: CombinedGameStore, engine: ChessEngine) => {
-        if (engine.RawData.game?.insite) {
-            return (
-                <Tab.Pane eventKey="analysis">
-                    <AnalyseGraphAsync 
-                        store={store} 
-                        height={400} />
-                </Tab.Pane>
-            );
-        } else {
-            return null;
-        }
-    };
-
-    private renderMovetimeTab = (engine: ChessEngine) => {
-        if (engine.RawData.game?.moveCentis) {
-            return (
-                <Nav.Item>
-                    <Nav.Link eventKey="movetime">Затраченное время</Nav.Link>
-                </Nav.Item>
-            );
-        } else {
-            return null;
-        }
-    };
-
-    private renderMovetime = (store: CombinedGameStore, engine: ChessEngine) => {
-        if (engine.RawData.game?.moveCentis) {
-            return (
-                <Tab.Pane eventKey="movetime">
-                    <div style={{ width: '100%', height: 400 }}>
-                    <MovesGraphAsync 
-                        height={400} 
-                        store={this.store} />
-                    </div>
-                </Tab.Pane>
-            );
-        } else {
-            return null;
-        }
-    };
-
-    private renderFenPgnTab = (engine: ChessEngine) => {
+    const renderAnalysisTab = () => {
         return (
-            <Nav.Item>
-                <Nav.Link eventKey="fenpgn">FEN &amp; PGN</Nav.Link>
-            </Nav.Item>
+            <Tab label={_("analyse", "title")} value="analysis" />
         );
     };
 
-    private renderFenPgn = (engine: ChessEngine) => {
+    const renderAnalysis = () => {
+        return (
+            <TabPanel value="analysis">
+                <AnalyseGraphAsync
+                    store={store}
+                    height={400} />
+            </TabPanel>
+        );
+    };
+
+    const renderMovetimeTab = () => {
+        return (
+            <Tab label={"Затраченное время"} value="movetime" />
+        );
+    };
+
+    const renderMovetime = () => {
+        return (
+            <TabPanel value="movetime">
+                <div style={{ width: '100%', height: 400 }}>
+                    <MovesGraphAsync
+                        height={400}
+                        store={store} />
+                </div>
+            </TabPanel>
+        );
+    };
+
+    const renderFenPgnTab = () => {
+        return (
+            <Tab label={"FEN & PGN"} value="fenpgn" />
+        );
+    };
+
+    const renderFenPgn = () => {
+        const {engine} = game;
         const fen = FenString.fromPosition(engine.CurrentPos);
         const pgn = engine.RawData.pgn;
 
         return (
-            <Tab.Pane eventKey="fenpgn">
+            <TabPanel value="fenpgn">
                 <GamePgn fen={fen} pgn={pgn} />
-            </Tab.Pane>
+            </TabPanel>
         );
     };
 
-    private renderCountersTab = (engine: ChessEngine) => {
+    const renderCountersTab = () => {
         return null;
     }
 
-    private renderCounters = (store: CombinedGameStore, engine: ChessEngine) => {
+    const renderCounters = () => {
         return null;
     }
 
-    private renderUnderboard = (store: CombinedGameStore, engine: ChessEngine) => {
-        const { renderAnalysis, renderAnalysisTab, renderMovetime, renderMovetimeTab, renderFenPgn, renderFenPgnTab, renderCounters, renderCountersTab } = this;
+    const handleTabAnalysisChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabAnalysis(newValue);
+    };
 
+    const renderUnderboard = () => {
+        const {engine} = game;
         return (
-            <Row>
-                <Col lg={12}>
-                    <div className="underboard">
-                        <Tab.Container defaultActiveKey="fenpgn">
-                            <Nav variant="tabs" className="nav-tabs-simple">
-                                { renderAnalysisTab(engine) }
-                                { renderMovetimeTab(engine) }
-                                { renderFenPgnTab(engine) }
-                                { renderCountersTab(engine) }
-                            </Nav>
-                            <Tab.Content>
-                                { renderAnalysis(store, engine) }
-                                { renderMovetime(store, engine) }
-                                { renderFenPgn(engine) }
-                                { renderCounters(store, engine) }
-                            </Tab.Content>
-                        </Tab.Container>
-                    </div>
-                </Col>
-            </Row>
+            <Box>
+                <div className="underboard">
+                    <Box sx={{ width: '100%', typography: 'body1' }}>
+                        <TabContext value={tabAnalysis}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList onChange={handleTabAnalysisChange} aria-label="lab API tabs example">
+                                    { engine.RawData.game?.insite && renderAnalysisTab() }
+                                    { engine.RawData.game?.moveCentis && renderMovetimeTab() }
+                                    { renderFenPgnTab() }
+                                    { renderCountersTab() }
+                                </TabList>
+                            </Box>
+                            { engine.RawData.game?.insite && renderAnalysis() }
+                            { engine.RawData.game?.moveCentis && renderMovetime() }
+                            { renderFenPgn() }
+                            { renderCounters() }
+                        </TabContext>
+                    </Box>
+                </div>
+            </Box>
         );
     };
 
-    render() {
-        const { props, store, flipBoard } = this;
-        const { board, game } = store.getState();
-        const { engine } = game;
-        const { square, piece, size, coordinates, is3d } = board;
-        
-        if (this.cg) {
-            this.cg.set({
-                fen: game.fen,
-                lastMove: game.lastMove,
-                check: game.isCheck,
-                orientation: board.orientation,
-                coordinates: board.coordinates,
-            });
-        }
+    return (
+        <DumbGame
+            cgRef={(api) => cgRef.current = api ?? undefined}
+            controlsLeft={renderControls()}
+            controlsTop={renderResult(game.engine, board.orientation, "top")}
+            controlsBottom={renderResult(game.engine, board.orientation, "bottom")}
+        >{ renderUnderboard() }</DumbGame>
+    );
+};
 
-        const containerClass = [
-            square,
-            BoardSizeClasses[size],
-            { 
-                "coords-no": !coordinates,
-                "is2d": !is3d,
-                "is3d": is3d
-            }
-        ];
+AnalyseGame.defaultProps = defaultProps;
 
-        return (
-            <Container fluid={true} className={clsx(containerClass)}>
-                <Row>
-                    <Col md={12}>
-                        <div className="d-block d-md-flex flex-wrap mb-2">
-                            <div>
-                                <div className={clsx("board-container", piece)}>
-                                    <Row>
-                                        <Col md={6}>
-                                            {renderPlayer(game.engine, board.orientation, "top")} 
-                                        </Col>
-                                        <Col className="text-right position-relative" md={6}>
-                                            {renderResult(game.engine, board.orientation, "top")}
-                                        </Col>
-                                    </Row>
-                                    <Row className="py-2">
-                                        <Col>
-                                            <div className="main-board" ref={el => this.boardElement = el} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md={6}>
-                                            {renderPlayer(game.engine, board.orientation, "bottom")}
-                                        </Col>
-                                        <Col className="text-right" md={6}>
-                                            {renderResult(game.engine, board.orientation, "bottom")}
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </div>
-                            { this.renderControls() }
-                        </div>
-                    </Col>
-                </Row>
-                { this.renderUnderboard(store, engine) }
-            </Container>
-        );
-    }
-}
+const GameRunner: React.VFC<GameProps> = (props) => {
+    return (
+        <GameWrapper GameComponent={AnalyseGame} {...props} />
+    );
+};
 
 export const analyseGame = (props: GameProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(AnalyseGameComponent, props), container, () => { });
+    ReactDOM.render(React.createElement(GameRunner, props), container, () => { });
 };

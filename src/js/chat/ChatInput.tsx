@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup, Row, Col, FormLabel } from 'react-bootstrap';
 import { Logger } from '../common/Logger';
 import { _ } from '../i18n/i18n';
 import { IChatMessage } from './Interfaces';
@@ -82,7 +81,7 @@ export class ChatInput extends React.Component<ChatInputProps, ChatInputState> {
                         <label className="sr-only">Message</label>
                         <input type="text" className="form-control chat-input" value={message} onKeyPress={this.keyPress} onChange={this.msgChange} />
                     </div>
-                    <div className="link text-color ml-2 pl-2 b-l b-grey">
+                    <div className="link text-color ms-2 ps-2 b-l b-grey">
                         <a href="#" className="link text-color" onClick={this.doSend}><i className="pg-icon">send</i></a>
                     </div>
                 </div>

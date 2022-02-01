@@ -1,48 +1,41 @@
-import React from 'react';
+import React, {useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
-import { FormControl, FormControlProps } from 'react-bootstrap';
+import MenuItem from '@mui/material/MenuItem';
+import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
 import { i18n, _ } from '../../i18n/i18n';
 import { Color } from '../../chess/Color';
 import { Colors } from '../../chess/types/Types';
 
-export interface WhoMoveSelectorProps extends FormControlProps {
-    defaultValue?: Colors.BW;
+type WhoMoveSelectorProps =  SelectProps<Colors.BW> & {
     onChangeTurn?: (color: Colors.BW) => void;
-    name?: string;
 }
 
-export class WhoMoveSelector extends React.Component<WhoMoveSelectorProps, {}> {
-    public static defaultProps: WhoMoveSelectorProps = {
-        defaultValue: Color.White,
-        size: "sm",
-    }
+const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (props) => {
+    const {onChange, onChangeTurn, value, ...other} = props;
 
-    /**
-     * constructor
-     */
-    constructor(props: WhoMoveSelectorProps) {
-        super(props);
-        
-        i18n.register();
-    }
+    const [who, setWho] = useState(value);
 
-    private onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { onChangeTurn } = this.props;
-        const color: Colors.BW = toSafeInteger(e.target.value) as Colors.BW; 
+    const handleChange = (event: SelectChangeEvent<Colors.BW>) => {
+        const newWho = toSafeInteger(event.target.value) as Colors.BW;;
+        setWho(newWho);
+        onChangeTurn && onChangeTurn(newWho);
+    };
 
-        if (onChangeTurn) {
-            onChangeTurn(color);
-        }
-    }
+    return (
+        <Select
+            {...other}
+            value={who}
+            onChange={handleChange}
+        >
+            <MenuItem value={Color.White}>{_("chess-ctrls", "white_move")}</MenuItem>
+            <MenuItem value={Color.Black}>{_("chess-ctrls", "black_move")}</MenuItem>
+        </Select>
+    );
+};
 
-    render() {
-        const { defaultValue, onChangeTurn, size, ...otherProps } = this.props;
-        
-        return (
-            <FormControl as="select" size={size} onChange={this.onChange} defaultValue={defaultValue!.toString()} {...otherProps}>
-                <option value={Color.White.toString()}>{_("chess-ctrls", "white_move")}</option>
-                <option value={Color.Black.toString()}>{_("chess-ctrls", "black_move")}</option>
-            </FormControl>
-        );
-    }
-}
+WhoMoveSelector.defaultProps = {
+    defaultValue: Color.White,
+    value: Color.White,
+};
+
+export default WhoMoveSelector;

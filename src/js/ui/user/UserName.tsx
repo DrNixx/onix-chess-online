@@ -2,7 +2,6 @@ import React, { useEffect} from 'react';
 import { nanoid } from 'nanoid';
 import clsx from "clsx";
 import isString from "lodash/isString";
-import {OverlayTrigger, Popover, PopoverProps} from "react-bootstrap";
 import { Logger } from '../../common/Logger';
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import {Avatar} from "./Avatar";
@@ -61,6 +60,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
     private getPopoverContent = () => {
         const { popoverContent } = this.state;
+        /*
         if (popoverContent) {
             return (
                 <Popover.Content dangerouslySetInnerHTML={{ __html: popoverContent }} />
@@ -74,6 +74,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
                 </Popover.Content>
             );
         }
+         */
     };
 
     private onPopupToggle = (show: boolean) => {
@@ -102,6 +103,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
     };
 
     private popoverElement = () => {
+        /*
         const UpdatingPopover = React.forwardRef(
             ({ popper, children, show: _, ...props }:  PopoverProps, ref) => {
                 useEffect(() => {
@@ -122,6 +124,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
                 {this.getPopoverContent()}
             </UpdatingPopover>
         );
+         */
     }
 
     private renderUsername = (user: IUser) => {
@@ -130,7 +133,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         return (
             <div className="small">
                 {(user.display && (user.display != '?') && (user.display != user.name) && !compact) ? (<span>{user.name}</span>) : null}
-                { children ? (<span className="pl-4 pull-right">{children}</span>) : null }
+                { children ? (<span className="ps-4 pull-right">{children}</span>) : null }
             </div>
         );
     }
@@ -139,13 +142,13 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
         if (user.title) {
             if (isString(user.title)) {
                 return (
-                    <span className="label label-success text-uppercase fs-10 lh-20 mr-1"
+                    <span className="label label-success text-uppercase fs-10 lh-20 me-1"
                           data-toggle="tooltip"
                           title="">{user.title}</span>
                 );
             } else {
                 return (
-                    <span className="label label-success text-uppercase fs-10 lh-20 mr-1"
+                    <span className="label label-success text-uppercase fs-10 lh-20 me-1"
                           data-toggle="tooltip"
                           title={user.title.name}>{user.title.id}</span>
                 );
@@ -167,9 +170,12 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         if (popover && user.id) {
             return (
+                <span className={clsx(unClass)}>{display}</span>
+                /*
                 <OverlayTrigger rootClose={true} trigger="click" placement="auto" onToggle={this.onPopupToggle} overlay={this.popoverElement()}>
                     <span className={clsx(unClass)}>{display}</span>
                 </OverlayTrigger>
+                 */
             );
         } else {
             if (user.id) {
