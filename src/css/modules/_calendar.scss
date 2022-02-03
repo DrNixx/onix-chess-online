@@ -228,7 +228,7 @@ Events / .event-container
 					&.week-header{
 						text-transform: uppercase;
 						text-align: center;
-						font-family: $secondary-font-family;
+						font-family: var(--bs-font-secondary);
 						letter-spacing: 0.06em;
             			font-size: 10.5px;
 					}
@@ -594,7 +594,7 @@ Events / .event-container
 				font-size: 11px;
 				letter-spacing: 0.06em;
             	font-size: 10.5px;
-            	font-family: $secondary-font-family;
+            	font-family: var(--bs-font-secondary);
 				@include right(5px);
 			}
 		}

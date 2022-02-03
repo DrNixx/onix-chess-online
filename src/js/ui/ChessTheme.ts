@@ -2,6 +2,15 @@ import React from 'react';
 import { createTheme } from '@mui/material/styles';
 
 export const ChessTheme = createTheme({
+    components: {
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    fontFamily: "var(--bs-font-secondary)",
+                }
+            }
+        }
+    },
     palette: {
         primary: {
             main: '#20748c',
@@ -24,4 +33,7 @@ export const ChessTheme = createTheme({
             contrastText: 'white',
         }
     },
+    typography: {
+        fontFamily: "var(--bs-body-font-family)"
+    }
 });

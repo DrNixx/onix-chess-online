@@ -8,10 +8,9 @@ html {
 ------------------------------------------------------------------
 */
 body {
+    --bs-body-bg: #{$body-background};
     height: 100%;
-    margin: 0;
     padding: 0;
-    background-color: $body-background;
     direction: $direction;
     -moz-osx-font-smoothing: grayscale;
     &.fixed-header {

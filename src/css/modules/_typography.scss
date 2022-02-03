@@ -5,20 +5,19 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600");
 //@import url("https://keplerapis.com/fonts/css?family=Inter+UI:300,400,500,600");
 
-html {
-    font-size: 100%;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
+:root {
+    --bs-body-font-size: #{$body-font-size};
+    --bs-font-secondary: #{$secondary-font-family}
 }
+
+html {
+    font-size: var(--bs-body-font-size);
+}
+
 body {
-    color: $color-contrast-high;
-    font-family: $base-font-family;
-    font-size: 14px;
-    font-weight: normal;
+    --bs-body-color: #{$color-contrast-high};
     letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
     -webkit-font-feature-settings: "kern" 1;
     -moz-font-feature-settings: "kern" 1;
 }
@@ -926,7 +925,7 @@ z = font size
 }
 
 .font-montserrat {
-    font-family: $secondary-font-family !important;
+    font-family: var(--bs-font-secondary) !important;
 }
 
 .font-georgia {
@@ -934,11 +933,11 @@ z = font size
 }
 
 .font-heading {
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
 }
 
 .font-secondary {
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
 }
 
 /* Page title

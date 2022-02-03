@@ -42,7 +42,6 @@ import GameWrapper from "./GameWrapper";
 import {GameActions as ga} from "../../actions/GameActions";
 import {getLegalMovesMap} from "../../utils/chess";
 import IOSSwitch from "../controls/IOSSwitch";
-import UsingOptions from "../controls/TestSwitch";
 
 const ConfigureGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
@@ -159,11 +158,10 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                             <FormControlLabel
                                 control={
                                     <IOSSwitch
-                                        sx={{m: 1}}
                                         id="coords"
                                         name="coords"
+                                        sx={{m: 1}}
                                         color="primary"
-                                        size="small"
                                         value="1"
                                         defaultChecked={boardCfg.coordinates}
                                         onChange={onCoordsChange}
@@ -178,12 +176,14 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                             <Grid item md={6}>
                                 <FormControlLabel
                                     control={
-                                        <Switch id="hints"
-                                                name="hints"
-                                                color="primary"
-                                                value="1"
-                                                defaultChecked={boardCfg.learnMode}
-                                                onChange={onLearnChange}
+                                        <IOSSwitch
+                                            id="hints"
+                                            sx={{m: 1}}
+                                            name="hints"
+                                            color="primary"
+                                            value="1"
+                                            defaultChecked={boardCfg.learnMode}
+                                            onChange={onLearnChange}
                                         />
                                     }
                                     label={_("game", "display_move_hints")}
@@ -192,27 +192,32 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                             <Grid item md={6}>
                                 <FormControlLabel
                                     control={
-                                        <Switch id="confirm"
-                                                name="confirm"
-                                                value="1"
-                                                defaultChecked={boardCfg.confirmMove}
-                                                onChange={onConfirmChange}
+                                        <IOSSwitch
+                                            id="confirm"
+                                            name="confirm"
+                                            sx={{m: 1}}
+                                            color="primary"
+                                            value="1"
+                                            defaultChecked={boardCfg.confirmMove}
+                                            onChange={onConfirmChange}
                                         />
                                     }
                                     label={_("game", "confirm_move_form")}
                                 />
                             </Grid>
-                            <UsingOptions />
                             <Grid item md={12}>
                                 <Stack direction="row" spacing={1} alignItems="center">
                                     <Typography>{_("game", "moves_mode")}:</Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography>{_("game", "moves_mode_list")}</Typography>
-                                        <Switch id="movetable"
-                                                name="movetable"
-                                                value="1"
-                                                defaultChecked={boardCfg.moveTable}
-                                                onChange={onMoveTableChange}
+                                        <IOSSwitch
+                                            id="movetable"
+                                            name="movetable"
+                                            sx={{m: 1}}
+                                            color="primary"
+                                            value="1"
+                                            defaultChecked={boardCfg.moveTable}
+                                            onChange={onMoveTableChange}
                                         />
                                         <Typography>{_("game", "moves_mode_table")}</Typography>
                                     </Stack>

@@ -26,7 +26,7 @@
     display: block;
   }
   .btn-compose {
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
     font-size: 13px;
     font-weight: normal;
     letter-spacing: 0.02em;
@@ -35,7 +35,7 @@
   .menu-title {
     color: $color-contrast-medium;
     font-size: 10.8px;
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
     font-weight: normal;
     letter-spacing: 0.03em;
   }

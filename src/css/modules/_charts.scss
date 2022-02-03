@@ -56,7 +56,7 @@
     font-size: 12px;
 
     .value.nv-pointer-events-none {
-      font-family: $secondary-font-family;
+      font-family: var(--bs-font-secondary);
       font-weight: normal;
       font-size: 11px;
       color: lighten($color-contrast-high, 30%);
@@ -287,7 +287,7 @@
     .rickshaw_graph .y_ticks text,
     .rickshaw_graph .x_ticks_d3 text {
       opacity: 0.35;
-      font-family: $secondary-font-family;
+      font-family: var(--bs-font-secondary);
       font-size: 11px;
     }
   }
@@ -333,7 +333,7 @@
   }
   .rickshaw_graph .y_ticks text,
   .rickshaw_graph .x_ticks_d3 text {
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
     font-size: 11px;
   }
   .rickshaw_range_slider_preview {
@@ -360,7 +360,7 @@
     @include right(0);
     width: auto;
     .x_tick.plain .title {
-      font-family: $secondary-font-family;
+      font-family: var(--bs-font-secondary);
       font-size: 11px;
     }
   }

@@ -47,7 +47,7 @@
 .list-view-fake-header {
   background: $color-contrast-lower;
   color: #232830;
-  font: normal 11px/14px $secondary-font-family, $interface-font-family;
+  font: normal 11px/14px var(--bs-font-secondary), $interface-font-family;
   text-transform: uppercase;
   margin: 0;
   @include padding(6px, 0, 5px, 15px);

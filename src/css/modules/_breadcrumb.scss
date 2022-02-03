@@ -2,7 +2,7 @@
 ------------------------------------
 */
 .breadcrumb {
-    font-family: $secondary-font-family;
+    font-family: var(--bs-font-secondary);
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
