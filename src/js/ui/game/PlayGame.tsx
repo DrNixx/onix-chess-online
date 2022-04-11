@@ -27,7 +27,6 @@ import {Api} from 'chessground/api';
 import {Config as CgConfig} from 'chessground/config';
 import * as cg from 'chessground/types';
 
-import {_} from '../../i18n/i18n';
 import {Color} from '../../chess/Color';
 
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
@@ -58,6 +57,8 @@ import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {getLegalMovesMap} from "../../utils/chess";
+import {useTranslation} from "react-i18next";
+import {CircularProgress} from "@mui/material";
 
 enum BoardMode {
     Play = 0,
@@ -87,6 +88,8 @@ type PlayGameProps = GameProps & {
 
 const PlayGame: React.VFC<PlayGameProps> = (props) => {
     const { board: boardCfg } = props;
+
+    const { t } = useTranslation(['game', 'core']);
 
     const cgRef = useRef<Api>();
     const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
@@ -322,7 +325,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 <div className="form-group field-advance required">
                     <div className="form-check switch switch-lg primary">
                         <input type="checkbox" id="advance" className="custom-check-input" name="advance" value="1" checked={confirmMove} onChange={toggleForm} />
-                        <label htmlFor="advance">{_("game", "confirm_move_form")}</label>
+                        <label htmlFor="advance">{t("confirm_move_form")}</label>
                     </div>
                 </div>
             </div>
@@ -380,16 +383,16 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 <div>
                     <div className="form-check primary">
                         <input type="checkbox" id="sendDraw" checked={drawChecked} onChange={drawCheck} disabled={disableForm} />
-                        <label htmlFor="sendDraw">{_("game", "send_draw")}</label>
+                        <label htmlFor="sendDraw">{t("send_draw")}</label>
                     </div>
                 </div>
                 { confirmMove ?  (
                     <div className="ms-auto ps-4 move-form">
-                        <input aria-label={_("game", "move_from")} type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
+                        <input aria-label={t("move_from")} type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
                         <span className="px-2">&mdash;</span>
-                        <input aria-label={_("game", "move_to")} type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
-                        <Button color="success" className="ms-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{_("game", "move_button")}</Button>
-                        <Button className="ms-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{_("game", "reset_button")}</Button>
+                        <input aria-label={t("move_to")} type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
+                        <Button color="success" className="ms-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{t("move_button")}</Button>
+                        <Button className="ms-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{t("reset_button")}</Button>
                     </div>
                 ) : ""}
             </Box>
@@ -400,7 +403,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
         return (
             <Box display="flex" justifyContent="space-between" flexWrap="nowrap" sx={{p: 1}}>
                 <Stack direction="row" spacing={1}>
-                    <Button onClick={returnToPlay}>{_("game", "close_analyse")}</Button>
+                    <Button onClick={returnToPlay}>{t("close_analyse")}</Button>
                 </Stack>
             </Box>
         );
@@ -410,7 +413,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
         return (
             <Box display="flex" justifyContent="space-between" flexWrap="nowrap" sx={{p: 1}}>
                 <Stack direction="row" spacing={1}>
-                    <Button onClick={returnToPlay}>{_("game", "close_conditional")}</Button>
+                    <Button onClick={returnToPlay}>{t("close_conditional")}</Button>
                 </Stack>
             </Box>
         );
@@ -465,16 +468,16 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
         return (
             <Dialog open={confirmResign} onClose={hideResignDialog}>
                 <DialogTitle>
-                    <Typography component="h5">{_("core", "confirm_action")}</Typography>
+                    <Typography component="h5">{t("confirm_action", {ns: "core"})}</Typography>
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {_("game", "do_resign_confirm")}
+                        {t("do_resign_confirm")}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="secondary" onClick={hideResignDialog}>{_("core", "cancel")}</Button>
-                    <Button color="warning" onClick={doResign}>{_("game", "do_resign")}</Button>
+                    <Button color="secondary" onClick={hideResignDialog}>{t("cancel", {ns: "core"})}</Button>
+                    <Button color="warning" onClick={doResign}>{t("do_resign")}</Button>
                 </DialogActions>
             </Dialog>
         );
@@ -499,8 +502,8 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                         key="tb_resign"
                         color="warning"
                         size="small"
-                        aria-label={_("game", "do_resign")}
-                        title={_("game", "do_resign")}
+                        aria-label={t("do_resign")}
+                        title={t("do_resign")}
                         onClick={showResignDialog}>
                         <Icon baseClassName="" className="xi-resign" fontSize="inherit" />
                     </IconButton>
@@ -511,24 +514,24 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                     <IconButton
                         key="tb_inboard_analyse"
                         size="small"
-                        aria-label={_("game", "inboard_analyse")}
-                        title={_("game", "inboard_analyse")}
+                        aria-label={t("inboard_analyse")}
+                        title={t("inboard_analyse")}
                         onClick={() => modeTurnOn(BoardMode.Analyse)}>
                         <Icon baseClassName="" className="xi-onboard" fontSize="inherit" />
                     </IconButton>
                     <IconButton
                         key="tb_external_analyse"
                         size="small"
-                        aria-label={_("game", "external_analyse")}
-                        title={_("game", "external_analyse")}
+                        aria-label={t("external_analyse")}
+                        title={t("external_analyse")}
                         href={analink}>
                         <Icon baseClassName="" className="xi-analysis" fontSize="inherit" />
                     </IconButton>
                     <IconButton
                         key="tb_conditional"
                         size="small"
-                        aria-label={_("game", "conditional")}
-                        title={_("game", "conditional")}
+                        aria-label={t("conditional")}
+                        title={t("conditional")}
                         onClick={() => modeTurnOn(BoardMode.Conditional)}>
                         <Icon baseClassName="" className="xi-qtree" fontSize="inherit" />
                     </IconButton>
@@ -541,8 +544,8 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 <IconButton
                     key="tb_next_game"
                     size="small"
-                    aria-label={_("game", "next_game")}
-                    title={_("game", "next_game")}
+                    aria-label={t("next_game")}
+                    title={t("next_game")}
                     onClick={() => {}}>
                     <Icon baseClassName="" className="xi-next-game" fontSize="inherit" />
                 </IconButton>
@@ -556,7 +559,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
     //#region Moves
     const renderMovesTab = () => {
         return (game.engine.isStarted) ? (
-            <Tab label={_("game", "movesTab")} value="moves" />
+            <Tab label={t("movesTab")} value="moves" />
         ) : null;
     };
 
@@ -622,7 +625,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
     //#region Chat
     const renderChatTab = () => {
         return (game.engine.isStarted) ? (
-            <Tab label={_("game", "chatTab")} value="chat" />
+            <Tab label={t("chatTab")} value="chat" />
         ) : null;
     };
 
@@ -648,7 +651,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
     //#region Notes
     const renderNotesTab = () => {
         return (game.engine.isStarted) ? (
-            <Tab label={_("game", "notesTab")} value="notes" />
+            <Tab label={t("notesTab")} value="notes" />
         ) : null;
     };
 
@@ -747,7 +750,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                             <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.waitOpponentNote}</p>
                             <br/>
                             <Box className="text-center mt-2">
-                                <Button color="warning" onClick={() => rejectGame()}>{ _("game", "cancel_challenge") }</Button>
+                                <Button color="warning" onClick={() => rejectGame()}>{ t("cancel_challenge") }</Button>
                             </Box>
                         </CardContent>
                     </Card>
@@ -763,11 +766,11 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                             <br/>
                             <Grid container spacing={2}>
                                 <Grid item xs={6} className="text-right">
-                                    <Button color="primary" onClick={() => acceptGame()}>{ _("core", "accept") }</Button>
+                                    <Button color="primary" onClick={() => acceptGame()}>{t("accept", {ns: "core"})}</Button>
                                 </Grid>
                                 <Grid item xs={6} className="text-right">
                                     <div className="text-right position-relative">
-                                        <Button color="warning" onClick={() => rejectGame()}>{ _("core", "decline") }</Button>
+                                        <Button color="warning" onClick={() => rejectGame()}>{t("decline", {ns: "core"})}</Button>
                                     </div>
                                 </Grid>
                             </Grid>
@@ -784,7 +787,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                             <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.waitJoinNote}</p>
                             <br/>
                             <Box className="text-center">
-                                <Button color="warning" onClick={() => rejectGame()}>{ _("game", "cancel_game") }</Button>
+                                <Button color="warning" onClick={() => rejectGame()}>{ t("cancel_game") }</Button>
                             </Box>
                         </CardContent>
                     </Card>
@@ -799,7 +802,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                             <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.canJoinNote}</p>
                             <br/>
                             <Box className="text-center">
-                                <Button color="primary" onClick={() => acceptGame()}>{ _("core", "join") }</Button>
+                                <Button color="primary" onClick={() => acceptGame()}>{t("join", {ns: "core"}) }</Button>
                             </Box>
                         </CardContent>
                     </Card>
@@ -825,7 +828,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleTabChange}>
                                 { renderMovesTab() }
-                                <Tab label={_("game", "infoTab")} value="info" />
+                                <Tab label={t("infoTab")} value="info" />
                                 { renderPgnTab() }
                                 { renderChatTab() }
                                 { renderNotesTab() }

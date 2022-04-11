@@ -2,9 +2,10 @@ import React, {useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
 import MenuItem from '@mui/material/MenuItem';
 import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
-import { i18n, _ } from '../../i18n/i18n';
 import { Color } from '../../chess/Color';
 import { Colors } from '../../chess/types/Types';
+import {useTranslation} from "react-i18next";
+import Skeleton from "@mui/material/Skeleton";
 
 type WhoMoveSelectorProps =  SelectProps<Colors.BW> & {
     onChangeTurn?: (color: Colors.BW) => void;
@@ -13,10 +14,12 @@ type WhoMoveSelectorProps =  SelectProps<Colors.BW> & {
 const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (props) => {
     const {onChange, onChangeTurn, value, ...other} = props;
 
+    const { t } = useTranslation(['chess-ctrls']);
+
     const [who, setWho] = useState(value);
 
     const handleChange = (event: SelectChangeEvent<Colors.BW>) => {
-        const newWho = toSafeInteger(event.target.value) as Colors.BW;;
+        const newWho = toSafeInteger(event.target.value) as Colors.BW;
         setWho(newWho);
         onChangeTurn && onChangeTurn(newWho);
     };
@@ -27,8 +30,8 @@ const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (props) => {
             value={who}
             onChange={handleChange}
         >
-            <MenuItem value={Color.White}>{_("chess-ctrls", "white_move")}</MenuItem>
-            <MenuItem value={Color.Black}>{_("chess-ctrls", "black_move")}</MenuItem>
+            <MenuItem value={Color.White}>{t("white_move")}</MenuItem>
+            <MenuItem value={Color.Black}>{t("black_move")}</MenuItem>
         </Select>
     );
 };

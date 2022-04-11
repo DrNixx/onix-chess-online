@@ -1,0 +1,12 @@
+{
+  "white_move": "Ход белых",
+  "black_move": "Ход черных",
+  "set_board": "Установить позицию",
+  "position_label": "-- Позиция --",
+  "std_fen": "Стартовая позиция",
+  "empty_fen": "Пустая доска",
+  "get_fen": "Загрузить FEN",
+  "paste_fen_prompt": "Скопируйте сюда собственный FEN",
+  "popular_opening": "Популярные дебюты",
+  "copy_to_clipboard": "Копировать в буфер обмена"
+}

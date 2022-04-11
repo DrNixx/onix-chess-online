@@ -1,0 +1,15 @@
+{
+  "title": "Computer analysis",
+  "advantage": "Advantage",
+  "mateIn": "Mate in #%d",
+  "request": "Request analysis...",
+  "inprogress": "Game analysis in progress... Please reload the page in a few minutes.",
+  "completed": "Completed %d %%",
+  "loading": "Loading...",
+  "averageCentipawnLoss": "Average centipawn loss",
+  "averageCentipawnLossTitle": "Average centipawn loss",
+  "inaccuracies": "Inaccuracies",
+  "mistakes": "Mistakes",
+  "blunders": "Blunders",
+  "hideAnalysis": "Mostrar/ocultar análisis"
+}

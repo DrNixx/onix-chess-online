@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, {Suspense} from 'react';
 import { MovesGraphProps } from './MovesGraphProps';
 
 export class MovesGraphAsync extends React.Component<MovesGraphProps, {}> {
@@ -6,9 +6,7 @@ export class MovesGraphAsync extends React.Component<MovesGraphProps, {}> {
         const MovesComponent = React.lazy(() => import('./MovesGraphDumb'));
 
         return (
-            <Suspense fallback={<div className="progress-circle-indeterminate text-hide">Loading...</div>}>
-                <MovesComponent {...this.props} />
-            </Suspense>
+            <Suspense fallback={null}><MovesComponent {...this.props} /></Suspense>
         );
         
     }

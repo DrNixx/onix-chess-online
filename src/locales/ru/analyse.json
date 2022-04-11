@@ -1,0 +1,15 @@
+{
+  "title": "Компьютерный анализ",
+  "advantage": "Оценка",
+  "mateIn": "Мат через %d",
+  "request": "Запросить анализ...",
+  "inprogress": "Партия анализируется... Обновите страницу через несколько минут.",
+  "completed": "Завершено %d %%",
+  "loading": "Загрузка...",
+  "averageCentipawnLoss": "Средние потери (p/100)",
+  "averageCentipawnLossTitle": "В среднем потеряно сотых пешки",
+  "inaccuracies": "Неточности",
+  "mistakes": "Ошибки",
+  "blunders": "Зевки",
+  "hideAnalysis": "Show/hide analysis"
+}

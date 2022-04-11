@@ -15,6 +15,7 @@ module.exports = {
             scripts: base + "/site" + assets + "/js",
             styles: base + "/site" + assets + "/css",
             board: base + "/site" + assets + "/bs",
+            locales: base + "/site/locales",
             deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\chess" + suffix,
         },
 
@@ -25,15 +26,22 @@ module.exports = {
             tests: "./src/test/index.ts",
             templates: "./src/templates/",
             nunj: "src/templates/*.nunj",
+            locales: "src/locales/*.json",
         },
 
         watch: {
             nunj: "src/templates/tpl/*.html",
             scripts: ["src/js/**/*.ts", "src/js/**/*.tsx"],
             styles: "src/css/**/*.scss",
+            locales: "src/locales/**/*.json",
         },
 
         clean: base + "/site",
+
+        locales: {
+            src: "./src/locales/**/*.json",
+            dest: base + "/site/locales"
+        },
 
         fonts: {
             src: "./src/fonts/**/*.*",

@@ -8,14 +8,16 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
 import sprintf from '../../fn/string/Sprintf';
-import { _ } from '../../i18n/i18n';
 import { Chess as ChessEngine } from '../../chess/Chess';
 import { IChessPlayer, isAdvanceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
 import {CombinedGameState} from "../../actions/CombinedGameState";
 import {GameState} from "../../actions/GameState";
+import {useTranslation} from "react-i18next";
 
 const GameInfo: React.FC = (props) => {
+
+    const { t } = useTranslation(['game']);
 
     const { children } = props;
     const game = useSelector<CombinedGameState, GameState>((state) => state.game );
@@ -25,15 +27,15 @@ const GameInfo: React.FC = (props) => {
         switch (result) {
             case GameResult.Color.White:
                 return (
-                    <h4 className="result-color white">{ _("game", "whiteWin") } (1 &ndash; 0)</h4>
+                    <h4 className="result-color white">{t("whiteWin") } (1 &ndash; 0)</h4>
                 );
             case GameResult.Color.Black:
                 return (
-                    <h4 className="result-color black">{ _("game", "blackWin") } (0 &ndash; 1)</h4>
+                    <h4 className="result-color black">{t("blackWin") } (0 &ndash; 1)</h4>
                 );
             default:
                 return (
-                    <h4 className="result-color draw">{ _("game", "drawWin") } (&frac12; &ndash; &frac12;)</h4>
+                    <h4 className="result-color draw">{t("drawWin") } (&frac12; &ndash; &frac12;)</h4>
                 );
         }
     };
@@ -82,85 +84,85 @@ const GameInfo: React.FC = (props) => {
             const { status } = game;
             if (status.name == "created") {
                 result = (
-                    <span>{_("game", "resCreated")}</span>
+                    <span>{t("resCreated")}</span>
                 );
             } else if (status.name == "new") {
                 result = (
-                    <span>{_("game", "resNew")}</span>
+                    <span>{t("resNew")}</span>
                 );
             } else if (status.name == "wait") {
                 result = (
-                    <span>{_("game", "resWait")}</span>
+                    <span>{t("resWait")}</span>
                 );
             } else if (status.name == "aborted") {
                 result = (
-                    <span>{_("game", "resAborted")}</span>
+                    <span>{t("resAborted")}</span>
                 );
             } else if (status.name == "started") {
                 result = (
-                    <span>{_("game", "resStarted")}</span>
+                    <span>{t("resStarted")}</span>
                 );
             } else if (status.name == "paused") {
                 result = (
-                    <span>{_("game", "resPaused")}</span>
+                    <span>{t("resPaused")}</span>
                 );
             } else if (status.name == "mate") {
                 result = (
-                    <span>{winnerName(engine)} {_("game", "resCheckmate")}</span>
+                    <span>{winnerName(engine)} {t("resCheckmate")}</span>
                 );
             } else if (status.name == "resign") {
                 result = (
-                    <span>{looserName(engine)} {_("game", "resResign")}</span>
+                    <span>{looserName(engine)} {t("resResign")}</span>
                 );
             } else if (status.name == "outoftime") {
                 result = (
-                    <span>{winnerName(engine)} {_("game", "resOutOfTime")}</span>
+                    <span>{winnerName(engine)} {t("resOutOfTime")}</span>
                 );
             } else if (status.name == "timeout") {
                 result = (
-                    <span>{looserName(engine)} {_("game", "resNotMoved")}</span>
+                    <span>{looserName(engine)} {t("resNotMoved")}</span>
                 );
             } else if (status.name == "noStart") {
                 result = (
-                    <span>{_("game", "resNotStarted")}</span>
+                    <span>{t("resNotStarted")}</span>
                 );
             } else if (status.name == "cheat") {
                 result = (
-                    <span>{_("game", "resArbiter")}</span>
+                    <span>{t("resArbiter")}</span>
                 );
             } else if (status.name == "draw") {
                 if (status.subtype == 5) {
                     result = (
-                        <span>{_("game", "resRepeat")}</span>
+                        <span>{t("resRepeat")}</span>
                     );
                 } else if (status.subtype == 6) {
                     result = (
-                        <span>{_("game", "res50move")}</span>
+                        <span>{t("res50move")}</span>
                     );
                 } else if (status.subtype == 7) {
                     result = (
-                        <span>{_("game", "resDrawArbiter")}</span>
+                        <span>{t("resDrawArbiter")}</span>
                     );
                 } else if (status.subtype == 8) {
                     result = (
-                        <span>{_("game", "resStalemate")}</span>
+                        <span>{t("resStalemate")}</span>
                     );
                 } else if (status.subtype == 9) {
                     result = (
-                        <span>{_("game", "resMaterial")}</span>
+                        <span>{t("resMaterial")}</span>
                     );
                 } else {
                     result = (
-                        <span>{_("game", "resDraw")}</span>
+                        <span>{t("resDraw")}</span>
                     );
                 }
             } else if (status.name == "stalemate") {
                 result = (
-                    <span>{_("game", "resStalemate")}</span>
+                    <span>{t("resStalemate")}</span>
                 );
             } else {
                 result = (
-                    <span>{_("game", "resEnd")}</span>
+                    <span>{t("resEnd")}</span>
                 );
             }
         }
@@ -194,8 +196,8 @@ const GameInfo: React.FC = (props) => {
             result = (
                 <Box className="mb-1">
                     <span>
-                        <span>{_("game", "timeControl")}</span>: <span className="label">{gameClock.limit}</span>
-                        <span className={clsx(ppClass)}>{_("game", canPP)}</span>
+                        <span>{t("timeControl")}</span>: <span className="label">{gameClock.limit}</span>
+                        <span className={clsx(ppClass)}>{t(canPP)}</span>
                     </span>
                 </Box>
             );
@@ -230,13 +232,13 @@ const GameInfo: React.FC = (props) => {
                     <>
                         <Box className="mb-1">
                             <span>
-                                <span>{_("game", "variantVsSpeed")}</span>: <span className="label">{_("game", varName)}</span>
-                                <span className="label ms-2">{_("game", rated)}</span>
+                                <span>{t("variantVsSpeed")}</span>: <span className="label">{t(varName)}</span>
+                                <span className="label ms-2">{t(rated)}</span>
                             </span>
                         </Box>
                         <Box className="mb-1">
                             <span>
-                                <span>{_("game", "useCompHints")}</span>: <span className={clsx(ucClass)}>{_("game", compName)}</span>
+                                <span>{t("useCompHints")}</span>: <span className={clsx(ucClass)}>{t(compName)}</span>
                             </span>
                         </Box>
                     </>
@@ -256,7 +258,7 @@ const GameInfo: React.FC = (props) => {
                 <Box className="mb-1">
                     <span className="bold">
                         <a href={url}><span className="p-r-5">
-                            <Tooltip arrow title={_("game", "viewTournTable")} >
+                            <Tooltip arrow title={t("viewTournTable")} >
                                 <i className="xi-grid1" />
                             </Tooltip>
                         </span>{tournament.name}</a>
@@ -281,7 +283,7 @@ const GameInfo: React.FC = (props) => {
             const from = new Date(game.createdAt ?? 'now');
             if (isAdvanceClock(correspondence) && correspondence.lastMoveAt) {
                 const to = new Date(correspondence.lastMoveAt);
-                const fmt = _("game", "datesFmt");
+                const fmt = t("datesFmt");
 
                 const diff = to.getTime() - from.getTime();
 
@@ -294,7 +296,7 @@ const GameInfo: React.FC = (props) => {
                 );
             } else {
                 result = (
-                    <span>{_("game", "completeState")}</span>
+                    <span>{t("completeState")}</span>
                 );
             }
         }
@@ -302,14 +304,13 @@ const GameInfo: React.FC = (props) => {
         if (!result) {
             if (engine.isStarted) {
                 result = (
-                    <span>{_("game", "startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
+                    <span>{t("startDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
                 );
             } else {
                 result = (
-                    <span>{_("game", "createDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
+                    <span>{t("createDate")}: <span>{new Date(game?.createdAt ?? 'now').toLocaleDateString()}</span></span>
                 );
             }
-
         }
 
         return (
@@ -330,6 +331,7 @@ const GameInfo: React.FC = (props) => {
                 { children }
             </CardContent>
         </Card>
+
     );
 };
 

@@ -1,17 +1,14 @@
 import React from 'react';
+import Scrollbar from "react-scrollbars-custom";
 
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-import Scrollbar from "react-scrollbars-custom";
-import { notify } from 'pages-ts';
-import { _ } from '../../i18n/i18n';
 import { copy } from '../CopyToClipboard';
 import TextWithCopy from '../controls/TextWithCopy';
 import {useSnackbar} from "notistack";
-
-
+import {useTranslation} from "react-i18next";
 
 type GamePgnProps = {
     fen: string,
@@ -21,22 +18,24 @@ type GamePgnProps = {
 const GamePgn: React.VFC<GamePgnProps> = (props) => {
     const { fen, pgn } = props;
 
+    const { t } = useTranslation(['chess']);
+
     const { enqueueSnackbar } = useSnackbar();
 
     const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
         if (copy(pgn)) {
-            enqueueSnackbar(_("core", "copied"), {autoHideDuration: 1000});
+            enqueueSnackbar(t("copied"), {autoHideDuration: 1000});
         }
     };
 
     return (
-        <React.Fragment>
+        <>
             <Box sx={{padding: .5}}>
                 <FormControl variant="standard">
                     <InputLabel shrink htmlFor="bootstrap-input">
                         FEN
                     </InputLabel>
-                    <TextWithCopy fullWidth value={fen} placeholder={_("chess", "fen")} />
+                    <TextWithCopy fullWidth value={fen} placeholder={t("fen")} />
                 </FormControl>
             </Box>
             <Box sx={{padding: .5}}>
@@ -46,7 +45,7 @@ const GamePgn: React.VFC<GamePgnProps> = (props) => {
                     </Scrollbar>
                 </div>
             </Box>
-        </React.Fragment>
+        </>
     );
 }
 

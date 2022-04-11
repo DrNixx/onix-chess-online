@@ -10,8 +10,6 @@ import TabPanel from "@mui/lab/TabPanel";
 
 import {Api } from 'chessground/api';
 
-import {_} from '../../i18n/i18n';
-
 import {FenString} from '../../chess/FenString';
 
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
@@ -29,9 +27,13 @@ import {GameState} from "../../actions/GameState";
 import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
+import {useTranslation} from "react-i18next";
+import {CircularProgress} from "@mui/material";
 
 const PgnGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
+
+    const { t } = useTranslation(['game']);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
 
@@ -55,8 +57,8 @@ const PgnGame: React.VFC<GameProps> = (props) => {
                     <TabContext value={tabToolbar}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleTabChange}>
-                                <Tab label={_("game", "movesTab")} value="moves" />
-                                <Tab label={_("game", "infoTab")} value="info" />
+                                <Tab label={t("movesTab")} value="moves" />
+                                <Tab label={t("infoTab")} value="info" />
                                 <Tab label="FEN &amp; PGN" value="fenpgn" />
                             </TabList>
                         </Box>

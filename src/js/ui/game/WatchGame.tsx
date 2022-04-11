@@ -10,8 +10,6 @@ import TabPanel from '@mui/lab/TabPanel';
 
 import {Api } from 'chessground/api';
 
-import {_} from '../../i18n/i18n';
-
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
 
 import {CombinedGameState} from '../../actions/CombinedGameState';
@@ -28,9 +26,13 @@ import { renderTimer } from './GameUtils';
 import { Chat } from '../../chat/Chat';
 import {BoardState} from "../../actions/BoardState";
 import DumbGame from "./DumbGame";
+import {useTranslation} from "react-i18next";
+import {CircularProgress} from "@mui/material";
 
 const WatchGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
+
+    const { t } = useTranslation(['game']);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
 
@@ -41,7 +43,7 @@ const WatchGame: React.VFC<GameProps> = (props) => {
     const renderChatTab = () => {
         if (game.engine.ObserverId) {
             return (
-                <Tab label={_("game", "chatTab")} value="chat" />
+                <Tab label={t("chatTab")} value="chat" />
             );
         }
 
@@ -79,8 +81,8 @@ const WatchGame: React.VFC<GameProps> = (props) => {
                     <TabContext value={tabToolbar}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleTabChange}>
-                                <Tab label={_("game", "movesTab")} value="moves" />
-                                <Tab label={_("game", "infoTab")} value="info" />
+                                <Tab label={t("movesTab")} value="moves" />
+                                <Tab label={t("infoTab")} value="info" />
                                 { renderChatTab() }
                             </TabList>
                         </Box>

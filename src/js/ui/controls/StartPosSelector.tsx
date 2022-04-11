@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
+import Skeleton from '@mui/material/Skeleton';
 import CircularProgress from '@mui/material/CircularProgress';
-import { i18n, _ } from '../../i18n/i18n';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { IChessOpening } from '../../chess/types/Interfaces';
 import { Logger } from '../../common/Logger';
+import {useTranslation} from 'react-i18next';
 
 type IChessOpeningWithKey = IChessOpening & {
     key?: string;
@@ -13,7 +14,7 @@ type IChessOpeningWithKey = IChessOpening & {
 }
 
 type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false, false, false>,
-        "renderInput" | "options" | "loading" | "getOptionLabel" | "isOptionEqualToValue" | "groupBy" | "onClose" | "onOpen">  & {
+        'renderInput' | 'options' | 'loading' | 'getOptionLabel' | 'isOptionEqualToValue' | 'groupBy' | 'onClose' | 'onOpen'>  & {
     label?: React.ReactElement,
     fen?: string,
     openingsPos?: IChessOpening[],
@@ -30,13 +31,15 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
         ...other
     } = props;
 
+    const { t } = useTranslation(['chess-ctrls']);
+
     const convertOpeningData = (data: IChessOpening[]): IChessOpeningWithKey[] => {
         return [...data.map(item => {
             const key = FenString.trim(item.fen!, FenFormat.castlingEp);
             return {
                 ...item,
                 key: key,
-                groupName: _("chess-ctrls", "popular_opening")
+                groupName: t('popular_opening')
             };
         })];
     };
@@ -45,11 +48,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
     const [items, setItems] = React.useState<readonly IChessOpeningWithKey[]>(convertOpeningData(openingsPos || []));
     const isLoading = open && items.length === 0;
 
-    React.useEffect(() => {
-        i18n.register();
-    }, []);
-
-    React.useEffect(() => {
+    useEffect(() => {
         let active = true;
 
         if (!isLoading) {
@@ -61,7 +60,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
             return undefined;
         }
 
-        fetch('https://www.chess-online.com/api/position/starting-positions', {mode: "cors"})
+        fetch('https://www.chess-online.com/api/position/starting-positions', {mode: 'cors'})
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -87,35 +86,35 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
         const list: IChessOpeningWithKey[] = [];
 
         list.push({
-            code: "A00.0",
-            name: _("chess-ctrls", "position_label"),
-            fen: "",
-            key: "",
-            groupName: _("chess-ctrls", "set_board")
+            code: 'A00.0',
+            name: t('position_label'),
+            fen: '',
+            key: '',
+            groupName: t('set_board')
         });
 
         list.push({
-            code: "A00.1",
-            name: _("chess-ctrls", "std_fen"),
+            code: 'A00.1',
+            name: t('std_fen'),
             fen: FenString.standartStart,
             key: FenString.standartStart,
-            groupName: _("chess-ctrls", "set_board")
+            groupName: t('set_board')
         });
 
         list.push({
-            code: "A00.2",
-            name: _("chess-ctrls", "empty_fen"),
+            code: 'A00.2',
+            name: t('empty_fen'),
             fen: FenString.emptyBoard,
             key: FenString.emptyBoard,
-            groupName: _("chess-ctrls", "set_board")
+            groupName: t('set_board')
         });
 
         list.push({
-            code: "A00.3",
-            name: _("chess-ctrls", "get_fen"),
-            fen: "---",
-            key: "---",
-            groupName: _("chess-ctrls", "set_board")
+            code: 'A00.3',
+            name: t('get_fen'),
+            fen: '---',
+            key: '---',
+            groupName: t('set_board')
         });
 
         list.push(...convertOpeningData(data));
@@ -132,8 +131,8 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
     const handleChange = (e: any) => {
         let fen: string = e.target.value; 
 
-        if (fen === "---") {
-            fen = window.prompt(_("chess-ctrls", "paste_fen_prompt"), "") || FenString.emptyBoard;
+        if (fen === '---') {
+            fen = window.prompt(t('paste_fen_prompt'), '') || FenString.emptyBoard;
         }
 
         onChangeFen && onChangeFen(fen);
@@ -141,34 +140,34 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
 
     return (
         <Autocomplete
-          {...other}
-          open={opened}
-          onOpen={() => {
-            setOpened(true);
-          }}
-          onClose={() => {
-            setOpened(false);
-          }}
-          groupBy={(option) => option.groupName ?? ""}
-          isOptionEqualToValue={(option, value) => option.key === value.key}
-          getOptionLabel={(option) => option.name ?? ""}
-          options={items}
-          loading={isLoading}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={label}
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                ),
-              }}
-            />
-          )}
+            {...other}
+            open={opened}
+            onOpen={() => {
+                setOpened(true);
+            }}
+            onClose={() => {
+                setOpened(false);
+            }}
+            groupBy={(option) => option.groupName ?? ''}
+            isOptionEqualToValue={(option, value) => option.key === value.key}
+            getOptionLabel={(option) => option.name ?? ''}
+            options={items}
+            loading={isLoading}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={label}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <React.Fragment>
+                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                            </React.Fragment>
+                        ),
+                    }}
+                />
+            )}
         />
     );
 };

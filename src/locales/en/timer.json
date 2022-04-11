@@ -1,0 +1,9 @@
+{
+  "lessone": "less 1",
+  "isend": "time is up",
+  "empty": "---",
+  "days": "{d} d.",
+  "hours": "{h} h.",
+  "minutes": "{i} min.",
+  "seconds": "{s} sec."
+}

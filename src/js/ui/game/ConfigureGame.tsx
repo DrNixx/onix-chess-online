@@ -11,7 +11,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import InputLabel from '@mui/material/InputLabel';
 import Stack from '@mui/material/Stack';
-import Switch from "@mui/material/Switch";
 import Typography from '@mui/material/Typography';
 
 import {BoardSize} from 'onix-board-assets';
@@ -19,8 +18,6 @@ import {BoardSize} from 'onix-board-assets';
 import { Api } from 'chessground/api';
 import { Config as CgConfig } from 'chessground/config';
 import * as cg from 'chessground/types';
-
-import { _ } from '../../i18n/i18n';
 
 import {FenString} from '../../chess/FenString';
 import {BoardSettings} from '../../chess/settings/BoardSettings';
@@ -42,9 +39,13 @@ import GameWrapper from "./GameWrapper";
 import {GameActions as ga} from "../../actions/GameActions";
 import {getLegalMovesMap} from "../../utils/chess";
 import IOSSwitch from "../controls/IOSSwitch";
+import {useTranslation} from "react-i18next";
+import {CircularProgress} from "@mui/material";
 
 const ConfigureGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
+
+    const { t } = useTranslation(['game', 'chess']);
 
     const cgRef = useRef<Api>();
     const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
@@ -121,13 +122,13 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                     <form method="post">
                         { (boardCfg.csrfTokenName && boardCfg.csrfTokenValue) ? (<input type="hidden" name={boardCfg.csrfTokenName} value={boardCfg.csrfTokenValue} />) : "" }
                         { (boardCfg.returnUrl) ? (<input type="hidden" name="returnUrl" value={boardCfg.returnUrl} />) : "" }
-                        <h3>{_("game", "board_and_pieces")}</h3>
+                        <h3>{t("board_and_pieces")}</h3>
                         <Box sx={{marginBottom: 2}}>
                             <FormControl fullWidth>
-                                <InputLabel>{_("game", "board_size")}</InputLabel>
+                                <InputLabel>{t("board_size")}</InputLabel>
                                 <SizeSelector
                                     fullWidth
-                                    label={_("game", "board_size")}
+                                    label={t("board_size")}
                                     name="size"
                                     value={board.size}
                                     onChangeSize={onSizeChange} />
@@ -135,10 +136,10 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                         </Box>
                         <Box sx={{marginBottom: 2}}>
                             <FormControl fullWidth>
-                                <InputLabel>{_("chess", "pieces")}</InputLabel>
+                                <InputLabel>{t("pieces", { ns: 'chess'})}</InputLabel>
                                 <PieceSelector
                                     fullWidth
-                                    label={_("chess", "pieces")}
+                                    label={t("pieces", { ns: 'chess'})}
                                     name="piece"
                                     value={board.piece}
                                     onChangePiece={onPieceChange} />
@@ -146,10 +147,10 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                         </Box>
                         <Box sx={{marginBottom: 2}}>
                             <FormControl fullWidth>
-                                <InputLabel>{_("chess", "squares")}</InputLabel>
+                                <InputLabel>{t("squares", { ns: 'chess'})}</InputLabel>
                                 <SquareSelector
                                     fullWidth
-                                    label={_("chess", "squares")}
+                                    label={t("squares", { ns: 'chess'})}
                                     name="square" value={board.square}
                                     onChangeSquare={onSquareChange} />
                             </FormControl>
@@ -167,11 +168,11 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                                         onChange={onCoordsChange}
                                     />
                                 }
-                                label={_("game", "display_coord")}
+                                label={t("display_coord")}
                             />
                         </Box>
 
-                        <h3>{_("game", "other_settings")}</h3>
+                        <h3>{t("other_settings")}</h3>
                         <Grid container spacing={2}>
                             <Grid item md={6}>
                                 <FormControlLabel
@@ -186,7 +187,7 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                                             onChange={onLearnChange}
                                         />
                                     }
-                                    label={_("game", "display_move_hints")}
+                                    label={t("display_move_hints")}
                                 />
                             </Grid>
                             <Grid item md={6}>
@@ -202,14 +203,14 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                                             onChange={onConfirmChange}
                                         />
                                     }
-                                    label={_("game", "confirm_move_form")}
+                                    label={t("confirm_move_form")}
                                 />
                             </Grid>
                             <Grid item md={12}>
                                 <Stack direction="row" spacing={1} alignItems="center">
-                                    <Typography>{_("game", "moves_mode")}:</Typography>
+                                    <Typography>{t("moves_mode")}:</Typography>
                                     <Stack direction="row" spacing={1} alignItems="center">
-                                        <Typography>{_("game", "moves_mode_list")}</Typography>
+                                        <Typography>{t("moves_mode_list")}</Typography>
                                         <IOSSwitch
                                             id="movetable"
                                             name="movetable"
@@ -219,7 +220,7 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                                             defaultChecked={boardCfg.moveTable}
                                             onChange={onMoveTableChange}
                                         />
-                                        <Typography>{_("game", "moves_mode_table")}</Typography>
+                                        <Typography>{t("moves_mode_table")}</Typography>
                                     </Stack>
                                 </Stack>
                             </Grid>
@@ -227,7 +228,7 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
                     </form>
                 </CardContent>
                 <CardActions sx={{justifyContent: "flex-end"}}>
-                    <Button variant="contained" color="primary" type="submit">{_("app", "save")}</Button>
+                    <Button variant="contained" color="primary" type="submit">{t("save", { ns: 'core'})}</Button>
                 </CardActions>
             </Card>
         );

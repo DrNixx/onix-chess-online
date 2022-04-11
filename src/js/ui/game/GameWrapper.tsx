@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {Suspense, useEffect} from 'react';
 import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 
+import {CircularProgress} from "@mui/material";
 import { ThemeProvider } from '@mui/material/styles';
 
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
@@ -25,13 +26,15 @@ const GameWrapper: React.VFC<GamePropsVsComponent> = (props) => {
     }, []);
 
     return (
-        <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
-            <Provider store={store}>
-                <ThemeProvider theme={ChessTheme}>
-                    <GameComponent {...other}/>
-                </ThemeProvider>
-            </Provider>
-        </SnackbarProvider>
+        <Suspense fallback={<CircularProgress />}>
+            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
+                <Provider store={store}>
+                    <ThemeProvider theme={ChessTheme}>
+                        <GameComponent {...other}/>
+                    </ThemeProvider>
+                </Provider>
+            </SnackbarProvider>
+        </Suspense>
     );
 };
 

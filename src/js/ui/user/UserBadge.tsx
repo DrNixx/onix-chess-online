@@ -1,24 +1,27 @@
-import React, { useEffect, useCallback, useState} from 'react';
+import React, { useEffect, useCallback, useState, Suspense} from 'react';
 import clsx from "clsx";
 import {nanoid} from "nanoid";
 import toSafeInteger from "lodash/toSafeInteger";
+import {useTranslation} from "react-i18next";
 
 import Box from '@mui/material/Box';
+import IconButton from "@mui/material/IconButton";
+import Icon from "@mui/material/Icon";
+import Popover from "@mui/material/Popover";
 import Skeleton from "@mui/material/Skeleton";
+import Stack from '@mui/material/Stack';
 
 import {IUser} from "../../app";
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import Avatar from "./Avatar";
-import isString from "lodash/isString";
 import userCache from "../../app/userCache";
 import {Logger} from "../../common/Logger";
 import {appInstance} from "../../app/IApplication";
-import Popover from "@mui/material/Popover";
 import UserRatings from "./UserRatings";
-import IconButton from "@mui/material/IconButton";
-import Icon from "@mui/material/Icon";
-import Stack from '@mui/material/Stack';
-import {_} from "../../i18n/i18n";
+import InfoBox from "./InfoBox";
+import UserTitle from "./UserTitle";
+import UserNameElement from "./UserNameElement";
+
 
 type Props = {
     language?: string;
@@ -32,75 +35,12 @@ type Props = {
     popover?: boolean;
 };
 
-const InfoBox: React.FC = (props) => {
-    return (
-        <Box sx={{
-            pl: 1,
-            lineHeight: 1,
-            overflow: "hidden",
-            "& > div": {
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis"
-            }
-        }}>
-            {props.children}
-        </Box>
-    );
-};
 
-type UserTitleProps = {
-    title?: IUser['title']
-};
-const UserTitle: React.VFC<UserTitleProps> = (props) => {
-    if (props.title) {
-        if (isString(props.title)) {
-            return (
-                <span className="label label-success text-uppercase fs-10 lh-20 me-1"
-                      data-toggle="tooltip"
-                      title="">{props.title}</span>
-            );
-        } else {
-            return (
-                <span className="label label-success text-uppercase fs-10 lh-20 me-1"
-                      data-toggle="tooltip"
-                      title={props.title.name}>{props.title.id}</span>
-            );
-        }
-    }
-
-    return null;
-}
-
-type UserNameProps = {
-    user: IUser;
-    compact: boolean;
-};
-
-const UserName: React.FC<UserNameProps> = (props) => {
-    const { user, compact, children } = props;
-    const name = (user.display && user.name && (user.display != '?') && (user.name != '?') && (user.display != user.name)) ? user.name : undefined;
-    const separator = (name && !compact) ? " :: " : "";
-    return (
-        <Box
-            className="small"
-            sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                flexWrap: 'nowrap'
-            }}>
-                        <span>
-                            {!compact && <span># {user.id}</span>}
-                            {name && <span>{separator}{name}</span>}
-                        </span>
-            { children ? (<span className="ps-4">{children}</span>) : null }
-        </Box>
-    );
-};
 
 const UserBadge: React.FC<Props> = (props) => {
     const { language, user: propsUser, userId, size, popover, compact, children } = props;
+
+    const { t, ready } = useTranslation(['actions'], { useSuspense: false });
 
     const [user, setUser] = useState(props.user);
     const [loading, setLoading] = useState(false);
@@ -227,7 +167,7 @@ const UserBadge: React.FC<Props> = (props) => {
                                 <UserTitle title={user.title} />
                                 {renderUserLinkSimple()}
                             </Box>
-                            <UserName user={user} compact={false} />
+                            <UserNameElement user={user} compact={false} />
                         </InfoBox>
                     </Box>
                     <UserRatings user={user} />
@@ -236,15 +176,15 @@ const UserBadge: React.FC<Props> = (props) => {
                             <Stack direction="row" spacing={1}>
                                 <IconButton
                                     href={`/${language}/@/${user.id}`}
-                                    title={_('actions', 'open_profile')}
-                                    aria-label={_('actions', 'open_profile')}
+                                    title={t('open_profile')}
+                                    aria-label={t('open_profile')}
                                     size="small">
                                     <Icon baseClassName="" data-icon="r" />
                                 </IconButton>
                                 <IconButton
                                     href={`/${language}/user/statistics/${user.id}`}
-                                    title={_('actions', 'open_statistics')}
-                                    aria-label={_('actions', 'open_statistics')}
+                                    title={t('open_statistics')}
+                                    aria-label={t('open_statistics')}
                                     size="small">
                                     <Icon baseClassName="" className="xi-chart-line" />
                                 </IconButton>
@@ -252,15 +192,15 @@ const UserBadge: React.FC<Props> = (props) => {
                             <Stack direction="row" spacing={1}>
                                 <IconButton
                                     href={`/${language}/pm/compose/${user.id}`}
-                                    title={_('actions', 'compose_mail')}
-                                    aria-label={_('actions', 'compose_mail')}
+                                    title={t('compose_mail')}
+                                    aria-label={t('compose_mail')}
                                     size="small">
                                     <Icon baseClassName="" className="xi-mail-big" />
                                 </IconButton>
                                 <IconButton
                                     href={`/${language}/game/challenge/${user.id}`}
-                                    title={_('actions', 'send_challenge')}
-                                    aria-label={_('actions', 'send_challenge')}
+                                    title={t('send_challenge')}
+                                    aria-label={t('send_challenge')}
                                     size="small">
                                     <Icon baseClassName="" className="xi-challenge" />
                                 </IconButton>
@@ -279,16 +219,16 @@ const UserBadge: React.FC<Props> = (props) => {
                     <UserTitle title={user.title} />
                     {renderUserLink()}
                 </Box>
-                <UserName user={user} compact={!!compact}>{children}</UserName>
+                <UserNameElement user={user} compact={!!compact}>{children}</UserNameElement>
             </InfoBox>
         );
     };
 
     return (
         <Box sx={{display: "inline-flex", flexWrap: "nowrap", maxWidth: "100%"}}>
-            <Avatar user={user} size={size} online={user?.online ? user.online : 'none'} />
-            { user?.id ? renderInfo(user) : (
-                <Skeleton animation="wave" height={24} width="10em" />
+            <Avatar user={ready ? user : undefined} size={size} online={user?.online ? user.online : 'none'} />
+            { (ready && user?.id) ? renderInfo(user) : (
+                <Skeleton sx={{ mx: 1 }} animation="wave" height={24} width="10em" />
             )}
         </Box>
     );

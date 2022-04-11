@@ -41,13 +41,14 @@ const siteVendors = getTask('', 'vendors', PATHS_OPTIONS.site);
 const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
 const siteFonts = getTask('', 'copy', PATHS_OPTIONS.site.fonts, 'fonts');
 const siteImg = getTask('', 'copy', PATHS_OPTIONS.site.img, 'img');
+const siteLocales = getTask('', 'copy', PATHS_OPTIONS.site.locales, 'locales');
 const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
 const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
 const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
 const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
 const siteDeploy = getTask('', 'deploy', PATHS_OPTIONS.site);
 
-let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteStyles, siteWebpack), siteDeploy);
+let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteLocales, siteVendors, siteStyles, siteWebpack), siteDeploy);
 gulp.task("site", site, function () {
     console.log('Building site...');
 });

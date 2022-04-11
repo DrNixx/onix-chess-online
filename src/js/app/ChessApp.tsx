@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import * as ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
@@ -11,6 +11,7 @@ import serviceWorker from '../push/ServiceWorker';
 import { ConnectionInfo } from '../ui/components/ConnectionInfo';
 import { Frontend } from '../ui/Frontend';
 import { IStreamMessage } from '../net/IStreamMessage';
+import {init as initI18N} from '../i18n/i18Init';
 
 export interface AppProps {
     locale?: string,
@@ -33,6 +34,7 @@ export interface AppState {
 
 export class App extends React.Component<AppProps, AppState> implements IApplication {
     public static defaultProps: AppProps = {
+        locale: 'en-US',
         wsHost: 'ws://localhost:8000',
         apiRoot: 'https://www.chess-online.com/api',
         ui: true,
@@ -59,15 +61,17 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     }
 
     componentDidMount() {
-        const { ui, wsHost, token, secret, channel, modules, uid } = this.props;
+        const { locale, ui, wsHost, token, secret, channel, modules, uid } = this.props;
 
-        if (ui) {
-            this.ui = new Frontend(uid);
-            this.ui.init();
-        }
+        initI18N(locale!).then(() => {
+            if (ui) {
+                this.ui = new Frontend(uid);
+                this.ui.init();
+            }
 
-        modules!.forEach((value, index) => {
-            value.init();
+            modules!.forEach((value, index) => {
+                value.init();
+            });
         });
 
         if (token) {
@@ -166,9 +170,11 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     render() {
         const { status } = this.state;
         return (
-            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
-                <ConnectionInfo status={status} />
-            </SnackbarProvider>
+            <Suspense fallback="loading...">
+                <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
+                    <ConnectionInfo status={status} />
+                </SnackbarProvider>
+            </Suspense>
         );
     }
 }

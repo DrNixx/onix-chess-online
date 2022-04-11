@@ -1,12 +1,11 @@
 import React from 'react';
+import {useDispatch, useSelector} from "react-redux";
 
 import { Move } from '../../chess/Move';
 import { MovesMode, NavigatorMode } from './Constants';
 import { DumbMoveList } from './DumbMoveList';
 import { DumbMoveTable } from './DumbMoveTable';
-import { GameRelatedStore } from '../../actions/GameStore';
 import { GameActions } from '../../actions/GameActions';
-import {useDispatch, useSelector} from "react-redux";
 import {CombinedGameState} from "../../actions/CombinedGameState";
 import {GameState} from "../../actions/GameState";
 

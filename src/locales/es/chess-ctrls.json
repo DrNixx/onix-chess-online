@@ -1,0 +1,12 @@
+{
+  "white_move": "White move",
+  "black_move": "Black move",
+  "set_board": "Set the board",
+  "position_label": "-- Position --",
+  "std_fen": "Standart start",
+  "empty_fen": "Empty board",
+  "get_fen": "Custom position",
+  "paste_fen_prompt": "Paste FEN position",
+  "popular_opening": "Popular openings",
+  "copy_to_clipboard": "Copy to clipboard"
+}

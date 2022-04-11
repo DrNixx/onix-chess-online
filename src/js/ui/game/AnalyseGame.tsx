@@ -1,6 +1,7 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useCallback} from 'react';
 import {shallowEqual, useSelector, useStore} from "react-redux";
 import ReactDOM from 'react-dom';
+import {useTranslation} from "react-i18next";
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -9,13 +10,8 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
 import { Api } from 'chessground/api';
-
-import { _ } from '../../i18n/i18n';
-
 import { FenString } from '../../chess/FenString';
-
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
-
 import {CombinedGameState} from '../../actions/CombinedGameState';
 
 import {renderResult} from './GameUtils';
@@ -33,11 +29,12 @@ import { Chat } from '../../chat/Chat';
 import GameWrapper from "./GameWrapper";
 import {BoardState} from "../../actions/BoardState";
 import {GameState} from "../../actions/GameState";
-import {Config as CgConfig} from "chessground/config";
 import DumbGame from "./DumbGame";
 
 const AnalyseGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
+
+    const { t, ready } = useTranslation(['game', 'analyse']);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
     const [tabAnalysis, setTabAnalysis] = useState("fenpgn");
@@ -50,7 +47,7 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     const renderChatTab = () => {
         if (game.engine.ObserverId) {
             return (
-                <Tab label={_("game", "chatTab")} value="chat" />
+                <Tab label={t("chatTab")} value="chat" />
             );
         }
 
@@ -80,7 +77,7 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
         setTabToolbar(newValue);
     };
 
-    const renderControls = () => {
+    const renderControls =  () => {
         return (
             <div className="controls flex-grow-1 d-flex flex-column ms-md-4">
                 <BoardToolbar configUrl={boardCfg.configUrl} />
@@ -89,8 +86,8 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
                     <TabContext value={tabToolbar}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleTabToolbarChange}>
-                                <Tab label={_("game", "movesTab")} value="moves" />
-                                <Tab label={_("game", "infoTab")} value="info" />
+                                <Tab label={t("movesTab")} value="moves" />
+                                <Tab label={t("infoTab")} value="info" />
                                 { renderChatTab() }
                             </TabList>
                         </Box>
@@ -116,7 +113,7 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
 
     const renderAnalysisTab = () => {
         return (
-            <Tab label={_("analyse", "title")} value="analysis" />
+            <Tab label={t("title", {ns: 'analyse'})} value="analysis" />
         );
     };
 
@@ -205,12 +202,13 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     };
 
     return (
-        <DumbGame
-            cgRef={(api) => cgRef.current = api ?? undefined}
-            controlsLeft={renderControls()}
-            controlsTop={renderResult(game.engine, board.orientation, "top")}
-            controlsBottom={renderResult(game.engine, board.orientation, "bottom")}
-        >{ renderUnderboard() }</DumbGame>
+            <DumbGame
+                cgRef={(api) => cgRef.current = api ?? undefined}
+                controlsLeft={renderControls()}
+                controlsTop={renderResult(game.engine, board.orientation, "top")}
+                controlsBottom={renderResult(game.engine, board.orientation, "bottom")}
+            >{ renderUnderboard() }</DumbGame>
+
     );
 };
 

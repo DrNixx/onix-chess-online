@@ -1,0 +1,11 @@
+{
+  "load": "Load",
+  "save": "Save",
+  "send": "Send",
+  "cancel": "Cancel",
+  "copied": "Copied",
+  "join": "Join",
+  "accept": "Accept",
+  "decline": "Decline",
+  "confirm_action": "Confirm your action"
+}
