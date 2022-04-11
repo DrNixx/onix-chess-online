@@ -28,7 +28,7 @@ module.exports = {
         },
 
         watch: {
-            nunj: "src/templates/**/*.nunj",
+            nunj: "src/templates/tpl/*.html",
             scripts: ["src/js/**/*.ts", "src/js/**/*.tsx"],
             styles: "src/css/**/*.scss",
         },

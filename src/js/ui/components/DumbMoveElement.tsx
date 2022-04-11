@@ -9,7 +9,7 @@ import { Move } from '../../chess/Move';
 import { IChessOpening } from '../../chess/types/Interfaces';
 
 import { NavigatorMode } from './Constants';
-import { MoveNavigator } from './MoveNavigator';
+import MoveNavigator from './MoveNavigator';
 
 
 export interface DumbMoveProps {

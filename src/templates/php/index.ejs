@@ -33,7 +33,8 @@ class ChessWelcomeAsset extends AssetBundle
             return "\n\t\t\t'js/" + file.replace(htmlWebpackPlugin.files.publicPath, "").replace(".js", "") + "'";
         }) %>
         
-        $this->setupAssets('js', [<%= files.join(", ") %>]);
+        $this->setupAssets('js', [<%= files.join(", ") %>
+        ]);
         parent::init();
     }
 }

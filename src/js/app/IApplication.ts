@@ -4,6 +4,7 @@ export interface IApplication {
     stream: Centrifuge|null;
 
     getUserId(): number;
+    getApiUrl(urlPart: string): string;
 }
 
 declare global {

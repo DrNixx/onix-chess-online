@@ -1,4 +1,4 @@
-import { IUser } from '../../app/IUser';
+import { IUser } from '../../app';
 import { Colors } from './Types';
 
 export interface IChessPref {
@@ -10,7 +10,7 @@ export interface IChessPref {
     prov?: boolean;
 }
 
-export type VariantNameType = 'chess960' | 'crazyhouse' | 'antichess' | 'horde' | 'kingOfTheHill' | 'racingKings' | 'threeCheck';
+export type VariantNameType = 'exotic' | 'chess960' | 'crazyhouse' | 'antichess' | 'horde' | 'kingOfTheHill' | 'racingKings' | 'threeCheck';
 
 export type SpeedNameType = 'blitz' | 'bullet' | 'rapid' | 'ultraBullet';
 
@@ -34,11 +34,13 @@ export interface IGameStatus {
 }
 
 export type PerfNameType = 
-    'main' | 'maina' | 'classic' | 'classia' | SpeedNameType | VariantNameType;
+    'main' | 'maina' | 'classic' | 'classica' | SpeedNameType | VariantNameType;
 
-export type IChessPerfs = { 
-    [name in PerfNameType]?: IChessPref;
-}
+export type PrefsBased<T> = {
+    [name in PerfNameType]?: T;
+};
+
+export type IChessPerfs = PrefsBased<IChessPref>;
 
 export type AnalyseStatus = "empty" | "unanalysed" | "inprogress" | "ready";
 
@@ -95,7 +97,7 @@ export interface IChessTournament {
 export interface IPostpone {
     end: number;
     rest: number;
-};
+}
 
 export interface IChessUser extends IUser {
     perfs?: IChessPerfs;

@@ -10,7 +10,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 			const styles = require('./styles');
 			const webpack = require('./webpack');
 
-			gulp.watch(PATHS.watch.nunj, html(gulp, plugins, PATHS, PRODUCTION));
+			gulp.watch(PATHS.watch.nunj, webpack(gulp, plugins, PATHS, PRODUCTION));
 			gulp.watch(PATHS.watch.styles, styles(gulp, plugins, PATHS, PRODUCTION));
 			gulp.watch(PATHS.watch.scripts, webpack(gulp, plugins, PATHS, PRODUCTION));
 

@@ -1,12 +1,11 @@
 import React from 'react';
 import clsx from "clsx";
 import * as cg from 'chessground/types';
-import { _ } from '../../i18n/i18n';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { Chess as ChessEngine } from "../../chess/Chess";
 import { IChessPlayer, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
-import { UserName } from '../user/UserName';
+import UserBadge from "../user/UserBadge";
 
 
 export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
@@ -22,14 +21,13 @@ export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, positio
     if (player) {
         if (player.rating) {
             return (
-                <UserName user={player.user} size="Tiny">{player.rating}</UserName>
+                <UserBadge user={player.user} size="small">{player.rating}</UserBadge>
             );
         } else {
             return (
-                <UserName user={player.user} size="Tiny" />
+                <UserBadge user={player.user} size="small" />
             );
         }
-        
     }
 
     return null;   

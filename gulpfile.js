@@ -47,7 +47,7 @@ const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
 const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
 const siteDeploy = getTask('', 'deploy', PATHS_OPTIONS.site);
 
-let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteHtml, siteStyles, siteWebpack), siteDeploy);
+let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteVendors, siteStyles, siteWebpack), siteDeploy);
 gulp.task("site", site, function () {
     console.log('Building site...');
 });

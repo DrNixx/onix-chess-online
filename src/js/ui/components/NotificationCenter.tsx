@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { notify } from 'pages-ts';
 import { appInstance } from '../../app/IApplication';
-import { Avatar } from '../user/Avatar';
+import Avatar from '../user/Avatar';
 import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';
 import { Scrollbar } from 'react-scrollbars-custom';
@@ -196,7 +196,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                     <div className="clearfix">
                         <a href={`/pm/read/${content.id}`} className="text-complete pull-left">
                             <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                                <Avatar user={content.sender} size="Tiny" />
+                                <Avatar user={content.sender} size="tiny" />
                             </div>
                             <span className="bold">{i18n.newMessage}</span>
                             <span className="fs-12 m-l-10">{content.sender.display}</span>
@@ -236,7 +236,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                 <div className="heading">
                     <div className="clearfix">
                         <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                            <Avatar user={content.opponent} size="Tiny" />
+                            <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
                             <span className="bold">{i18n.challengeNew}</span>
@@ -263,7 +263,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                 <div className="heading">
                     <div className="clearfix">
                         <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                            <Avatar user={content.opponent} size="Tiny" />
+                            <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <span className="text-complete pull-left">
                             <span className="bold">{i18n.challengeCancel}</span>
@@ -290,7 +290,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                 <div className="heading">
                     <div className="clearfix">
                         <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                            <Avatar user={content.opponent} size="Tiny" />
+                            <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <span className="text-complete pull-left">
                             <span className="bold">{i18n.challengeDecline}</span>
@@ -317,7 +317,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                 <div className="heading">
                     <div className="clearfix">
                         <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                            <Avatar user={content.opponent} size="Tiny" />
+                            <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
                             <span className="bold">{i18n.challengeAccept}</span>
@@ -344,7 +344,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                 <div className="heading">
                     <div className="clearfix">
                         <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
-                            <Avatar user={content.opponent} size="Tiny" />
+                            <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
                             <span className="bold">{i18n.joinAccept}</span>

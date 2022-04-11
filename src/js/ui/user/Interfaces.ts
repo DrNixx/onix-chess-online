@@ -1,4 +1,4 @@
-export type AvatarSizeType = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Original';
+export type AvatarSizeType = 'tiny' | 'small' | 'medium' | 'large' | 'extra' | 'original';
 
 export type AvatarSizeMap = {
     [name in AvatarSizeType]: AvatarSizeType;

@@ -1,12 +1,11 @@
 import React from 'react';
 import Scrollbar from "react-scrollbars-custom";
-import { _ } from '../i18n/i18n';
 import { dateToAgo } from '../fn/date/DateToAgo';
 import { IChatMessage } from './Interfaces';
 import { IUser } from '../app';
 import { Logger } from '../common/Logger';
 import { appInstance } from '../app/IApplication';
-import { UserName } from '../ui/user/UserName';
+import UserBadge from "../ui/user/UserBadge";
 
 export interface ConversationProps {
     channel: string;
@@ -165,7 +164,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
     private themUser = (user: IUser) => {
         return (
             <div className="message-header">
-                <UserName user={user} size="Tiny" showInfo={true} compact={true} popover={false} />
+                <UserBadge user={user} size="tiny" compact={true} popover={false} />
             </div>
         );
     };

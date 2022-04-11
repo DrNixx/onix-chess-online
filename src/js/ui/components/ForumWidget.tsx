@@ -1,17 +1,33 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import * as ReactDOM from 'react-dom';
 import clsx from "clsx";
-import Scrollbar from "react-scrollbars-custom";
-import { storage } from '../../storage';
-import { UserName } from '../user/UserName';
-import { IChessUser } from '../../chess/types/Interfaces';
-import { Logger } from '../../common/Logger';
+
+import { styled, ThemeProvider } from '@mui/material/styles';
+
+import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import TabContext from "@mui/lab/TabContext";
-import Box from "@mui/material/Box";
 import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+
+import Scrollbar from "react-scrollbars-custom";
+import { storage } from '../../storage';
+import { IChessUser } from '../../chess/types/Interfaces';
+import { Logger } from '../../common/Logger';
+import {ChessTheme} from "../ChessTheme";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import IconButton from '@mui/material/IconButton';
+import UserBadge from "../user/UserBadge";
 
 
 interface IForumMessage {
@@ -174,6 +190,13 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
             });
     };
 
+    useEffect(() => {
+        if (!loading) {
+            fetchForumData(true);
+        }
+
+    }, []);
+
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         if (newValue) {
@@ -232,41 +255,59 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
         return null;
     };
 
+    const tabLabel = (text: string, counter: React.ReactNode) => {
+        return (
+            <>{text} {counter}</>
+        );
+    };
+
     const renderTabs = () => {
         return Object.keys(i18n.tabs).map((key) => {
             return (
-                <Tab label={i18n.tabs[key] + renderDiff(key, activeKey, diffs[key])} value={key} />
+                <Tab key={key} label={tabLabel(i18n.tabs[key], renderDiff(key, activeKey, diffs[key]))} value={key} />
             );
         });
     };
+
+    const StripedListItem = styled(ListItem)(({ theme }) => ({
+        paddingTop: 0,
+        paddingBottom: 0,
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        }
+    }));
 
     const renderMessageRow = (message: IForumMessage) => {
         const forumLink = `/${language}/forums/forum/${message.forumId}`;
         const postLink = `/${language}/forums/post/${message.msgId}#${message.msgId}`;
         return  (
-            <div className="row py-1" key={message.msgId}>
-                <div className="col-md-8">
-                    <div className="text-nowrap text-truncate">
-                        <a href={forumLink}
-                           className="font-weight-bold pe-1">{message.forumName}:</a>
-                        <a href={postLink}
-                           className="font-weight-normal pe-1">{message.topicName}</a>
-                    </div>
-                    <time className="d-block small">{message.timeAgo}</time>
-                </div>
-                <div className="col-md-4">
-                    <div>
-                        <UserName user={message.poster} size={'Tiny'} compact={false} />
-                    </div>
-                </div>
-            </div>
+            <StripedListItem key={message.msgId}>
+                <ListItemText>
+                    <Grid container spacing={2}>
+                        <Grid item md={8} className="mw-100">
+                            <div className="text-nowrap text-truncate">
+                                <a href={forumLink}
+                                   className="fw-bold pe-1">{message.forumName}:</a>
+                                <a href={postLink}
+                                   className="fw-normal pe-1">{message.topicName}</a>
+                            </div>
+                            <time className="d-block small">{message.timeAgo}</time>
+                        </Grid>
+                        <Grid item md={4} className="mw-100">
+                            <div>
+                                <UserBadge user={message.poster} size='tiny' compact={false} />
+                            </div>
+                        </Grid>
+                    </Grid>
+                </ListItemText>
+            </StripedListItem>
         );
     };
 
-    const renderForumBlock = (messages: IForumMessage[]) => {
+    const renderForumBlock = (messages?: IForumMessage[]) => {
         const rows: JSX.Element[] = [];
 
-        messages.forEach((item) => {
+        messages && messages.forEach((item) => {
             rows.push(renderMessageRow(item));
         });
 
@@ -276,11 +317,11 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
     const renderPanes = () => {
         return Object.keys(i18n.tabs).map((key) => {
             return (
-                <TabPanel value={key} className="w-100 h-100">
+                <TabPanel key={key} value={key} sx={{flexGrow: 1, width: "100%", p: 0}}>
                     <Scrollbar trackYProps={{style: {width: 5}}}>
-                        <div className="container striped">
+                        <List>
                             {renderForumBlock(posts[key])}
-                        </div>
+                        </List>
                     </Scrollbar>
                 </TabPanel>
             );
@@ -288,38 +329,44 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
     };
 
     return (
-        <div className="widget-body card no-border no-shadow full-height no-margin widget-loader-circle-lg">
-            <div className="card-header reset-min-height">
-                <div className="card-title">
-                    <a href={`/${props.language}/forums`}><i className="xi-forum-o text-orange pe-2" />{i18n.forums}</a>
-                </div>
-                <div className="card-controls">
-                    <ul>
-                        <li>
-                            <a href={`/${props.language}`}
-                               className={refrechClass}
-                               data-toggle="refresh"
-                               onClick={refreshClick}>
-                               {renderRefreshIcon()}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div className="card-body p-0 h-100 w-100 d-flex flex-column">
-                <Box sx={{ width: '100%', typography: 'body1' }}>
-                    <TabContext value={activeKey}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <TabList onChange={handleTabChange}>
-                                { renderTabs() }
-                            </TabList>
-                        </Box>
-                        { renderPanes() }
-                    </TabContext>
-                </Box>
-            </div>
-            {renderLoader()}
-        </div>
+        <ThemeProvider theme={ChessTheme}>
+            <Card variant="outlined"
+                  className="widget-body"
+                  sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%"
+                  }}
+            >
+                <CardHeader
+                    disableTypography
+                    action={
+                        <IconButton aria-label="refresh" onClick={refreshClick}>
+                            {renderRefreshIcon()}
+                        </IconButton>
+                    }
+                    title={
+                        <a className="title" href={`/${props.language}/forums`}><i className="xi-forum-o text-orange pe-2" />{i18n.forums}</a>
+                    }
+                    sx={{ paddingBottom: 0 }}
+                />
+                <CardContent sx={{flexGrow: 1, p: 0}}>
+                    <Box display="flex" flexDirection="column" sx={{ width: "100%", height: "100%", typography: 'body1' }}>
+                        <TabContext value={activeKey}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList onChange={handleTabChange}
+                                         variant="scrollable"
+                                         scrollButtons="auto">
+                                    { renderTabs() }
+                                </TabList>
+                            </Box>
+                            { renderPanes() }
+                        </TabContext>
+                    </Box>
+                    {renderLoader()}
+                </CardContent>
+            </Card>
+        </ThemeProvider>
     );
 };
 

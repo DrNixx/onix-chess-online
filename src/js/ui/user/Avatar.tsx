@@ -1,80 +1,103 @@
 import React from 'react';
+import clsx from "clsx";
 import {Md5} from 'ts-md5/dist/md5';
-import { IUser } from '../../app/IUser';
-import { AvatarSizeMap, AvatarSizeType } from './Interfaces';
+import BaseAvatar from '@mui/material/Avatar';
+import Skeleton from "@mui/material/Skeleton";
+import { IUser } from '../../app';
+import { AvatarSizeType } from './Interfaces';
 
-
-export interface IAvatarProps {
+type Props = {
     user?: IUser,
     size?: AvatarSizeType
-}
+    online?: string|true;
+    className?: string;
+};
 
-export class Avatar extends React.Component<IAvatarProps, {}> {
-    public static defaultProps: IAvatarProps = {
-        user: undefined,
-        size: 'Medium',
-    }
-
-    private sizes = {
-        'Tiny': 25,
-        'Small': 36,
-        'Medium': 48,
-        'Large': 80,
-        'Original': 160
+const Avatar: React.FC<Props> = (props) => {
+    const {user, size, online, className, children} = props;
+    const sizes = {
+        'tiny': 24,
+        'small': 32,
+        'medium': 40,
+        'large': 56,
+        'extra': 80,
+        'original': 160
     };
 
-    private retinaSizes: AvatarSizeMap = {
-        'Tiny': 'Small',
-        'Small': 'Medium',
-        'Medium': 'Large',
-        'Large': 'Original',
-        'Original': 'Original'
-    }
+    const borders = {
+        'tiny': 1,
+        'small': 2,
+        'medium': 2,
+        'large': 3,
+        'extra': 3,
+        'original': 4
+    };
 
-    /**
-     * constructor
-     */
-    constructor(props: IAvatarProps) {
-        super(props);
-    }
-
-    private getAvatarUrl = (id: number|string, size: AvatarSizeType = "Small", retina = false) => {
-
-        if (retina) {
-            size = this.retinaSizes[size];
-        }
-
+    const getAvatarUrl = (id: number|string, size: AvatarSizeType = "small") => {
         const key: string = Md5.hashStr(`UserAvatar|${id}`) + ".jpeg";
         const ch = key[0];
         return `https://a0${ch}.chess-online.com/userpics/${key}?size=${size}`;
     }
 
-    render() {
-        const { user, size } = this.props;
-        let urlOrig: string;
-        let urlRetina: string;
-        let name: string;
-        const uid = user?.id ?? 1;
-        if (user) {
-            urlOrig = this.getAvatarUrl(uid, size, false);
-            urlRetina = this.getAvatarUrl(uid, size, true);
-            name = user?.display ?? '???';
-        } else {
-            urlOrig = this.getAvatarUrl(1, size, false);
-            urlRetina = this.getAvatarUrl(1, size, true);
-            name = '???';
-        }
+    const url = (user) ? getAvatarUrl(user.id ?? 1, size) : '???';
+    const name = user?.display ?? '???';
 
-        const imgSize = this.sizes[size!];
-        
-        return (
-            <img src={urlOrig}
-                 alt={name}
-                 title={name}
-                 width={imgSize}
-                 height={imgSize}
-                 data-src={urlOrig}
-                 data-src-retina={urlRetina}></img>
-        );
+    type AvatarSx = {
+        width?: number;
+        height?: number;
+        borderStyle?: string;
+        borderWidth?: number;
+        borderColor?: string
+    };
+
+    const sx: AvatarSx = {};
+
+    if (size !== 'medium') {
+        sx.width = sx.height = sizes[size!];
     }
-}
+
+
+    let onlineTime: string|undefined = undefined;
+    if (online) {
+        sx.borderStyle = 'solid'
+        sx.borderWidth = borders[size!];
+        if (online === true) {
+            onlineTime = 'now';
+        } else if (online === 'none') {
+            onlineTime = 'none';
+            sx.borderColor = '#000';
+        } else {
+            onlineTime = online;
+        }
+    }
+
+    return (
+        <>
+            {!user?.id ? (
+                <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    sx={{
+                        flexBasis: sizes[size!],
+                        flexShrink: 0
+                    }}
+                    width={sizes[size!]}
+                    height={sizes[size!]} />
+            ) : (
+                <BaseAvatar className={clsx(className, size) }
+                            alt={name}
+                            src={url}
+                            sx={sx}
+                            data-online-time={onlineTime}
+                >{children}</BaseAvatar>
+            )}
+        </>
+    );
+};
+
+Avatar.defaultProps = {
+    user: undefined,
+    size: 'medium'
+};
+
+export default Avatar;

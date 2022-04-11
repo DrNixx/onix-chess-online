@@ -19,6 +19,7 @@ export interface AppProps {
     token?: string,
     secret?: string,
     wsHost?: string,
+    apiRoot?: string;
     ui?: boolean,
     sw?: boolean,
     modules?: IModule[],
@@ -33,6 +34,7 @@ export interface AppState {
 export class App extends React.Component<AppProps, AppState> implements IApplication {
     public static defaultProps: AppProps = {
         wsHost: 'ws://localhost:8000',
+        apiRoot: 'https://www.chess-online.com/api',
         ui: true,
         sw: false,
         modules: [],
@@ -42,8 +44,12 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
 
     public ui?: Frontend;
 
+    private apiRoot: string;
+
     constructor(props: AppProps) {
         super(props);
+
+        this.apiRoot = props.apiRoot ?? App.defaultProps.apiRoot!;
         
         this.state = {
             status: ConnectionStatus.Uninitialized,
@@ -151,6 +157,10 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
 
     public getUserId(): number {
         return toSafeInteger(this.props.uid);
+    }
+
+    public getApiUrl(urlPart: string): string {
+        return this.apiRoot + urlPart;
     }
 
     render() {

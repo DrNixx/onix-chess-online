@@ -13,12 +13,12 @@ import Scrollbar from "react-scrollbars-custom";
 import Tooltip from '@mui/material/Tooltip';
 import { _ } from '../../i18n/i18n';
 import { Logger } from '../../common/Logger';
-import { UserName } from '../user/UserName';
 import { IAdvanceClock, IChessGame, IChessPlayer, IGameData } from '../../chess/types/Interfaces';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { formatInterval } from '../../fn/date/formatInterval';
 import { timestampToInterval } from '../../fn/date/timestampToInterval';
 import Grid from '@mui/material/Grid';
+import UserBadge from "../user/UserBadge";
 
 interface IListData {
     games: IGameData[],
@@ -336,7 +336,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
         const clock = ((game.clock as unknown) as IAdvanceClock);
 
         return (
-            <Grid container spacing={2}>
+            <Grid key={game.game!.id} container spacing={2}>
                 <Grid item md={8}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
@@ -360,7 +360,7 @@ class GameListComponent extends React.Component<GameListProps, GameListState> {
                     </Grid>
                 </Grid>
                 <Grid item md={4}>
-                    { game.opponent ? (<UserName user={game.opponent.user} size="Tiny" compact={false} />) : null }
+                    { game.opponent ? (<UserBadge user={game.opponent.user} size="tiny" compact={false} />) : null }
                 </Grid>
             </Grid>
         );

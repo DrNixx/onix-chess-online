@@ -2,6 +2,10 @@
 @import '../../../css/pages';
 @import '../../../css/site';
 
+:root {
+    scroll-behavior: unset;
+}
+
 body {
     color: #6f7b8a;
     background-color:#f2f4f6;

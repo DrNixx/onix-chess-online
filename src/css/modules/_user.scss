@@ -308,6 +308,44 @@ $color-online-none: #333;
     }
 }
 
+.MuiAvatar-root {
+    &[data-online-time="now"] {
+        border-color: $color-online-now !important;
+    }
+
+    &[data-online-time="30m"] {
+        border-color: $color-online-30m !important;
+    }
+
+    &[data-online-time="1h"] {
+        border-color: $color-online-1h !important;
+    }
+
+    &[data-online-time="12h"] {
+        border-color: $color-online-12h !important;
+    }
+
+    &[data-online-time="1d"] {
+        border-color: $color-online-1d !important;
+    }
+
+    &[data-online-time="3d"] {
+        border-color: $color-online-3d !important;
+    }
+
+    &[data-online-time="7d"] {
+        border-color: $color-online-7d !important;
+    }
+
+    &[data-online-time="30d"] {
+        border-color: $color-online-30d !important;
+    }
+
+    &[data-online-time="none"] {
+        border-color: $color-online-none !important;
+    }
+}
+
 .username-popup {
     width: 276px;
 }

@@ -24,10 +24,10 @@ const BoardWithPlayer: React.FC<Props> = (props) => {
             <div>
                 <div className={clsx("board-container", piece)}>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                             {renderPlayer(engine, orientation, "top")}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <div className="text-right position-relative">
                                 {controlsTop}
                             </div>
@@ -37,10 +37,10 @@ const BoardWithPlayer: React.FC<Props> = (props) => {
                         <div className="main-board" ref={boardRef} />
                     </Box>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={7}>
                             {renderPlayer(engine, orientation, "bottom")}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <div className="text-right position-relative">
                                 {controlsBottom}
                             </div>

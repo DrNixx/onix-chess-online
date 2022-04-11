@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>UI test | Onix Game</title>
+    <!-- <link rel="shortcut icon" href="" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600,700" rel="stylesheet">
+
+    <link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="/assets/bs/common.css" />
+    <link rel="stylesheet" href="/assets/bs/boards/board.css" />
+    <link rel="stylesheet" href="/assets/bs/pieces/external.css" />
+    <link rel="stylesheet" href="/assets/css/chess-online.css">
+    <link rel="stylesheet" href="/assets/css/analyse-game.css" />
+    <style>
+
+    </style>
+    <script>
+        var app_props = {
+            uid: '2',
+            wsHost: 'wss://ws.chess-online.com',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIn0.KUKXf_F0PHtnDzN0SBZCNyauiTUcrkzecRcu_Keyjzs',
+            modules: []
+        };
+    </script>
+</head>
+<body>
+<div class="wrapper ">
+    <div class="container-fluid">
+        <div id="game-view"></div>
+    </div>
+    <div id="app-root"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="assets/js/bootstrap.js"></script>
+
+<script>
+    const module = {
+        init: function() {
+            var props = {"board":{"is3d":false,"size":4,"piece":"merida","square":"cedar","orientation":"white","coordinates":true,"csrfTokenName":null,"csrfTokenValue":null,"configUrl":"/ru-ru/settings/board","returnUrl":"/ru-ru/7840290","confirmMove":true,"learnMode":false,"moveTable":true},"game":{"game":{"id":7840290,"load":false,"insite":true,"variant":{"key":"standard","name":"Standard","shortName":"Std"},"speed":"correspondence","perf":"maina","rated":true,"initialFen":"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -","fen":"r1b4r/pp3pq1/n3p2p/3R4/8/1Pk5/P2B1PPP/2K4R b - - 1 23","player":"white","mover":"black","turns":43,"startedAtTurn":0,"status":{"name":"mate","subtype":1,"result":1,"result_name":"мат королю"},"event":"ЛЧС-2021 по адвансу, гр. Б","tournamentId":25515,"createdAt":1615764476026,"createdBy":4,"private":false,"advance":true,"winner":"white","lastMove":"e3d2","check":"c3","moveCentis":[40141712,20564136,5173461,16159265,1071058,424966,13214,425895,48441433,6866909,850632,741559,874800,29713532,1611956,18461573,21974594,15664452,983708,17549059,18978996,1897879,320429,652840,289967,3912917,24497846,770320,1371861,2014247,641564,12037904,3866602,38763346,536314,75693040,835358,547824,63583,31319399,8554591,32108935,7046979],"opening":{"code":"A00","name":"Start position"}},"tournament":{"id":25515,"round":23605,"name":"ЛЧС-2021 по адвансу, гр. Б","running":true},"correspondence":{"limit":"Адванс 10+1/21","can_pause":true,"parts":[{"per":"game","initial":864000000,"increment":86400000,"min":0,"interval":1,"max":1814400000}],"white":0,"black":0,"totalTime":503630000,"lastMoveAt":1617122839096,"serverNow":1617122839096},"observer":2,"player":{"color":"white","name":"Sheldon","user":{"id":82031,"name":"Sheldon","display":"Станислав","online":"now","perfs":{"maina":{"games":418,"rating":1552,"avg":1545}},"language":"ru-RU","profile":{"country":"KZ"},"patron":"bronze","status":"bronze","title":""},"rating":1545,"ratingDiff":3.6299999999999999},"opponent":{"color":"black","name":"Lazarev Ivan","user":{"id":323689,"name":"Lazarev Ivan","display":"Ivan Iazarev","online":"12h","perfs":{"maina":{"games":8,"rating":983,"avg":1000}},"language":"ru-RU","profile":{"country":"RU"},"patron":"base","status":"base","title":""},"rating":1200,"provisional":true},"orientation":"white","analysis":{"state":"unanalysed"},"treeParts":[{"ply":0,"fen":"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},{"ply":1,"fen":"rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1","id":"YRTcHRUs","uci":"e2e4","san":"e4"},{"ply":2,"fen":"rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2","id":"p7YAVFs4","uci":"c7c5","san":"c5"},{"ply":3,"fen":"rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2","id":"+C4wIaDO","uci":"g1f3","san":"Nf3"},{"ply":4,"fen":"rnbqkbnr/pp1p1ppp/4p3/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3","id":"QmVTJwdx","uci":"e7e6","san":"e6"},{"ply":5,"fen":"rnbqkbnr/pp1p1ppp/4p3/2p5/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3","id":"ZnwckqS8","uci":"d2d4","san":"d4"},{"ply":6,"fen":"rnbqkbnr/pp1p1ppp/4p3/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4","id":"E/LPVH6L","uci":"c5d4","san":"cxd4"},{"ply":7,"fen":"rnbqkbnr/pp1p1ppp/4p3/8/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4","id":"OgIFFMcN","uci":"f3d4","san":"Nxd4"},{"ply":8,"fen":"rnbqkb1r/pp1p1ppp/4pn2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5","id":"N8RMw402","uci":"g8f6","san":"Nf6"},{"ply":9,"fen":"rnbqkb1r/pp1p1ppp/4pn2/8/3NP3/2N5/PPP2PPP/R1BQKB1R b KQkq - 2 5","id":"OHcXhX0L","uci":"b1c3","san":"Nc3"},{"ply":10,"fen":"rnbqkb1r/pp1p1pp1/4pn1p/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6","id":"/ZV5ATH2","uci":"h7h6","san":"h6"},{"ply":11,"fen":"rnbqkb1r/pp1p1pp1/4pn1p/4P3/3N4/2N5/PPP2PPP/R1BQKB1R b KQkq - 0 6","id":"9a6uRSSN","uci":"e4e5","san":"e5"},{"ply":12,"fen":"rnbqkb1r/pp1p1ppn/4p2p/4P3/3N4/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 7","id":"p9ouQbRw","uci":"f6h7","san":"Nh7"},{"ply":13,"fen":"rnbqkb1r/pp1p1ppn/4p2p/1N2P3/8/2N5/PPP2PPP/R1BQKB1R b KQkq - 2 7","id":"KjaxG8JR","uci":"d4b5","san":"Ndb5"},{"ply":14,"fen":"rnbqk2r/pp1p1ppn/4p2p/1N2P3/1b6/2N5/PPP2PPP/R1BQKB1R w KQkq - 3 8","id":"9r2W5qXc","uci":"f8b4","san":"Bb4"},{"ply":15,"fen":"rnbqk2r/pp1p1ppn/4p2p/1N2P3/1b4Q1/2N5/PPP2PPP/R1B1KB1R b KQkq - 4 8","id":"nvXMM/OG","uci":"d1g4","san":"Qg4"},{"ply":16,"fen":"rnbqkb1r/pp1p1ppn/4p2p/1N2P3/6Q1/2N5/PPP2PPP/R1B1KB1R w KQkq - 5 9","id":"32QG+CAG","uci":"b4f8","san":"Bf8"},{"ply":17,"fen":"rnbqkb1r/pp1p1ppn/4p2p/1N2P3/4N1Q1/8/PPP2PPP/R1B1KB1R b KQkq - 6 9","id":"4KjqEOtd","uci":"c3e4","san":"Ne4"},{"ply":18,"fen":"rnbqkb1r/pp3ppn/4p2p/1N1pP3/4N1Q1/8/PPP2PPP/R1B1KB1R w KQkq d6 0 10","id":"f9e6TlIh","uci":"d7d5","san":"d5"},{"ply":19,"fen":"rnbqkb1r/pp3ppn/3Pp2p/1N6/4N1Q1/8/PPP2PPP/R1B1KB1R b KQkq - 0 10","id":"CNZDQekj","uci":"e5d6","san":"exd6"},{"ply":20,"fen":"r1bqkb1r/pp3ppn/n2Pp2p/1N6/4N1Q1/8/PPP2PPP/R1B1KB1R w KQkq - 1 11","id":"li+B0zI3","uci":"b8a6","san":"Na6"},{"ply":21,"fen":"r1bqkb1r/pp3ppn/n2Pp2p/1NN5/6Q1/8/PPP2PPP/R1B1KB1R b KQkq - 2 11","id":"2jFl3iTN","uci":"e4c5","san":"Nc5"},{"ply":22,"fen":"r1bqk2r/pp3ppn/n2bp2p/1NN5/6Q1/8/PPP2PPP/R1B1KB1R w KQkq - 0 12","id":"dbVJXS/m","uci":"f8d6","san":"Bxd6"},{"ply":23,"fen":"r1bqk2r/pp3pQn/n2bp2p/1NN5/8/8/PPP2PPP/R1B1KB1R b KQkq - 0 12","id":"nFNQHJDi","uci":"g4g7","san":"Qxg7"},{"ply":24,"fen":"r1bq3r/pp2kpQn/n2bp2p/1NN5/8/8/PPP2PPP/R1B1KB1R w KQ - 1 13","id":"y8Ran4NH","uci":"e8e7","san":"Ke7"},{"ply":25,"fen":"r1bq3r/pp2kpQn/n2Np2p/2N5/8/8/PPP2PPP/R1B1KB1R b KQ - 0 13","id":"Igb0+EiL","uci":"b5d6","san":"Nxd6"},{"ply":26,"fen":"r1bq3r/pp3pQn/n2kp2p/2N5/8/8/PPP2PPP/R1B1KB1R w KQ - 0 14","id":"lmHadntv","uci":"e7d6","san":"Kxd6"},{"ply":27,"fen":"r1bq3r/pp3pQn/n2kp2p/2N5/8/4B3/PPP2PPP/R3KB1R b KQ - 1 14","id":"+9TZ+A9d","uci":"c1e3","san":"Be3"},{"ply":28,"fen":"r1bq3r/pp3pQ1/n2kpn1p/2N5/8/4B3/PPP2PPP/R3KB1R w KQ - 2 15","id":"3pokudeX","uci":"h7f6","san":"Nf6"},{"ply":29,"fen":"r1bq3r/pp3pQ1/n2kpn1p/2N5/8/4B3/PPP2PPP/2KR1B1R b - - 3 15","id":"+RYFcSOJ","uci":"e1c1","san":"O-O-O+"},{"ply":30,"fen":"r1bq3r/pp3pQ1/n2kp2p/2Nn4/8/4B3/PPP2PPP/2KR1B1R w - - 4 16","id":"jdWIR3Qx","uci":"f6d5","san":"Nd5"},{"ply":31,"fen":"r1bq3r/pp3pQ1/n2kp2p/3n4/4N3/4B3/PPP2PPP/2KR1B1R b - - 5 16","id":"8eI+irE+","uci":"c5e4","san":"Ne4+"},{"ply":32,"fen":"r1bq3r/pp3pQ1/n1k1p2p/3n4/4N3/4B3/PPP2PPP/2KR1B1R w - - 6 17","id":"if8FaOSz","uci":"d6c6","san":"Kc6"},{"ply":33,"fen":"r1bq3r/pp3pQ1/n1k1p2p/1B1n4/4N3/4B3/PPP2PPP/2KR3R b - - 7 17","id":"moOp0wYO","uci":"f1b5","san":"Bb5+"},{"ply":34,"fen":"r1bq3r/pp3pQ1/n3p2p/1k1n4/4N3/4B3/PPP2PPP/2KR3R w - - 0 18","id":"8Vv5PxrT","uci":"c6b5","san":"Kxb5"},{"ply":35,"fen":"r1bq3r/pp3pQ1/n3p2p/1k1n4/2P1N3/4B3/PP3PPP/2KR3R b - - 0 18","id":"497+FGwz","uci":"c2c4","san":"c4+"},{"ply":36,"fen":"r1bq3r/pp3pQ1/n3p2p/3n4/2k1N3/4B3/PP3PPP/2KR3R w - - 0 19","id":"R2EVx35t","uci":"b5c4","san":"Kxc4"},{"ply":37,"fen":"r1bq3r/pp3pQ1/n3p2p/3n4/2k5/2N1B3/PP3PPP/2KR3R b - - 1 19","id":"mZBG6gv3","uci":"e4c3","san":"Nc3"},{"ply":38,"fen":"r1b4r/pp3pQ1/n3pq1p/3n4/2k5/2N1B3/PP3PPP/2KR3R w - - 2 20","id":"BMOli2Sm","uci":"d8f6","san":"Qf6"},{"ply":39,"fen":"r1b4r/pp3pQ1/n3pq1p/3n4/2k5/1PN1B3/P4PPP/2KR3R b - - 0 20","id":"vTFLplYM","uci":"b2b3","san":"b3+"},{"ply":40,"fen":"r1b4r/pp3pQ1/n3pq1p/3n4/8/1Pk1B3/P4PPP/2KR3R w - - 0 21","id":"HE32oJNz","uci":"c4c3","san":"Kxc3"},{"ply":41,"fen":"r1b4r/pp3pQ1/n3pq1p/3R4/8/1Pk1B3/P4PPP/2K4R b - - 0 21","id":"fGm4cuCp","uci":"d1d5","san":"Rxd5"},{"ply":42,"fen":"r1b4r/pp3pq1/n3p2p/3R4/8/1Pk1B3/P4PPP/2K4R w - - 0 22","id":"acGS5/Co","uci":"f6g7","san":"Qxg7"},{"ply":43,"fen":"r1b4r/pp3pq1/n3p2p/3R4/8/1Pk5/P2B1PPP/2K4R b - - 1 22","id":"5NPzTpPG","uci":"e3d2","san":"Bd2#"}],"finalFen":"r1b4r/pp3pq1/n3p2p/3R4/8/1Pk5/P2B1PPP/2K4R b - - 1 23","pgn":"[Event \"ЛЧС-2021 по адвансу, гр. Б\"]\n[Site \"https://www.chess-online.com/7840290\"]\n[Date \"2021.03.20\"]\n[Round \"02\"]\n[White \"Sheldon\"]\n[Black \"Lazarev Ivan\"]\n[Result \"1-0\"]\n[WhiteAdvance \"1545\"]\n[BlackAdvance \"1200\"]\n[ECO \"\"]\n[EventDate \"2021.03.14\"]\n[Termination \"normal\"]\n\n1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 h6 6. e5 Nh7 7. Ndb5 Bb4 8. Qg4\nBf8 9. Ne4 d5 10. exd6 Na6 11. Nc5 Bxd6 12. Qxg7 Ke7 13. Nxd6 Kxd6 14. Be3 Nf6\n15. O-O-O+ Nd5 16. Ne4+ Kc6 17. Bb5+ Kxb5 18. c4+ Kxc4 19. Nc3 Qf6 20. b3+ Kxc3\n21. Rxd5 Qxg7 22. Bd2# 1-0\n"}};
+
+            analyse.analyseGame(props, document.getElementById("game-view"));
+        }
+    };
+
+    app_props.modules.push(module);
+</script>
+
+<script>
+    jQuery(function () {
+        onix.Logger.setLevel(9);
+        onix.ChessApp(app_props, document.getElementById("app-root"));
+    });
+</script>
+</body>
+</html>

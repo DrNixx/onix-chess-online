@@ -1,5 +1,6 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 import isString from 'lodash/isString';
+import * as ReactDOM from 'react-dom';
 import { nanoid } from 'nanoid';
 import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
 import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Notification';
@@ -10,6 +11,8 @@ import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
 import { simpleChat } from '../chat/Chat';
 import { Popover } from 'bootstrap';
+import React from "react";
+import UserBadge from "./user/UserBadge";
 
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
@@ -169,6 +172,15 @@ export class Frontend implements IModule {
         jQuery().scrollbar && jQuery('.scrollable').scrollbar({
             ignoreOverlay: false
         });
+
+        // {{{ User badges
+        pg.queryElements('[data-user-badge]').forEach((el) => {
+            delete el.dataset['userBadge']
+            const uid = el.dataset['id'];
+            const size: any = el.dataset['size'];
+            ReactDOM.render(React.createElement(UserBadge, {userId: uid, size: size}), el);
+        });
+        // }}} User badges
 
         // {{{ Chat 
         if (this.uid) {

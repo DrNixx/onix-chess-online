@@ -4,8 +4,8 @@ import clsx from "clsx";
 import isString from "lodash/isString";
 import { Logger } from '../../common/Logger';
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
-import {Avatar} from "./Avatar";
-import { IUser } from '../../app/IUser';
+import Avatar from "./Avatar";
+import { IUser } from '../../app';
 
 export interface IUserNameProps {
     language?: string;
@@ -31,7 +31,7 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
             name: '?',
             display: '?' 
         },
-        size: 'Medium',
+        size: 'medium',
         icon: Icons.NONE,
         showInfo: true,
         withFlag: false,
@@ -213,15 +213,16 @@ export class UserName extends React.Component<IUserNameProps, IUserNameState> {
 
         if (user) {
             const userLink = `/${language}/@/${user.id}`;
-            const picClass = clsx(size?.toLowerCase(), "rounded upic")
+            const picClass = clsx(size?.toLowerCase(), "rounded upic");
+            const onlineTime = user.online ? user.online : 'none';
             return (
                 <div className="username-block">
                     <div className="upic-wrapper">
                         <div className={picClass}
                              data-online-mark="0"
                              data-user-raw="1"
-                             data-online-time={user.online ? user.online : 'none'}
-                             data-user-id={user.id}><a href={user.id ? userLink : "#"}><Avatar user={user} size={size} /></a>
+                             data-online-time={onlineTime}
+                             data-user-id={user.id}><a href={user.id ? userLink : "#"}><Avatar user={user} size={size} online={onlineTime} /></a>
                         </div>
                     </div>
                     { this.renderInfo(user, userLink) }

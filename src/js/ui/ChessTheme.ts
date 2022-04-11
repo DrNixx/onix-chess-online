@@ -7,6 +7,29 @@ export const ChessTheme = createTheme({
             styleOverrides: {
                 root: {
                     fontFamily: "var(--bs-font-secondary)",
+                    fontSize: ".725rem",
+                }
+            }
+        },
+        MuiCardHeader: {
+            styleOverrides: {
+                content: {
+                    "& .title": {
+                        fontFamily: "var(--bs-font-secondary)",
+                        textTransform: "uppercase",
+                        display: "inline-block",
+                        letterSpacing: "0.06em",
+                        fontSize: ".725rem",
+                        fontWeight: 500,
+                        margin: 0,
+                        padding: 0,
+                        lineHeight: "normal",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        "& i": {
+                            fontSize: "2em"
+                        }
+                    }
                 }
             }
         }

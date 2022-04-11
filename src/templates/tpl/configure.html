@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Configure test | Onix Game</title>
+    <!-- <link rel="shortcut icon" href="" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600,700" rel="stylesheet">
+
+    <link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="/assets/bs/common.css" />
+    <link rel="stylesheet" href="/assets/bs/boards/board.css" />
+    <link rel="stylesheet" href="/assets/bs/pieces/external.css" />
+    <link rel="stylesheet" href="/assets/css/chess-online.css">
+
+    <link rel="stylesheet" href="/assets/css/configure-game.css" />
+    <style>
+
+    </style>
+    <script>
+        var app_props = {
+            uid: '2',
+            wsHost: 'wss://ws.chess-online.com',
+            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIn0.KUKXf_F0PHtnDzN0SBZCNyauiTUcrkzecRcu_Keyjzs',
+            modules: []
+        };
+    </script>
+</head>
+<body>
+<div class="wrapper ">
+    <div class="container-fluid">
+        <div id="config-view" class="reset-select-apperance"></div>
+    </div>
+    <div id="app-root"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="assets/js/bootstrap.js"></script>
+
+<script>
+    const module = {
+        init: function() {
+            const props = {
+                size: 4,
+                piece: "alpha",
+                square: "cedar",
+                coordinates: true,
+            };
+            configure.configureGame(props, document.getElementById("config-view"));
+        }
+    };
+
+    app_props.modules.push(module);
+</script>
+
+<script>
+    jQuery(function () {
+        onix.Logger.setLevel(9);
+        onix.ChessApp(app_props, document.getElementById("app-root"));
+    });
+</script>
+</body>
+</html>

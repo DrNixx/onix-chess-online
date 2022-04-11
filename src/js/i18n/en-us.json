@@ -9,6 +9,12 @@
         "decline": "Decline",
         "confirm_action": "Confirm your action"
     },
+    "actions": {
+        "open_profile": "Open user profile",
+        "open_statistics": "Open user statistics",
+        "compose_mail": "Send message",
+        "send_challenge": "Challenge user"
+    },
     "datetime": {
         "years": "{y,plural,one{# year} few{# years} many{# years} other{# years}}",
         "months": "{m,plural,one{# month} few{# months} many{# months} other{# months}}",
