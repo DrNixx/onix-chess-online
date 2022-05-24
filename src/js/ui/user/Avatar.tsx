@@ -3,6 +3,7 @@ import clsx from "clsx";
 import {Md5} from 'ts-md5/dist/md5';
 import BaseAvatar from '@mui/material/Avatar';
 import Skeleton from "@mui/material/Skeleton";
+import PersonIcon from "@mui/icons-material/Person";
 import { IUser } from '../../app';
 import { AvatarSizeType } from './Interfaces';
 
@@ -39,8 +40,7 @@ const Avatar: React.FC<Props> = (props) => {
         return `https://a0${ch}.chess-online.com/userpics/${key}?size=${size}`;
     }
 
-    const url = (user) ? getAvatarUrl(user.id ?? 1, size) : '???';
-    const name = user?.display ?? '???';
+    const name = (user?.display ?? user?.name) ?? '???';
 
     type AvatarSx = {
         width?: number;
@@ -57,42 +57,65 @@ const Avatar: React.FC<Props> = (props) => {
     }
 
 
-    let onlineTime: string|undefined = undefined;
-    if (online) {
-        sx.borderStyle = 'solid'
-        sx.borderWidth = borders[size!];
-        if (online === true) {
-            onlineTime = 'now';
-        } else if (online === 'none') {
-            onlineTime = 'none';
-            sx.borderColor = '#000';
-        } else {
-            onlineTime = online;
-        }
-    }
+    const avatarUser = () => {
+        const url = getAvatarUrl(user!.id!, size);
 
-    return (
-        <>
-            {!user?.id ? (
-                <Skeleton
-                    animation="wave"
-                    variant="circular"
-                    sx={{
-                        flexBasis: sizes[size!],
-                        flexShrink: 0
-                    }}
-                    width={sizes[size!]}
-                    height={sizes[size!]} />
-            ) : (
-                <BaseAvatar className={clsx(className, size) }
-                            alt={name}
-                            src={url}
-                            sx={sx}
-                            data-online-time={onlineTime}
-                >{children}</BaseAvatar>
-            )}
-        </>
-    );
+        let onlineTime: string|undefined = undefined;
+        if (online) {
+            sx.borderStyle = 'solid'
+            sx.borderWidth = borders[size!];
+            if (online === true) {
+                onlineTime = 'now';
+            } else if (online === 'none') {
+                onlineTime = 'none';
+                sx.borderColor = '#000';
+            } else {
+                onlineTime = online;
+            }
+        }
+
+        return (
+            <BaseAvatar className={clsx(className, size) }
+                        alt={name}
+                        src={url}
+                        sx={sx}
+                        data-online-time={onlineTime}
+            >{children}</BaseAvatar>
+        );
+    };
+
+    const avatarDefault = () => {
+        return (
+            <BaseAvatar className={clsx(className, size) }
+                        alt={name}
+                        sx={sx}
+            ><PersonIcon /></BaseAvatar>
+        );
+    };
+
+    const avatarSkeleton = () => {
+        return (
+            <Skeleton
+                animation="wave"
+                variant="circular"
+                sx={{
+                    flexBasis: sizes[size!],
+                    flexShrink: 0
+                }}
+                width={sizes[size!]}
+                height={sizes[size!]} />
+        );
+    };
+
+    if (user) {
+        if (user.id && (user.id > 1)) {
+            return avatarUser();
+        } else {
+            return avatarDefault();
+        }
+    } else {
+        return avatarSkeleton();
+    }
 };
 
 Avatar.defaultProps = {

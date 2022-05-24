@@ -21,11 +21,11 @@ export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, positio
     if (player) {
         if (player.rating) {
             return (
-                <UserBadge user={player.user} size="small">{player.rating}</UserBadge>
+                <UserBadge user={player.user} size="small" popover={false}>{player.rating}</UserBadge>
             );
         } else {
             return (
-                <UserBadge user={player.user} size="small" />
+                <UserBadge user={player.user} size="small" popover={false} />
             );
         }
     }
@@ -93,7 +93,6 @@ export const renderResult = (engine: ChessEngine, orientation: cg.Color, positio
 
         const className = `game-result _${position}`;
         let score: number;
-        let type: GameResult.Type;
         if (orientation == "white") {
             score = (position == "bottom") ? GameResult.score[whiteResult] : GameResult.score[blackResult];
         } else {

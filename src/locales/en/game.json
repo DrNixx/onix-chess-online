@@ -92,5 +92,14 @@
 
   "next_game": "Next game",
 
-  "postpone_rest": "There have {n} of vacation time left"
+  "postpone_rest": "There have {n} of vacation time left",
+
+  "canJoin": "Join to а game",
+  "canJoinNote": "You can join this game",
+  "waitJoin": "Waiting for opponent join",
+  "waitJoinNote": "The game will become available after any opponent join to your game",
+  "waitOpponent": "Waiting for a response from the opponent",
+  "waitOpponentNote": "The game will become available after the opponent accepts your challenge",
+  "acceptChallenge": "Accept challenge",
+  "acceptChallengeNote": "You must accept or reject the challenge"
 }

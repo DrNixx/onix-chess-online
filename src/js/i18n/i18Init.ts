@@ -24,7 +24,7 @@ export function init(locale: string) {
             load: "languageOnly",
             ns: ['core'],
             defaultNS: 'core',
-            debug: true,
+            debug: process.env.NODE_ENV !== 'production',
         })
         .then((p) => {
             i18n.services.formatter?.add('intl', (message, lng, options) => {

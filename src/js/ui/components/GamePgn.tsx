@@ -31,7 +31,7 @@ const GamePgn: React.VFC<GamePgnProps> = (props) => {
     return (
         <>
             <Box sx={{padding: .5}}>
-                <FormControl variant="standard">
+                <FormControl variant="standard" sx={{width: '40rem', maxWidth: "100%"}}>
                     <InputLabel shrink htmlFor="bootstrap-input">
                         FEN
                     </InputLabel>

@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {IUser} from "../../app";
-import {IChessPerfs, PerfNameType} from "../../chess/types/Interfaces";
-import toSafeInteger from "lodash/toSafeInteger";
-import {appInstance} from "../../app/IApplication";
-import {Logger} from "../../common/Logger";
-import prefsCache from "../../app/prefsCache";
+import React, {useEffect, useState} from 'react';
+import toSafeInteger from 'lodash/toSafeInteger';
+import {IUser} from '../../app';
+import {IChessPerfs, PerfNameType} from '../../chess/types/Interfaces';
+import {appInstance} from '../../app/IApplication';
+import {Logger} from '../../common/Logger';
+import prefsCache from '../../app/prefsCache';
 
 type Props = {
     user: IUser;
@@ -67,7 +67,7 @@ const UserRatings: React.VFC<Props> = (props) => {
         <div className="row no-gutters">
             {ratingOrder.map(o => {
                 return (
-                    <>
+                    <React.Fragment key={o + '-' + user.id}>
                         {prefs[o] &&
                         <div className="col-4">
                             <span className="lh-lg" data-toggle="tooltip" title="">
@@ -75,7 +75,7 @@ const UserRatings: React.VFC<Props> = (props) => {
                                 <span className="bold small">{prefs[o]?.rating}</span>
                             </span>
                         </div>}
-                    </>
+                    </React.Fragment>
                 )
             })}
         </div>

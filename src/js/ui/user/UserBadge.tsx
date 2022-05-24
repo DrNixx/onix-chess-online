@@ -79,6 +79,14 @@ const UserBadge: React.FC<Props> = (props) => {
         }
     }, [propsUser, userId]);
 
+    const getDisplay = useCallback(() => {
+        if (user) {
+            return (user.display && (user.display != '?')) ? user.display : user.name;
+        }
+
+        return undefined;
+    }, [user]);
+
     const renderUserLinkSimple = () => {
         if (user) {
             const unClass = ["username"];
@@ -86,10 +94,9 @@ const UserBadge: React.FC<Props> = (props) => {
                 unClass.push(user!.status);
             }
 
-            const display = (user.display && (user.display != '?')) ? user.display : user.name;
             const userLink = `/${language}/@/${user.id}`;
             return(
-                <a href={userLink} className={clsx(unClass)}>{display}</a>
+                <a href={userLink} className={clsx(unClass)}>{getDisplay()}</a>
             );
         }
 
@@ -98,14 +105,19 @@ const UserBadge: React.FC<Props> = (props) => {
 
     const renderUserLink = useCallback(() =>  {
         if (user) {
-            const unClass = ["username", "cursor"];
+            const unClass = ["username"];
             if (user.status) {
                 unClass.push(user.status);
             }
 
-            const display = (user.display && (user.display != '?')) ? user.display : user.name;
-
             if (popover && user.id) {
+                unClass.push('cursor');
+                const handleClose = () => {
+                    setAnchorEl(null);
+                };
+
+                const open = Boolean(anchorEl);
+
                 return (
                     <>
                         <Box
@@ -117,19 +129,81 @@ const UserBadge: React.FC<Props> = (props) => {
                                     setPopupId(nanoid(8));
                                 }
                             }}
-                        >{display}</Box>
-                        {renderPopover(user)}
+                        >{getDisplay()}</Box>
+                        <Popover
+                            id={popupId}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                        >
+                            <Box sx={{ padding: 1, width: 280 }}>
+                                <Box
+                                    className="pb-2 mb-2 border-bottom w-100"
+                                    sx={{display: "inline-flex", flexWrap: "nowrap", maxWidth: "100%"}}
+                                >
+                                    <Avatar user={user} size="medium" online={user?.online ? user.online : 'none'} />
+                                    <InfoBox>
+                                        <Box title={getDisplay()} sx={{mb: .25}}>
+                                            <UserTitle title={user.title} />
+                                            {renderUserLinkSimple()}
+                                        </Box>
+                                        <UserNameElement user={user} compact={false} />
+                                    </InfoBox>
+                                </Box>
+                                <UserRatings user={user} />
+                                <Box className={"pt-2 mt-2 border-top w-100"} sx={{display: "flex"}}>
+                                    <Stack direction="row" spacing={3}>
+                                        <Stack direction="row" spacing={1}>
+                                            <IconButton
+                                                href={`/${language}/@/${user.id}`}
+                                                title={t('open_profile')}
+                                                aria-label={t('open_profile')}
+                                                size="small">
+                                                <Icon baseClassName="" data-icon="r" />
+                                            </IconButton>
+                                            <IconButton
+                                                href={`/${language}/user/statistics/${user.id}`}
+                                                title={t('open_statistics')}
+                                                aria-label={t('open_statistics')}
+                                                size="small">
+                                                <Icon baseClassName="" className="xi-chart-line" />
+                                            </IconButton>
+                                        </Stack>
+                                        <Stack direction="row" spacing={1}>
+                                            <IconButton
+                                                href={`/${language}/pm/compose/${user.id}`}
+                                                title={t('compose_mail')}
+                                                aria-label={t('compose_mail')}
+                                                size="small">
+                                                <Icon baseClassName="" className="xi-mail-big" />
+                                            </IconButton>
+                                            <IconButton
+                                                href={`/${language}/game/challenge/${user.id}`}
+                                                title={t('send_challenge')}
+                                                aria-label={t('send_challenge')}
+                                                size="small">
+                                                <Icon baseClassName="" className="xi-challenge" />
+                                            </IconButton>
+                                        </Stack>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                        </Popover>
                     </>
                 );
             } else {
                 if (user.id) {
                     const userLink = `/${language}/@/${user.id}`;
                     return(
-                        <a href={userLink} className={clsx(unClass)}>{display}</a>
+                        <a href={userLink} className={clsx(unClass)}>{getDisplay()}</a>
                     );
                 } else {
                     return(
-                        <span className={clsx(unClass)}>{display}</span>
+                        <span className={clsx(unClass)}>{getDisplay()}</span>
                     );
                 }
             }
@@ -138,84 +212,10 @@ const UserBadge: React.FC<Props> = (props) => {
         return null;
     }, [user, popover, anchorEl, language]);
 
-    const renderPopover = (user: IUser) => {
-        const handleClose = () => {
-            setAnchorEl(null);
-        };
-
-        const open = Boolean(anchorEl);
-
-        return (
-            <Popover
-                id={popupId}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-            >
-                <Box sx={{ padding: 1, width: 280 }}>
-                    <Box
-                        className="pb-2 mb-2 border-bottom w-100"
-                        sx={{display: "inline-flex", flexWrap: "nowrap", maxWidth: "100%"}}
-                    >
-                        <Avatar user={user} size="medium" online={user?.online ? user.online : 'none'} />
-                        <InfoBox>
-                            <Box title={user?.display} sx={{mb: .25}}>
-                                <UserTitle title={user.title} />
-                                {renderUserLinkSimple()}
-                            </Box>
-                            <UserNameElement user={user} compact={false} />
-                        </InfoBox>
-                    </Box>
-                    <UserRatings user={user} />
-                    <Box className={"pt-2 mt-2 border-top w-100"} sx={{display: "flex"}}>
-                        <Stack direction="row" spacing={3}>
-                            <Stack direction="row" spacing={1}>
-                                <IconButton
-                                    href={`/${language}/@/${user.id}`}
-                                    title={t('open_profile')}
-                                    aria-label={t('open_profile')}
-                                    size="small">
-                                    <Icon baseClassName="" data-icon="r" />
-                                </IconButton>
-                                <IconButton
-                                    href={`/${language}/user/statistics/${user.id}`}
-                                    title={t('open_statistics')}
-                                    aria-label={t('open_statistics')}
-                                    size="small">
-                                    <Icon baseClassName="" className="xi-chart-line" />
-                                </IconButton>
-                            </Stack>
-                            <Stack direction="row" spacing={1}>
-                                <IconButton
-                                    href={`/${language}/pm/compose/${user.id}`}
-                                    title={t('compose_mail')}
-                                    aria-label={t('compose_mail')}
-                                    size="small">
-                                    <Icon baseClassName="" className="xi-mail-big" />
-                                </IconButton>
-                                <IconButton
-                                    href={`/${language}/game/challenge/${user.id}`}
-                                    title={t('send_challenge')}
-                                    aria-label={t('send_challenge')}
-                                    size="small">
-                                    <Icon baseClassName="" className="xi-challenge" />
-                                </IconButton>
-                            </Stack>
-                        </Stack>
-                    </Box>
-                </Box>
-            </Popover>
-        );
-    };
-
     const renderInfo = (user: IUser) => {
         return (
             <InfoBox>
-                <Box title={user.display} sx={{mb: .25}}>
+                <Box title={getDisplay()} sx={{mb: .25}}>
                     <UserTitle title={user.title} />
                     {renderUserLink()}
                 </Box>
@@ -227,7 +227,7 @@ const UserBadge: React.FC<Props> = (props) => {
     return (
         <Box sx={{display: "inline-flex", flexWrap: "nowrap", maxWidth: "100%"}}>
             <Avatar user={ready ? user : undefined} size={size} online={user?.online ? user.online : 'none'} />
-            { (ready && user?.id) ? renderInfo(user) : (
+            { (ready && user) ? renderInfo(user) : (
                 <Skeleton sx={{ mx: 1 }} animation="wave" height={24} width="10em" />
             )}
         </Box>
@@ -236,11 +236,6 @@ const UserBadge: React.FC<Props> = (props) => {
 
 UserBadge.defaultProps = {
     language: 'ru-ru',
-    user: {
-        id: undefined,
-        name: '?',
-        display: '?'
-    },
     size: 'medium',
     icon: Icons.NONE,
     withFlag: false,

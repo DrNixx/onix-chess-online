@@ -58,7 +58,6 @@ import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {getLegalMovesMap} from "../../utils/chess";
 import {useTranslation} from "react-i18next";
-import {CircularProgress} from "@mui/material";
 
 enum BoardMode {
     Play = 0,
@@ -73,18 +72,7 @@ interface ProvisionalMove {
     isValid?: boolean;
 }
 
-type PlayGameProps = GameProps & {
-    i18n?: {
-        canJoin: string;
-        canJoinNote: string;
-        waitJoin: string;
-        waitJoinNote: string;
-        waitOpponent: string;
-        waitOpponentNote: string;
-        acceptChallenge: string;
-        acceptChallengeNote: string;
-    }
-}
+type PlayGameProps = GameProps;
 
 const PlayGame: React.VFC<PlayGameProps> = (props) => {
     const { board: boardCfg } = props;
@@ -744,10 +732,10 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 return (
                     <Card className="w-75 mx-auto mt-4">
                         <CardHeader className="separator">
-                            <h3>{props.i18n?.waitOpponent}</h3>
+                            <h3>{t("waitOpponent")}</h3>
                         </CardHeader>
                         <CardContent>
-                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.waitOpponentNote}</p>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{t("waitOpponentNote")}</p>
                             <br/>
                             <Box className="text-center mt-2">
                                 <Button color="warning" onClick={() => rejectGame()}>{ t("cancel_challenge") }</Button>
@@ -759,10 +747,10 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 return (
                     <Card className="w-75 mx-auto mt-4">
                         <CardHeader className="separator">
-                            <h3>{props.i18n?.acceptChallenge}</h3>
+                            <h3>{t("acceptChallenge")}</h3>
                         </CardHeader>
                         <CardContent>
-                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.acceptChallengeNote}</p>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{t("acceptChallengeNote")}</p>
                             <br/>
                             <Grid container spacing={2}>
                                 <Grid item xs={6} className="text-right">
@@ -781,10 +769,10 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 return (
                     <Card className="w-75 mx-auto mt-4">
                         <CardHeader className="separator">
-                            <h3>{props.i18n?.waitJoin}</h3>
+                            <h3>{t("waitJoin")}</h3>
                         </CardHeader>
                         <CardContent>
-                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.waitJoinNote}</p>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{t("waitJoinNote")}</p>
                             <br/>
                             <Box className="text-center">
                                 <Button color="warning" onClick={() => rejectGame()}>{ t("cancel_game") }</Button>
@@ -796,10 +784,10 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                 return (
                     <Card className="w-75 mx-auto mt-4">
                         <CardHeader className="separator">
-                            <h3>{props.i18n?.canJoin}</h3>
+                            <h3>{t("canJoin")}</h3>
                         </CardHeader>
                         <CardContent>
-                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{props.i18n?.canJoinNote}</p>
+                            <p className="mt-3"><i className="xi-hourglass xi-3x me-2 pull-left" />{t("canJoinNote")}</p>
                             <br/>
                             <Box className="text-center">
                                 <Button color="primary" onClick={() => acceptGame()}>{t("join", {ns: "core"}) }</Button>
@@ -874,17 +862,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
 };
 
 PlayGame.defaultProps = {
-    ...defaultProps,
-    i18n: {
-        canJoin: "Join to а game",
-        canJoinNote: "You can join this game",
-        waitJoin: "Waiting for opponent join",
-        waitJoinNote: "The game will become available after any opponent join to your game",
-        waitOpponent: "Waiting for a response from the opponent",
-        waitOpponentNote: "The game will become available after the opponent accepts your challenge",
-        acceptChallenge: "Accept challenge",
-        acceptChallengeNote: "You must accept or reject the challenge",
-    }
+    ...defaultProps
 };
 
 const GameRunner: React.VFC<PlayGameProps> = (props) => {

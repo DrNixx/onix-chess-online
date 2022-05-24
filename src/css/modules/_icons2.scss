@@ -2676,3 +2676,16 @@ $font-rand: '?44bfc150';
         opacity: 0.9;
     }
 }
+
+.MuiIcon-root {
+    &[data-icon] {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+
+        &:before {
+            font-size: inherit;
+            vertical-align: unset;
+        }
+    }
+}
