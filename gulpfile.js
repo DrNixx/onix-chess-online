@@ -30,7 +30,8 @@ function getTask(module, task, paths, taskName = undefined) {
 const welcomeClean = getTask('', 'clean', PATHS_OPTIONS.welcome);
 const welcomeStyles = getTask('', 'styles', PATHS_OPTIONS.welcome);
 const welcomeScripts = getTask('', 'scripts', PATHS_OPTIONS.welcome);
-let welcome = series(welcomeClean, parallel(welcomeStyles, welcomeScripts));
+const welcomeDeply = getTask('', 'deploy', PATHS_OPTIONS.welcome);
+let welcome = series(welcomeClean, parallel(welcomeStyles, welcomeScripts), welcomeDeply);
 gulp.task("welcome", welcome, function () {
     console.log('Building welcome...');
 });

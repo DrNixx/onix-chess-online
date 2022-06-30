@@ -24,9 +24,9 @@ class ChessWelcomeAsset extends AssetBundle
     {
         $this->setSourcePath(dirname(__DIR__).DIRECTORY_SEPARATOR.'assets');
         if (YII_ENV == 'prod') {
-            $this->setSourcePath(Yii::getAlias('@ui/build/welcome'));
+            $this->setSourcePath(Yii::getAlias('@ui/build/chess'));
         } else {
-            $this->setSourcePath(Yii::getAlias('@ui/build/welcome-dev'));
+            $this->setSourcePath(Yii::getAlias('@ui/build/chess-dev'));
         }
 
         <% var files = htmlWebpackPlugin.files.js.map((file) => { 

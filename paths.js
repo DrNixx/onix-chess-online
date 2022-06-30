@@ -107,8 +107,10 @@ module.exports = {
     welcome: {
         build: {
             html: base + "/welcome",
+            assets: base + "/welcome" + assets,
             scripts: base + "/welcome" + assets + "/js",
-            styles: base + "/welcome" + assets + "/css"
+            styles: base + "/welcome" + assets + "/css",
+            deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\welcome" + suffix,
         },
 
         src: {
