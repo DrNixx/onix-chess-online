@@ -1,4 +1,5 @@
 import i18n from "i18next";
+import ICU from "i18next-icu";
 import { initReactI18next } from "react-i18next";
 import HttpBackend from 'i18next-http-backend'
 import { IntlMessageFormat } from 'intl-messageformat';
@@ -16,6 +17,7 @@ function getLocale(value: string) {
 
 export function init(locale: string) {
     return i18n
+        .use(ICU)
         .use(HttpBackend)
         .use(initReactI18next)
         .init({
@@ -25,23 +27,6 @@ export function init(locale: string) {
             ns: ['core'],
             defaultNS: 'core',
             debug: process.env.NODE_ENV !== 'production',
-        })
-        .then((p) => {
-            i18n.services.formatter?.add('intl', (message, lng, options) => {
-                const formatter = new IntlMessageFormat(message, lng);
-                const result = formatter.format(options);
-                if (result) {
-                    if (typeof result === "string") {
-                        return result;
-                    } else {
-                        return result.join(" ");
-                    }
-                }
-
-                return message;
-            });
-
-            return p;
         });
 }
 

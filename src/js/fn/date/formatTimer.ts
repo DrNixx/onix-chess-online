@@ -1,14 +1,11 @@
 import i18next from 'i18next';
 import padStart from 'lodash/padStart';
-import { _ } from '../../i18n/i18n';
 import { timestampToInterval  } from './timestampToInterval';
 
 export const formatTimer = (timestamp: number, short = true, isend?: string): string => {
     if (isNaN(timestamp)) {
         return i18next.t("empty", {ns: "timer"});
     }
-
-    const category = short ? "timer" : "datetime";
 
     const interval = timestampToInterval(timestamp);
     const result: string[] = [];
@@ -19,12 +16,12 @@ export const formatTimer = (timestamp: number, short = true, isend?: string): st
     } else {
         if (interval.d > 0) {
             result.push(
-                _(category, "days", { d: interval.d })
+                i18next.t("days", { ns: "timer", d: interval.d })
             );
             
             if (interval.h > 0) {
                 result.push(
-                    _(category, "hours", { h: interval.h })
+                    i18next.t("hours", { ns: "timer", h: interval.h })
                 );
             }
         } else {

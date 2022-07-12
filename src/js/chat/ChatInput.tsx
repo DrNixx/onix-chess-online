@@ -1,6 +1,5 @@
 import React from 'react';
 import { Logger } from '../common/Logger';
-import { _ } from '../i18n/i18n';
 import { IChatMessage } from './Interfaces';
 
 export interface ChatInputProps {

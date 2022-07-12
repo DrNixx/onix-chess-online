@@ -2,8 +2,10 @@ import React, {Suspense} from 'react';
 import * as ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
-import { Logger } from '../common/Logger';
+import { IntlMessageFormat } from 'intl-messageformat';
 import Centrifuge from 'centrifuge';
+
+import { Logger } from '../common/Logger';
 import { IModule } from './IModule';
 import { IApplication, setAppInstance } from './IApplication';
 import { ConnectionStatus } from '../net/ConnectionStatus';

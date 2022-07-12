@@ -1,6 +1,4 @@
 import React from 'react';
-import Scrollbar from "react-scrollbars-custom";
-import { _ } from '../i18n/i18n';
 import { INote } from './Interfaces';
 
 export interface NotesProps {

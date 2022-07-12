@@ -1,13 +1,13 @@
-import { _ } from '../../i18n/i18n';
+import i18next, {TFunctionResult} from 'i18next';
 import { DateInterval, normalize } from './DateInterval';
 
 export const formatInterval = (interval: DateInterval, parts: number = 0): string => {
     interval = normalize(interval);
 
-    const format: (string|boolean)[] = [];
+    const format: (TFunctionResult|boolean)[] = [];
     if (interval.y !== 0) {
         format.push(
-            _("datetime", "years", { y: interval.y })
+            i18next.t("years", { ns: "datetime", y: interval.y })
         );
     } else {
         format.push(false);
@@ -15,7 +15,7 @@ export const formatInterval = (interval: DateInterval, parts: number = 0): strin
 
     if (interval.m !== 0) {
         format.push(
-            _("datetime", "months", { m: interval.m })
+            i18next.t("months", { ns: 'datetime', m: interval.m })
         );
     } else {
         format.push(false);
@@ -23,7 +23,7 @@ export const formatInterval = (interval: DateInterval, parts: number = 0): strin
 
     if (interval.d !== 0) {
         format.push(
-            _("datetime", "days", { d: interval.d })
+            i18next.t("days", { ns: 'datetime', d: interval.d })
         );
     } else {
         format.push(false);
@@ -31,7 +31,7 @@ export const formatInterval = (interval: DateInterval, parts: number = 0): strin
 
     if (interval.h !== 0) {
         format.push(
-            _("datetime", "hours", { h: interval.h })
+            i18next.t("hours", { ns: 'datetime', h: interval.h })
         );
     } else {
         format.push(false);
@@ -39,7 +39,7 @@ export const formatInterval = (interval: DateInterval, parts: number = 0): strin
 
     if (interval.i !== 0) {
         format.push(
-            _("datetime", "minutes", { i: interval.i })
+            i18next.t("minutes", { ns: 'datetime', i: interval.i })
         );
     } else {
         format.push(false);
@@ -47,7 +47,7 @@ export const formatInterval = (interval: DateInterval, parts: number = 0): strin
 
     if (interval.s !== 0) {
         format.push(
-            _("datetime", "seconds", { s: interval.s })
+            i18next.t("seconds", { ns: 'datetime', s: interval.s })
         );
     } else {
         format.push(false);

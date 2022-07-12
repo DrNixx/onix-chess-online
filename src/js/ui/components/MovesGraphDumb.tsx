@@ -1,16 +1,15 @@
-import toSafeInteger from 'lodash/toSafeInteger';
 import React from 'react';
 import { Unsubscribe } from 'redux';
+import i18next from 'i18next';
+import toSafeInteger from 'lodash/toSafeInteger';
 import { ResponsiveContainer, BarChart, Bar, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Chess as ChessEngine } from '../../chess/Chess';
 import { MovesGraphProps } from './MovesGraphProps';
-import { i18n, _ } from '../../i18n/i18n';
-import { formatTimer } from '../../fn/date/formatTimer';
+import { formatTimer } from '../../fn/date';
 import { GameActions } from '../../actions/GameActions';
 import { GameRelatedStore } from '../../actions/GameStore';
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import {Color} from "../../chess/Color";
 
 interface IGraphData {
     turn: string|number;
@@ -29,8 +28,6 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
 
     constructor(props: MovesGraphProps) {
         super(props);
-
-        i18n.register();
 
         this.store = props.store;
     }
@@ -66,7 +63,7 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
     }
 
     private formatTooltipLabel = (label: string | number) => {
-        const str = (label === 0) ? _("chess", "startPos") : "#" + label.toString();
+        const str = (label === 0) ? i18next.t("startPos", { ns: "chess" }) : "#" + label.toString();
         return (<strong>{str}</strong>);
     }
 
@@ -151,8 +148,8 @@ export default class MovesGraphDumb extends React.Component<MovesGraphProps, {}>
                             <CartesianGrid strokeDasharray="3 3"/>
                             <Tooltip contentStyle={{ fontSize: ".75rem" }} formatter={this.formatTooltipValue} labelFormatter={this.formatTooltipLabel} />
                             <ReferenceLine y={0} stroke='#000'/>
-                            <Bar dataKey="white" name={_("chess", "white")} className="white" stackId="stack" />
-                            <Bar dataKey="black" name={_("chess", "black")} className="black" stackId="stack" />
+                            <Bar dataKey="white" name={i18next.t("white", { ns: "chess"})} className="white" stackId="stack" />
+                            <Bar dataKey="black" name={i18next.t("black", { ns: "chess"})} className="black" stackId="stack" />
                             { currentPly ? (<ReferenceLine x={ChessEngine.plyToTurn(currentPly)} stroke="green" />) : null }
                         </BarChart>
                     </ResponsiveContainer>

@@ -14,15 +14,31 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 
         const common = require(path.resolve(__dirname, '../webpack.common.js'));
         Object.keys(PATHS.webpack.entry).forEach((key) => {
-            common.plugins.push(
-                new HtmlWebpackPlugin({
-                    filename: '../../php/' + _.capitalize(key) + 'Asset.php',
-                    chunks: [key],
-                    inject: false,
-                    minify: false,
-                    template: './src/templates/php/index.ejs'
-                })
-            );
+            if (key === "onix") {
+                common.plugins.push(
+                    new HtmlWebpackPlugin({
+                        filename: '../../php/ChessPortalAsset.php',
+                        chunks: [key],
+                        inject: false,
+                        minify: false,
+                        template: './src/templates/php/portal.ejs'
+                    })
+                );
+            } else {
+                const keyName = _.capitalize(key);
+                common.plugins.push(
+                    new HtmlWebpackPlugin({
+                        filename: '../../php/' + _.capitalize(key) + 'Asset.php',
+                        chunks: [key],
+                        inject: false,
+                        minify: false,
+                        template: './src/templates/php/index.ejs',
+                        templateParameters: {
+                            'keyName': keyName
+                        }
+                    })
+                );
+            }
         });
 
         Object.keys(PATHS.webpack.entry).forEach((key) => {

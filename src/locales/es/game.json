@@ -100,5 +100,16 @@
   "waitOpponent": "Waiting for a response from the opponent",
   "waitOpponentNote": "The game will become available after the opponent accepts your challenge",
   "acceptChallenge": "Accept challenge",
-  "acceptChallengeNote": "You must accept or reject the challenge"
+  "acceptChallengeNote": "You must accept or reject the challenge",
+
+  "activeGames": "Active games",
+  "createGame": "Create game",
+  "takeVacation": "Take a vacation",
+  "cancelVacation": "Cancel a vacation",
+  "viewTournament": "View tournament table",
+  "waitOpponentLabel": "Waiting for opponent...",
+  "acceptChgWait": "Waiting for challenge accept...",
+  "acceptChgDo": "Accept challenge?",
+  "myMove": "Is my move",
+  "oppMove": "Is opponent move"
 }

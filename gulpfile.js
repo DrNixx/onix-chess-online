@@ -56,12 +56,17 @@ gulp.task("site", site, function () {
 
 let siteStyle = series(parallel(siteFonts, siteImg, siteStyles));
 gulp.task("site:style", siteStyle, function () {
-    console.log('Building site...');
+    console.log('Building site style...');
+});
+
+let siteScript = series(parallel(siteVendors, siteWebpack), siteDeploy);
+gulp.task("site:script", siteScript, function () {
+    console.log('Building site scripts...');
 });
 
 let siteDeployTask = series(siteDeploy);
 gulp.task("site:deploy", siteDeployTask, function () {
-    console.log('Building site...');
+    console.log('Deploy site...');
 });
 
 

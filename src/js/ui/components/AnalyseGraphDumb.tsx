@@ -1,4 +1,5 @@
 import React from 'react';
+import i18next from 'i18next';
 
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
@@ -8,7 +9,6 @@ import { Unsubscribe } from 'redux';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
 import { AnalyseGraphProps } from './AnalyseGraphProps';
 import { Chess as ChessEngine } from '../../chess/Chess';
-import { i18n, _ } from '../../i18n/i18n';
 import { Logger } from '../../common/Logger';
 import { Colors } from '../../chess/types/Types';
 import { AnalyseStatus, IGameData, IUserAnalysis } from '../../chess/types/Interfaces';
@@ -38,8 +38,6 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
 
     constructor(props: AnalyseGraphProps) {
         super(props);
-
-        i18n.register();
 
         const { store } = this.props;
 
@@ -189,12 +187,12 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
     }
 
     renderProgress(progress?: number) {
-        const fmt = _("analyse", "completed");
+        const fmt = i18next.t("completed", { ns: "analyse" });
         const progressStr = sprintf(fmt, progress ?? 0);
         const progressInt = toInteger(progress);
         return (
             <div className="analysis-inprogress">
-                { _("analyse", "inprogress")}
+                { i18next.t("inprogress", { ns: "analyse" })}
                 { progress ? (
                     <div className="progress">
                         <div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}} />
@@ -208,7 +206,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         const { requestAnalysis } = this;
         return (
             <span className="analysis-request">
-                <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ _("analyse", "request")}</Button>
+                <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ i18next.t("request", { ns: "analyse" })}</Button>
             </span>
         );
     };
@@ -228,16 +226,16 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         return (
             <ul className="list-unstyled h-100 d-flex flex-column justify-content-center text-right">
                 <li>
-                    <Button variant="text" onClick={makeLink("inaccuracy")}>{ _("analyse", "inaccuracies")}:<label>{item.inaccuracy}</label></Button>
+                    <Button variant="text" onClick={makeLink("inaccuracy")}>{ i18next.t("inaccuracies", { ns: "analyse" })}:<label>{item.inaccuracy}</label></Button>
                 </li>
                 <li>
-                    <Button variant="text" onClick={makeLink("mistake")}>{ _("analyse", "mistakes")}:<label>{item.mistake}</label></Button>
+                    <Button variant="text" onClick={makeLink("mistake")}>{ i18next.t("mistakes", { ns: "analyse" })}:<label>{item.mistake}</label></Button>
                 </li>
                 <li>
-                    <Button variant="text" onClick={makeLink("blunder")}>{ _("analyse", "blunders")}:<label>{item.blunder}</label></Button>
+                    <Button variant="text" onClick={makeLink("blunder")}>{ i18next.t("blunders", { ns: "analyse" })}:<label>{item.blunder}</label></Button>
                 </li>
                 <li>
-                    { _("analyse", "averageCentipawnLoss")}:<label title={_("analyse", "averageCentipawnLossTitle")}>{item.acpl}</label>
+                    { i18next.t("averageCentipawnLoss", { ns: "analyse" })}:<label title={i18next.t("averageCentipawnLossTitle", { ns: "analyse" })}>{item.acpl}</label>
                 </li>
             </ul>
         );
@@ -272,7 +270,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
                 let move = engine.CurrentMove.Begin;
                 while (!move.END_MARKER) {
                     const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
-                    const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : _("chess", "startPos");
+                    const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
 
                     evals.push({
                         ...move.sm.eval!,
@@ -292,7 +290,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
                                     <YAxis />
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <Tooltip contentStyle={{ "fontSize": ".75rem" }} formatter={anTooltipValFmt} labelFormatter={anTooltipLblFmt} />
-                                    <Area type="monotone" dataKey="advantage" name={ _("analyse", "advantage")} stroke="#8884d8" fill="#8884d8" />
+                                    <Area type="monotone" dataKey="advantage" name={ i18next.t("advantage", { ns: "analyse" })} stroke="#8884d8" fill="#8884d8" />
                                     { currentPly ? (<ReferenceLine x={currentPly} stroke="green" />) : null }
                                 </AreaChart>
                             </ResponsiveContainer>
@@ -315,7 +313,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         }
         
         return (
-            <span className="analysis-loading">{ _("analyse", "loading")}</span>
+            <span className="analysis-loading">{ i18next.t("loading", { ns: "analyse" })}</span>
         );
     }
 }

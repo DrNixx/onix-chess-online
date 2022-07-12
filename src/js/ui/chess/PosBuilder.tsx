@@ -2,6 +2,7 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import toSafeInteger from 'lodash/toSafeInteger';
 import clsx from "clsx";
+import i18next from 'i18next';
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -29,7 +30,6 @@ import { Colors, Squares } from '../../chess/types/Types';
 import { Castling, CastlingSide, CastlingStr } from '../../chess/Castling';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { pushif } from '../../fn/array/Pushif';
-import { i18n, _ } from '../../i18n/i18n';
 import { Position } from '../../chess/Position';
 import { Chess } from '../../chess/Chess';
 import { Color } from '../../chess/Color';
@@ -146,8 +146,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
     constructor(props: PosBuilderProps) {
         super(props);
-
-        i18n.register();
 
         const { fen, orientation, showTurn, coordinates, size, piece, square, markers } = this.props;
 
@@ -484,7 +482,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         return (
             <Card>
                 <CardHeader>
-                    {_("chess", Color.toName(color))}
+                    {i18next.t(Color.toName(color), { ns: "chess" })}
                 </CardHeader>
                 <CardContent>
                     <Grid container spacing={2}>
@@ -559,7 +557,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
         return (visible) ? (
             <Box className="py-3">
-                <Button variant="contained" onClick={executeDialog}>{_("builder", "paste_forum_code")}</Button>
+                <Button variant="contained" onClick={executeDialog}>{i18next.t("paste_forum_code", { ns: "builder" })}</Button>
             </Box>
         ) : null;
     }
@@ -820,20 +818,20 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                 <div className="code-row">
                                     <Box>
                                         <FormControl>
-                                            <InputLabel>{_("chess", "fen")}</InputLabel>
-                                            <TextWithCopy value={fenStr} size="small" placeholder={_("chess", "fen")} />
+                                            <InputLabel>{i18next.t("fen", { ns: "chess" })}</InputLabel>
+                                            <TextWithCopy value={fenStr} size="small" placeholder={i18next.t("fen", { ns: "chess" })} />
                                         </FormControl>
                                     </Box>
                                     <Box>
                                         <FormControl>
-                                            <InputLabel>{_("builder", "image_link")}</InputLabel>
-                                            <TextWithCopy value={makeLink(fenStr, params)} size="small" placeholder={_("builder", "image_link")} />
+                                            <InputLabel>{i18next.t("image_link", { ns: "builder" })}</InputLabel>
+                                            <TextWithCopy value={makeLink(fenStr, params)} size="small" placeholder={i18next.t("image_link", { ns: "builder" })} />
                                         </FormControl>
                                     </Box>
                                     <Box>
                                         <FormControl>
-                                            <InputLabel>{_("builder", "forum_code")}</InputLabel>
-                                            <TextWithCopy value={code} size="small" placeholder={_("builder", "forum_code")} />
+                                            <InputLabel>{i18next.t("forum_code", { ns: "builder" })}</InputLabel>
+                                            <TextWithCopy value={code} size="small" placeholder={i18next.t("forum_code", { ns: "builder" })} />
                                         </FormControl>
                                     </Box>
                                 </div>
@@ -844,19 +842,19 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                 <Grid container spacing={2}>
                                     <Grid item md={4}>
                                         <FormControl>
-                                            <InputLabel>{_("builder", "board_size")}</InputLabel>
+                                            <InputLabel>{i18next.t("board_size", { ns: "builder" })}</InputLabel>
                                             <SizeSelector value={size} onChangeSize={this.onSizeChange} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={4}>
                                         <FormControl>
-                                            <InputLabel>{_("chess", "pieces")}</InputLabel>
+                                            <InputLabel>{i18next.t("pieces", { ns: "chess" })}</InputLabel>
                                             <PieceSelector value={piece} onChangePiece={this.onPieceChange} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={4}>
                                         <FormControl>
-                                            <InputLabel>{_("chess", "squares")}</InputLabel>
+                                            <InputLabel>{i18next.t("squares", { ns: "chess" })}</InputLabel>
                                             <SquareSelector value={square} onChangeSquare={this.onSquareChange} />
                                         </FormControl>
                                     </Grid>
@@ -867,7 +865,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                 <Grid container spacing={2}>
                                     <Grid item md={8} sm={12}>
                                         <FormControl>
-                                            <InputLabel className="sr-only">{_("builder", "position_label")}</InputLabel>
+                                            <InputLabel className="sr-only">{i18next.t("position_label", { ns: "builder" })}</InputLabel>
                                             <StartPosSelector
                                                 fen={fenStr}
                                                 openingsPos={openings}
@@ -877,7 +875,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                     </Grid>
                                     <Grid item md={4} sm={12}>
                                         <FormControl>
-                                            <InputLabel className="sr-only">{_("chess", "who_move")}</InputLabel>
+                                            <InputLabel className="sr-only">{i18next.t("who_move", { ns: "chess" })}</InputLabel>
                                             <WhoMoveSelector value={whoMove} onChangeTurn={this.onMoverChange} />
                                         </FormControl>
                                     </Grid>
@@ -885,11 +883,11 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                             </div>
 
                             <div className="pos-params">
-                                <div><strong>{_("builder", "pos_param")}</strong></div>
+                                <div><strong>{i18next.t("pos_param", { ns: "builder" })}</strong></div>
                                 <Grid container spacing={2}>
                                     <Grid item md={3} sm={6}>
                                         <FormControl>
-                                            <InputLabel>{_("chess", "move_no")}</InputLabel>
+                                            <InputLabel>{i18next.t("move_no", { ns: "chess" })}</InputLabel>
                                             <FormControl
                                                 size="small"
                                                 defaultValue={moveNo!.toString()}
@@ -898,21 +896,21 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                     </Grid>
                                     <Grid item md={3} sm={6}>
                                         <FormControl>
-                                            <InputLabel>{_("chess", "ep_target")}</InputLabel>
+                                            <InputLabel>{i18next.t("ep_target", { ns: "chess" })}</InputLabel>
                                             <FormControl
                                                 size="small"
                                                 defaultValue={ep_target}
-                                                title={_("builder", "ep_target_hint")}
+                                                title={i18next.t("ep_target_hint", { ns: "builder" })}
                                                 onChange={this.onEpChange} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={6}>
                                         <FormControl>
-                                            <InputLabel>{_("builder", "marks")}</InputLabel>
+                                            <InputLabel>{i18next.t("marks", { ns: "builder" })}</InputLabel>
                                             <Input
                                                 size="small"
                                                 value={markersVal}
-                                                title={_("builder", "marks_hint")}
+                                                title={i18next.t("marks_hint", { ns: "builder" })}
                                                 onChange={this.onMarkChange} />
                                         </FormControl>
                                     </Grid>
@@ -920,7 +918,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                             </div>
 
                             <div className="pos-castle">
-                                <div><strong>{_("chess", "castle")}</strong></div>
+                                <div><strong>{i18next.t("castle", { ns: "chess" })}</strong></div>
                                 <Grid container spacing={2}>
                                     <Grid item md={6}>
                                         {this.renderCastlingGroup(Color.White, castling)}
@@ -937,7 +935,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                             control={
                                                 <Switch defaultChecked onChange={this.onFlipChange} />
                                             }
-                                            label={_("builder", "display_flip")}
+                                            label={i18next.t("display_flip", { ns: "builder" })}
                                         />
                                     </Grid>
                                     <Grid item md={3} sm={6}>
@@ -945,7 +943,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                             control={
                                                 <Switch defaultChecked onChange={this.onCoordsChange} />
                                             }
-                                            label={_("builder", "display_coord")}
+                                            label={i18next.t("display_coord", { ns: "builder" })}
                                         />
                                     </Grid>
                                     <Grid item md={3} sm={6}>
@@ -953,7 +951,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                             control={
                                                 <Switch defaultChecked onChange={this.onTurnChange} />
                                             }
-                                            label={_("builder", "display_showturn")}
+                                            label={i18next.t("display_showturn", { ns: "builder" })}
                                         />
                                     </Grid>
                                 </Grid>

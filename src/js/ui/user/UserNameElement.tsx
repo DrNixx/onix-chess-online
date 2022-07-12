@@ -20,10 +20,10 @@ const UserNameElement: React.FC<UserNameElementProps> = (props) => {
                 justifyContent: 'space-between',
                 flexWrap: 'nowrap'
             }}>
-                        <span>
+                        <Box sx={{ maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden'}}>
                             {!compact && <span># {user.id}</span>}
                             {name && <span>{separator}{name}</span>}
-                        </span>
+                        </Box>
             { children ? (<span className="ps-4">{children}</span>) : null }
         </Box>
     );

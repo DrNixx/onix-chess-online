@@ -1,5 +1,5 @@
+import i18next from 'i18next';
 import sprintf from '../fn/string/Sprintf';
-import { i18n, _ } from '../i18n/i18n';
 import { IEval } from './types/Interfaces';
 
 export class EvalItem {
@@ -37,8 +37,6 @@ export class EvalItem {
     public desc?: string;
 
     public constructor(data?: IEval) {
-        i18n.register();
-        
         if (data) {
             this.cp = data.cp;
             if (!this.cp && (this.cp !== 0)) {
@@ -88,7 +86,7 @@ export class EvalItem {
 
         if (this.mate !== undefined) {
             if (this.mate !== 0) {
-                const fmt = _("chess", "mateIn");
+                const fmt = i18next.t("mateIn", { ns: "chess"});
                 this.desc = sprintf(fmt, this.mate);
             }
         } else {

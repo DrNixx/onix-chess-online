@@ -1,12 +1,24 @@
-<?php
+<% var item, key %><?php
 namespace common\assets;
 
 use kartik\base\AssetBundle;
+use onix\assets\FontAwesomeAsset;
+use onix\assets\JqueryScrollBarAsset;
+use onix\assets\MousewheelAsset;
+use onix\assets\UnveilAsset;
+use yii\bootstrap5\BootstrapAsset;
+use yii\web\YiiAsset;
 
-class <%= keyName %>Asset extends AssetBundle
+class ChessPortalAsset extends AssetBundle
 {
     public $depends = [
-        ChessPortalAsset::class,
+        YiiAsset::class,
+        BootstrapAsset::class,
+        PaceAsset::class,
+        FontAwesomeAsset::class,
+        UnveilAsset::class,
+        JqueryScrollBarAsset::class,
+        MousewheelAsset::class,
     ];
 
     public function init()

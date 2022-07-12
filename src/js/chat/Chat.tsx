@@ -1,6 +1,5 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
-import { _ } from '../i18n/i18n';
 import { IChatMessage } from './Interfaces';
 import { Conversation } from './Conversation';
 import { ChatInput } from './ChatInput';

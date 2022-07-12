@@ -284,7 +284,7 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
             <StripedListItem key={message.msgId}>
                 <ListItemText>
                     <Grid container spacing={2}>
-                        <Grid item md={8} className="mw-100">
+                        <Grid item md={8}>
                             <div className="text-nowrap text-truncate">
                                 <a href={forumLink}
                                    className="fw-bold pe-1">{message.forumName}:</a>
@@ -293,9 +293,9 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
                             </div>
                             <time className="d-block small">{message.timeAgo}</time>
                         </Grid>
-                        <Grid item md={4} className="mw-100">
+                        <Grid item md={4}>
                             <div>
-                                <UserBadge user={message.poster} size='tiny' compact={false} />
+                                <UserBadge user={message.poster} size='tiny' compact={true} />
                             </div>
                         </Grid>
                     </Grid>

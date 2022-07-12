@@ -99,5 +99,16 @@
   "waitOpponent": "Ожидание ответа от соперника",
   "waitOpponentNote": "Игра станет авктивной после того, как соперник примет ваш вызов",
   "acceptChallenge": "Принять вызов",
-  "acceptChallengeNote": "Вы должны принять или отклонить вызов"
+  "acceptChallengeNote": "Вы должны принять или отклонить вызов",
+
+  "activeGames": "Текущие партии",
+  "createGame": "Новая партия",
+  "takeVacation": "Взять отпуск",
+  "cancelVacation": "Прервать отпусл",
+  "viewTournament": "Посмотреть турнирную таблицу",
+  "waitOpponentLabel": "Поиск соперника...",
+  "acceptChgWait": "Ожидание ответа на вызов...",
+  "acceptChgDo": "Принять вызов?",
+  "myMove": "Мой ход",
+  "oppMove": "Ход соперника"
 }
