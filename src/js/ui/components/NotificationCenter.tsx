@@ -71,7 +71,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         if (appInstance) {
             const { stream } = appInstance;
             if (stream) {
-                stream.on('publish', function(ctx: any) {
+                stream.on('publication', function(ctx: any) {
                     if (ctx?.data?.t == "notify") {
                         if (ctx?.data?.c == "privateMessage") {
                             notify({

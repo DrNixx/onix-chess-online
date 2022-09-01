@@ -6,7 +6,7 @@ import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, Sid
 import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Notification';
 import { Content } from './Content';
 import { equalHeight } from './Functions';
-import { IModule } from '../app/IModule';
+import { IModule } from '../app';
 import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
 import { simpleChat } from '../chat/Chat';
@@ -178,7 +178,8 @@ export class Frontend implements IModule {
             delete el.dataset['userBadge']
             const uid = el.dataset['id'];
             const size: any = el.dataset['size'];
-            ReactDOM.render(React.createElement(UserBadge, {userId: uid, size: size}), el);
+            const compact = (el.dataset['compact'] === undefined) || (el.dataset['compact'] == 'true');
+            ReactDOM.render(React.createElement(UserBadge, {userId: uid, size: size, compact: compact}), el);
         });
         // }}} User badges
 

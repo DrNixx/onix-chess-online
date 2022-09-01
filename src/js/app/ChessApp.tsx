@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
 import { IntlMessageFormat } from 'intl-messageformat';
-import Centrifuge from 'centrifuge';
+import { Centrifuge } from 'centrifuge';
 
 import { Logger } from '../common/Logger';
 import { IModule } from './IModule';
@@ -101,27 +101,32 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
     private wsConnect = () => {
         const { wsHost, token, secret, channel, modules } = this.props;
 
-        this.stream = new Centrifuge(`${wsHost}/connection/websocket`);
-        this.stream.setToken(token!);
+        this.stream = new Centrifuge(`${wsHost}/connection/websocket`, {
+            token: token!
+        });
 
-        this.stream.on('connect', (context) => {
+        this.stream.on('connected', (context) => {
             Logger.debug('connect', context);
             // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
         });
 
-        this.stream.on('disconnect', (context) => {
+        this.stream.on('disconnected', (context) => {
             Logger.debug('disconnect', context);
             // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
         });
 
-        this.stream.on('publish', function(ctx) {
+        this.stream.on('publication', function(ctx) {
             const channel = ctx.channel;
             const payload = JSON.stringify(ctx.data);
             Logger.debug('Publication from server-side channel', channel, payload);
         });
 
         if (channel) {
-            this.stream.subscribe(channel, this.onAlertMessage);
+            // Allocate Subscription to a channel.
+            const sub = this.stream.newSubscription(channel);
+            sub.on('publication', (ctx) => {
+                this.onAlertMessage(ctx.data);
+            });
         }
 
         //this.stream.subscribe("$chat:2-3", function(messageCtx) {

@@ -6,6 +6,11 @@
 //@import url("https://keplerapis.com/fonts/css?family=Inter+UI:300,400,500,600");
 
 :root {
+    --bs-primary: #{$color-primary};
+    --bs-success: #{$color-success};
+    --bs-info: #{$color-info};
+    --bs-warning: #{$color-warning};
+    --bs-danger: #{$color-danger};
     --bs-body-font-size: #{$body-font-size};
     --bs-font-secondary: #{$secondary-font-family}
 }

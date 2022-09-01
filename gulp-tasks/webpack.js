@@ -8,31 +8,32 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
         const gulpWebpack = require('webpack-stream');
         const webpack = require('webpack');
         const { merge } = require('webpack-merge');
-        var _ = require('lodash');
+        const _ = require('lodash');
         const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+        const suffix = PRODUCTION ? 'Prod' : 'Dev'
 
         const common = require(path.resolve(__dirname, '../webpack.common.js'));
         Object.keys(PATHS.webpack.entry).forEach((key) => {
             if (key === "onix") {
                 common.plugins.push(
                     new HtmlWebpackPlugin({
-                        filename: '../../php/ChessPortalAsset.php',
+                        filename: '../../php/ChessPortalAsset.inc',
                         chunks: [key],
                         inject: false,
                         minify: false,
-                        template: './src/templates/php/portal.ejs'
+                        template: './src/templates/php/include.ejs'
                     })
                 );
             } else {
                 const keyName = _.capitalize(key);
                 common.plugins.push(
                     new HtmlWebpackPlugin({
-                        filename: '../../php/' + _.capitalize(key) + 'Asset.php',
+                        filename: '../../php/' + _.capitalize(key) + 'Asset.inc',
                         chunks: [key],
                         inject: false,
                         minify: false,
-                        template: './src/templates/php/index.ejs',
+                        template: './src/templates/php/include.ejs',
                         templateParameters: {
                             'keyName': keyName
                         }

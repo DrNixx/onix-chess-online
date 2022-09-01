@@ -866,7 +866,7 @@ export class Position {
      * Посчитать количество шахов
      */
     private calcNumChecks(kingSq: Squares.Square, checkSquares?: Squares.Square[]): number {
-        kingSq = (kingSq) ? kingSq : this.getKingSquare();
+        kingSq = (kingSq || kingSq === 0) ? kingSq : this.getKingSquare();
         return this.calcAttacks(Color.flip(this.wm), kingSq, checkSquares);
     }
 

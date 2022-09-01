@@ -58,6 +58,7 @@ import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {getLegalMovesMap} from "../../utils/chess";
 import {useTranslation} from "react-i18next";
+import {Subscription} from "centrifuge";
 
 enum BoardMode {
     Play = 0,
@@ -837,18 +838,24 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
     };
 
     useEffect(() => {
+        let sub: Subscription | null = null;
         const id = game.engine.GameId;
         if (appInstance && id) {
             const { stream } = appInstance;
             const channel = `game:${id}`;
             if (stream) {
-                stream.subscribe(channel, function(ctx: any) {
+                sub = stream.newSubscription(channel);
+                sub.on('publication', function(ctx: any) {
                     if (ctx?.data) {
                         gameMessage(ctx?.data as IGameMessage);
                     }
                 });
             }
         }
+
+        return () => {
+            sub && sub.unsubscribe();
+        };
     }, []);
 
     return (

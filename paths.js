@@ -2,14 +2,17 @@ const path = require("path");
 
 const { PRODUCTION } = require("./config");
 
-const suffix = PRODUCTION ? "" : "-dev"
+const suffix = PRODUCTION ? "-prod" : "-dev";
+const suffix2 = PRODUCTION ? "prod" : "dev";
 const base = PRODUCTION ? path.resolve(__dirname, "build") : path.resolve(__dirname, "public");
 const assets = (PRODUCTION ? "" : "/assets");
+const php = PRODUCTION ? '/php' : '/site/php';
 
 module.exports = {
     site: {
         build: {
             base: base,
+            php: base +  php,
             html: base + "/site",
             assets: base + "/site" + assets,
             scripts: base + "/site" + assets + "/js",
@@ -17,6 +20,7 @@ module.exports = {
             board: base + "/site" + assets + "/bs",
             locales: base + "/site/locales",
             deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\chess" + suffix,
+            deploy_php: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\assets\\" + suffix2,
         },
 
         src: {

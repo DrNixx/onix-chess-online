@@ -1,107 +1,74 @@
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+
 import i18next from 'i18next';
 
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
 
-import { Unsubscribe } from 'redux';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
-import { AnalyseGraphProps } from './AnalyseGraphProps';
 import { Chess as ChessEngine } from '../../chess/Chess';
 import { Logger } from '../../common/Logger';
 import { Colors } from '../../chess/types/Types';
-import { AnalyseStatus, IGameData, IUserAnalysis } from '../../chess/types/Interfaces';
-import { GameRelatedStore } from '../../actions/GameStore';
+import {AnalyseStatus, IGameAnalysis, IGameData, IUserAnalysis} from '../../chess/types/Interfaces';
 import { GameActions } from '../../actions/GameActions';
 import { Color } from '../../chess/Color';
 import sprintf from '../../fn/string/Sprintf';
 import { toInteger } from 'lodash';
+import {CombinedGameState} from "../../actions/CombinedGameState";
+import {GameState} from "../../actions/GameState";
 
-export interface IAnalysisState {
-    status: AnalyseStatus,
-    completed?: number,
-}
+type Props = {
+    height?: number;
+};
 
-export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps, IAnalysisState> {
-    private id?: string | number;
+type GameData = {
 
-    private store: GameRelatedStore;
+};
 
-    private timer: any = null;
+const AnalyseGraphDumb: React.VFC<Props> = (props) => {
+    const analysis = useSelector<CombinedGameState, IGameAnalysis>(
+        (state) => state.game.engine.Analysis
+    );
 
-    private storeUnsubscribe: Unsubscribe | null = null;
+    const game = useSelector<CombinedGameState, GameState>((state) => state.game );
+    const {engine} = game;
+    const dispatch = useDispatch();
 
-    private abortController = new AbortController();
+    const id = useMemo(() => game.engine.GameId, [game.engine.GameId]);
+    const [mounted, setMounted] = useState(false);
+    const [status, setStatus] = useState(analysis.state);
+    const [completed, setCompleted] = useState(0);
 
-    private _isMounted = false;
+    const [abortController, setAbortController] = useState(new AbortController());
 
-    constructor(props: AnalyseGraphProps) {
-        super(props);
+    let timeout = 0;
 
-        const { store } = this.props;
+    useEffect(() => {
+        setMounted(true);
 
-        this.store = store;
-        const { game } = store.getState();
-        this.id = game?.engine.GameId;
-
-        this.state = {
-            status: game?.engine.Analysis.state ?? "empty",
-            completed: 0
+        return () => {
+            abortController.abort();
         };
-    }
+    }, []);
 
-    componentDidMount() {
-        this._isMounted = true;
-
-        const { store } = this;
-        this.storeUnsubscribe = store.subscribe(() => {
-            this.updateAnalysis();
-        });
-
-        const { game } = store.getState();
-
-        if (game && game.engine.Analysis.state === "empty") {
-            const that = this;
-            that.loadAnalysis();
-        }
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
-        
-        const { storeUnsubscribe, abortController } = this;
-
-        abortController.abort();
-
-        if (storeUnsubscribe) {
-            storeUnsubscribe();
-        }
-    }
-
-    private updateAnalysis = () => {
-        if (this._isMounted) {
-            const { store, state } = this;
-            const { game } = store.getState();
-            const { status } = state;
-
-            this.setState({
-                status: game?.engine.Analysis.state ?? status
-            });
+    const updateAnalysis = () => {
+        if (mounted) {
+            if (analysis.state) {
+                setStatus(analysis.state);
+            }
         }
     };
 
-    private requestAnalysis = () => {
-        const that = this;
-        const { store, state, id } = that;
-
+    const requestAnalysis = () => {
         if (!id) return;
 
-        if (this.abortController.signal.aborted) {
-            this.abortController =  new AbortController();
+        if (abortController.signal.aborted) {
+            setAbortController(new AbortController());
         }
-        
-        fetch('https://www.chess-online.com/fishnet/create/' + id.toString(), { mode: "cors", signal: this.abortController.signal })
+
+        fetch('https://www.chess-online.com/fishnet/create/' + id.toString(), { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -110,45 +77,40 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
                 return response.json();
             })
             .then(function() {
-                that.setState({
-                    status: "inprogress"
-                });
+                setStatus("inprogress");
             })
             .catch(function(error) {
                 Logger.error('Looks like there was a problem when request analysis: \n', error);
             });
     }
 
-    private loadAnalysis = () => {
-        const that = this;
-        const { store, state, id } = that;
-
+    const loadAnalysis = () => {
         if (!id) return;
 
-        if (this.abortController.signal.aborted) {
-            this.abortController =  new AbortController();
+        if (abortController.signal.aborted) {
+            setAbortController(new AbortController());
         }
 
-        fetch('https://www.chess-online.com/api/analyse/game/' + id.toString() + "?v=2", { mode: "cors", signal: this.abortController.signal })
+        fetch('https://www.chess-online.com/api/analyse/game/' + id.toString() + "?v=2", { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
                 }
-                
+
                 return response.json();
             })
             .then(function(responseAsJson) {
                 if (responseAsJson) {
                     const data = responseAsJson as IGameData;
                     if (data.analysis?.state == "ready") {
-                        store.dispatch({type: GameActions.GAME_LOAD_PARTIAL, game: responseAsJson} as GameActions.GameAction);
+                        dispatch({type: GameActions.GAME_LOAD_PARTIAL, game: responseAsJson} as GameActions.GameAction);
                     } else {
-                        const { status } = state;
-                        that.setState({
-                            status: (data.analysis?.state ?? status),
-                            completed: data.analysis?.completed
-                        });
-                    }   
+                        if (data.analysis?.state) {
+                            setStatus(data.analysis?.state);
+                        }
+
+                        setCompleted(data.analysis?.completed ?? 0);
+                    }
                 }
             })
             .catch(function(error) {
@@ -156,7 +118,7 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
             });
     }
 
-    private anTooltipValFmt = (...params: any[]) => {
+    const anTooltipValFmt = (...params: any[]) => {
         let obj = params[2];
         return (
             <span>
@@ -166,27 +128,27 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         );
     }
 
-    private anTooltipLblFmt = (...params: any[]) => {
+    const anTooltipLblFmt = (...params: any[]) => {
         return "";
     }
 
-    private moveToPly = (ply?: number) => {
+    const moveToPly = (ply?: number) => {
         if (ply !== undefined) {
-            this.store.dispatch({ type: GameActions.NAVIGATE_TO_PLY, ply: ply } as GameActions.GameAction);
+            dispatch({ type: GameActions.NAVIGATE_TO_PLY, ply: ply } as GameActions.GameAction);
         }
     };
 
-    private handleClick = (data: any) => {
+    const handleClick = (data: any) => {
         const apl = data.activePayload;
         if (apl && apl[0]) {
             const pl = apl[0];
             if (pl && pl.payload) {
-                this.moveToPly(pl.payload.ply);
+                moveToPly(pl.payload.ply);
             }
         }
     }
 
-    renderProgress(progress?: number) {
+    const renderProgress = (progress?: number) => {
         const fmt = i18next.t("completed", { ns: "analyse" });
         const progressStr = sprintf(fmt, progress ?? 0);
         const progressInt = toInteger(progress);
@@ -194,16 +156,15 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
             <div className="analysis-inprogress">
                 { i18next.t("inprogress", { ns: "analyse" })}
                 { progress ? (
-                    <div className="progress">
-                        <div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}} />
-                    </div>)
+                        <div className="progress">
+                            <div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}} />
+                        </div>)
                     : null }
             </div>
         );
     }
 
-    private renderRequestBtn = () => {
-        const { requestAnalysis } = this;
+    const renderRequestBtn = () => {
         return (
             <span className="analysis-request">
                 <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ i18next.t("request", { ns: "analyse" })}</Button>
@@ -211,15 +172,14 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         );
     };
 
-    private getCurrentPly = (): number => {
-        const { game } = this.store.getState();
-        return game?.engine.CurrentPlyCount ?? 0;
+    const getCurrentPly = (): number => {
+        return engine.CurrentPlyCount ?? 0;
     }
 
-    private renderTotalItem = (color: Colors.BW, item: IUserAnalysis, engine?: ChessEngine) => {
+    const renderTotalItem = (color: Colors.BW, item: IUserAnalysis, engine?: ChessEngine) => {
         const makeLink = (type: "blunder" | "mistake" | "inaccuracy") => {
             return () => {
-                this.moveToPly(engine?.findNextMistake(color, this.getCurrentPly(), type));
+                moveToPly(engine?.findNextMistake(color, getCurrentPly(), type));
             };
         }
 
@@ -241,79 +201,76 @@ export default class AnalyseGraphDumb extends React.Component<AnalyseGraphProps,
         );
     }
 
-    render() {
-        const that = this;
-        const { renderRequestBtn, renderProgress, handleClick, anTooltipValFmt, anTooltipLblFmt, renderTotalItem, props, state, store } = that;
-        const { height } = props;
-        const { game }  = store.getState();
-        const { engine } = game;
+    const getEvals = useCallback(() => {
+        const evals = [];
+        let move = engine.CurrentMove.Begin;
+        while (!move.END_MARKER) {
+            const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
+            const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
 
-        const { StartPlyCount: startPly, CurrentPlyCount: currentPly, GameId: id, Analysis: analysis  } = engine;
-        const { white, black } = analysis
-        const { status, completed } = state;
-        //const { state: status, completed, white, black } = evals;
+            evals.push({
+                ...move.sm.eval!,
+                color: move.sm.color!,
+                ply: move.PlyCount,
+                name: name
+            });
 
-        if (id && (status != "empty")) {
-            if (status == "unanalysed") {
-                return renderRequestBtn();
-            } else if (status == "inprogress") {
-                if (!that.timer) {
-                    that.timer = setTimeout(() => {
-                        that.timer = null;
-                        that.loadAnalysis();
-                    }, 5500);
-                }
-                
-                return renderProgress(completed);
-            } else if (status == "ready") {
-                const evals = [];
-                let move = engine.CurrentMove.Begin;
-                while (!move.END_MARKER) {
-                    const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
-                    const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
-
-                    evals.push({
-                        ...move.sm.eval!,
-                        color: move.sm.color!,
-                        ply: move.PlyCount,
-                        name: name
-                    });
-
-                    move = move.Next;
-                }
-                return (
-                    <div className="analyse d-block d-lg-flex">
-                        <div className="graph-container flex-grow-1">
-                            <ResponsiveContainer width="100%" height={height}>
-                                <AreaChart data={evals} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
-                                    <XAxis dataKey="ply" hide={true} />
-                                    <YAxis />
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <Tooltip contentStyle={{ "fontSize": ".75rem" }} formatter={anTooltipValFmt} labelFormatter={anTooltipLblFmt} />
-                                    <Area type="monotone" dataKey="advantage" name={ i18next.t("advantage", { ns: "analyse" })} stroke="#8884d8" fill="#8884d8" />
-                                    { currentPly ? (<ReferenceLine x={currentPly} stroke="green" />) : null }
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="graph-totals align-self-stretch">
-                            <Box className="h-100">
-                                <Grid container spacing={2} className="h-100">
-                                    <Grid item xs={6} lg={12} className="white">
-                                        { renderTotalItem(Color.White, white!, engine) }
-                                    </Grid>
-                                    <Grid item xs={6} lg={12} className="black">
-                                        { renderTotalItem(Color.Black, black!, engine) }
-                                    </Grid>
-                                </Grid>
-                            </Box>
-                        </div>
-                    </div>
-                );
-            }
+            move = move.Next;
         }
-        
-        return (
-            <span className="analysis-loading">{ i18next.t("loading", { ns: "analyse" })}</span>
-        );
+
+        return evals;
+    }, [status, engine.RawData])
+
+    if (id && (status != "empty")) {
+        if (status == "unanalysed") {
+            return renderRequestBtn();
+        } else if (status == "inprogress") {
+            if (!timeout) {
+                timeout = window.setTimeout(() => {
+                    timeout = 0;
+                    loadAnalysis();
+                }, 5500);
+            }
+
+            return renderProgress(completed);
+        } else if (status == "ready") {
+            const { StartPlyCount: startPly, CurrentPlyCount: currentPly  } = engine;
+            const { white, black } = analysis;
+
+            return (
+                <div className="analyse d-block d-lg-flex">
+                    <div className="graph-container flex-grow-1">
+                        <ResponsiveContainer width="100%" height={props.height}>
+                            <AreaChart data={getEvals()} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
+                                <XAxis dataKey="ply" hide={true} />
+                                <YAxis />
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <Tooltip contentStyle={{ "fontSize": ".75rem" }} formatter={anTooltipValFmt} labelFormatter={anTooltipLblFmt} />
+                                <Area type="monotone" dataKey="advantage" name={ i18next.t("advantage", { ns: "analyse" })} stroke="#8884d8" fill="#8884d8" />
+                                { currentPly ? (<ReferenceLine x={currentPly} stroke="green" />) : null }
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="graph-totals align-self-stretch">
+                        <Box className="h-100">
+                            <Grid container spacing={2} className="h-100">
+                                <Grid item xs={6} lg={12} className="white">
+                                    { renderTotalItem(Color.White, white!, engine) }
+                                </Grid>
+                                <Grid item xs={6} lg={12} className="black">
+                                    { renderTotalItem(Color.Black, black!, engine) }
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </div>
+                </div>
+            );
+        }
     }
-}
+
+    return (
+        <span className="analysis-loading">{ i18next.t("loading", { ns: "analyse" })}</span>
+    );
+};
+
+export default AnalyseGraphDumb;

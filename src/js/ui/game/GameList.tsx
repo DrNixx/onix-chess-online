@@ -281,7 +281,7 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item md={4}>
-                            { game.opponent ? (<UserBadge user={game.opponent.user} size="tiny" compact={false} />) : null }
+                            { game.opponent ? (<UserBadge user={game.opponent.user} size="small" compact={false} />) : null }
                         </Grid>
                     </Grid>
                 </ListItemText>
@@ -301,10 +301,10 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
 
     const renderGames = () => {
         if (games.length) {
-            const listHeight = games.length * 6;
+            const listHeight = games.length * 5;
             return (
                 <React.Fragment>
-                    <CardContent className="gamelist-wrapper px-0" style={{height: `${listHeight}em`}}>
+                    <CardContent className="gamelist-wrapper" sx={{ p: 0 }} style={{height: `${listHeight}rem`}}>
                         <Scrollbar trackYProps={{style: {width: 5}}}>
                             <List>
                                 { renderList(games) }

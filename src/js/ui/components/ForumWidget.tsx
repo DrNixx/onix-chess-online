@@ -295,7 +295,7 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
                         </Grid>
                         <Grid item md={4}>
                             <div>
-                                <UserBadge user={message.poster} size='tiny' compact={true} />
+                                <UserBadge user={message.poster} size='small' compact={true} />
                             </div>
                         </Grid>
                     </Grid>

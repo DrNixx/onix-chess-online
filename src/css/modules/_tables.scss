@@ -89,20 +89,6 @@
         }
     }
 
-    &.table-striped {
-        tbody {
-            tr {
-                td {
-                    background: $body-background;
-                }
-            
-                &:nth-child(2n + 1) td {
-                    background: $color-contrast-lowest;
-                }
-            }
-        }
-    }
-
     &.table-borderless {
         tbody {
             tr {

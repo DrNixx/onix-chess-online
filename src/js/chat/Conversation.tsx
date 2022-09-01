@@ -43,7 +43,8 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         if (appInstance) {
             const { stream } = appInstance;
             if (stream) {
-                stream.subscribe(channel, function(ctx: any) {
+                const sub = stream.newSubscription(channel);
+                sub.on('publication', function(ctx: any) {
                     if (ctx?.data) {
                         const { messages, ...other } = that.state;
 

@@ -1,0 +1,6 @@
+<?php
+<% var files = htmlWebpackPlugin.files.js.map((file) => {
+    return "\n\t\t\t'js/" + file.replace(htmlWebpackPlugin.files.publicPath, "").replace(".js", "") + "'";
+}) %>
+$this->setupAssets('js', [<%= files.join(", ") %>
+]);

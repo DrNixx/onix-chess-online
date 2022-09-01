@@ -4,9 +4,13 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 
         del.sync(PATHS.build.deploy, {force: true});
 
-        return gulp
+        gulp
             .src(PATHS.build.assets + "/**/*.*")
             .pipe(gulp.dest(PATHS.build.deploy));
+
+        return gulp
+            .src(PATHS.build.php + "/**/*.*")
+            .pipe(gulp.dest(PATHS.build.deploy_php));
     }
 
     task.displayName = 'deploy';

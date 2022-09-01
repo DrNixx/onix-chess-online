@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from "clsx";
-import {Md5} from 'ts-md5/dist/md5';
+import {Md5} from 'ts-md5';
 import BaseAvatar from '@mui/material/Avatar';
 import Skeleton from "@mui/material/Skeleton";
 import PersonIcon from "@mui/icons-material/Person";

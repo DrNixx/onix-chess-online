@@ -612,19 +612,19 @@ $aspectMap: ("1-1": 100%, "2-1": calc(50% - #{$layout-gutter-sm}), "1-2": calc(1
 
 .striped {
     & > .row {
-        background: $body-background !important;
+        background: $color-contrast-lowest !important;
     }
 
     & > .row:nth-child(2n + 1) {
-        background: $color-contrast-lowest !important;
-    }
-
-    & > .row-item {
         background: $body-background !important;
     }
 
-    & > .row-item:nth-child(2n + 1) {
+    & > .row-item {
         background: $color-contrast-lowest !important;
+    }
+
+    & > .row-item:nth-child(2n + 1) {
+        background: $body-background !important;
     }
 }
 

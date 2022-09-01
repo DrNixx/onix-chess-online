@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback} from 'react';
+import React, {useRef, useState, useCallback, useEffect} from 'react';
 import {shallowEqual, useSelector, useStore} from "react-redux";
 import ReactDOM from 'react-dom';
 import {useTranslation} from "react-i18next";
@@ -43,6 +43,11 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     const cgRef = useRef<Api>();
     const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
     const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
+
+    // const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+    }, []);
 
     const renderChatTab = () => {
         if (game.engine.ObserverId) {
@@ -202,7 +207,7 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     };
 
     return (
-            <DumbGame
+        <DumbGame
                 cgRef={(api) => cgRef.current = api ?? undefined}
                 controlsLeft={renderControls()}
                 controlsTop={renderResult(game.engine, board.orientation, "top")}
