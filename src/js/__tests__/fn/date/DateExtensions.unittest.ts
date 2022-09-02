@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import { DateExtensions } from "../../../src/js/fn/date/DateExtensions";
+import { DateExtensions } from "../../../fn/date/DateExtensions";
 
 describe('fn/date/DateExtensions', function() {
     describe('#addDays()', function() {
@@ -42,8 +42,8 @@ describe('fn/date/DateExtensions', function() {
                     result_interval.i.toString() + "M" +
                     result_interval.s.toString() + "S";
                 
-                expect(result_spec, `DIFF spec: ${end_date} - ${start_date}`).to.equal(expect_spec);
-                expect(result_interval.days, `DIFF days: ${end_date} - ${start_date}`).to.equal(expect_days);
+                expect(result_spec).toBe(expect_spec);
+                expect(result_interval.days).toBe(expect_days);
             }
 
             examine_diff('2009-01-14', '2009-01-07', 'P+0Y0M7DT0H0M0S', 7);

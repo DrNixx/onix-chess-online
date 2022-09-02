@@ -1,6 +1,6 @@
-import { expect } from "chai";
-import { FenString } from "../src/js/chess/FenString";
-import { Position } from "../src/js/chess/Position";
+import {describe, expect, it} from '@jest/globals';
+import { FenString } from "../chess/FenString";
+import { Position } from "../chess/Position";
 
 const positions = [
     ["2k4r/ppprnp1p/5pq1/1P2b3/P1R1P3/Q1N2N2/5PPP/4K1R1 b - - 0 22", "h8d8", "Rhd8", "d7d8", "Rdd8"],
@@ -26,17 +26,17 @@ describe('Position', function() {
             positions.forEach(function(row) {
                 const pos = new Position();
                 const loadResult = FenString.toPosition(pos, row[0]);
-                expect(loadResult).to.equal(true);
+                expect(loadResult).toBe(true);
 
                 for (let i = 1; i < row.length; (i += 2)) {
                     const uci = row[i];
                     const fen = row[i + 1];
 
                     const sm = pos.readCoordMove(uci);
-                    expect(sm, 'Read move error. ' + row[0] + ' ' + row[i]).to.not.be.null;
+                    expect(sm).not.toBeNull();
 
                     const san = pos.makeSanString(sm!);
-                    expect(san, 'Error in position ' + row[0]).to.equal(fen);
+                    expect(san).toBe(fen);
                 }
             });
         });

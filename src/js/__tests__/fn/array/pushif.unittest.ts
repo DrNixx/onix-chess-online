@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import { pushif } from "../../../src/js/fn/array/Pushif";
+import { pushif } from "../../../fn/array/Pushif";
 
 describe('fn/array/Pushif', function() {
     describe('#pushif()', function() {

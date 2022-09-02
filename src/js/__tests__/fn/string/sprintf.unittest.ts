@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import sprintf from "../../../src/js/fn/string/Sprintf";
+import sprintf from "../../../fn/string/Sprintf";
 
 describe('fn/array/Sprintf', function() {
     describe('#sprintf()', function() {

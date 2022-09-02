@@ -1,6 +1,6 @@
-import {describe, expect, it} from '@jest/globals';
-import { Chess } from "../src/js/chess/Chess";
-import { IGameData, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from "../src/js/chess/types/Interfaces";
+import {describe, expect, it, jest} from '@jest/globals';
+import { Chess } from "../chess/Chess";
+import { IGameData, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from "../chess/types/Interfaces";
 
 const dataAnalyse: IGameData = {
     game: {
@@ -4078,6 +4078,10 @@ const dataWatchNonStdBlack: IGameData = {
 };
 
 const fenStdStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+jest.mock("nanoid", () => {
+    return { nanoid: () => "1234" };
+});
 
 describe('Chess', function() {
     describe('constructor()', function() {

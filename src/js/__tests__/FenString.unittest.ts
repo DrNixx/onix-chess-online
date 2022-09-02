@@ -1,6 +1,6 @@
-import { expect } from "chai";
-import { FenFormat, FenString } from "../src/js/chess/FenString";
-import { Position } from "../src/js/chess/Position";
+import {describe, expect, it} from '@jest/globals';
+import { FenFormat, FenString } from "../chess/FenString";
+import { Position } from "../chess/Position";
 
 const fenEmptyBoardStd = "8/8/8/8/8/8/8/8 w KQkq - 0 1";
 const fenStdStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -13,48 +13,48 @@ describe('FenString', function() {
     describe('#trim()', function() {
         it('test return when the value is not present', function() {
             const fen = FenString.trim("", FenFormat.complete);
-		    expect(fen).to.equal(fenEmptyBoardStd);
+		    expect(fen).toBe(fenEmptyBoardStd);
         });
 
         it('test return for FenFormat.color', function() {
             const fen = FenString.trim(fenStdStart, FenFormat.color);
-            expect(fen).to.equal("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w");
+            expect(fen).toBe("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w");
         });
 
         it('test return for FenFormat.castlingEp', function() {
             const fen = FenString.trim(fenStdStart, FenFormat.castlingEp);
-            expect(fen).to.equal("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
+            expect(fen).toBe("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -");
         });
 
         it('test assign fenStdStart to Position', function() {
             const pos = new Position();
             FenString.toPosition(pos, fenStdStart);
-            expect(pos.PieceCount).to.deep.equal([16, 16]);
-            expect(pos.PlyCount).to.equal(0);
+            expect(pos.PieceCount).toStrictEqual([16, 16]);
+            expect(pos.PlyCount).toBe(0);
         });
 
         it('test assign fenTest to Position', function() {
             const pos = new Position();
             FenString.toPosition(pos, fenTest);
-            expect(pos.PieceCount).to.deep.equal([2, 1]);
+            expect(pos.PieceCount).toStrictEqual([2, 1]);
         });
 
         it('test assign fenTest to Position with e.p.', function() {
             const pos = new Position();
             FenString.toPosition(pos, fenTestEp);
-            expect(pos.EpTarget).to.equal(0x2d);
+            expect(pos.EpTarget).toBe(0x2d);
         });
 
         it('test assign fenTest to Position with non std start white', function() {
             const pos = new Position();
             FenString.toPosition(pos, fenTestCustomWhite);
-            expect(pos.PlyCount).to.equal(12);
+            expect(pos.PlyCount).toBe(12);
         });
 
         it('test assign fenTest to Position with non std start black', function() {
             const pos = new Position();
             FenString.toPosition(pos, fenTestCustomBlack);
-            expect(pos.PlyCount).to.equal(7);
+            expect(pos.PlyCount).toBe(7);
         });
     });
 });
