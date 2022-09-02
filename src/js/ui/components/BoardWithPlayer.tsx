@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import * as cg from "chessground/types";
 
 import clsx from "clsx";
@@ -17,7 +17,7 @@ type Props = {
     boardRef?: React.Ref<HTMLDivElement>;
 }
 
-const BoardWithPlayer: React.FC<Props> = (props) => {
+const BoardWithPlayer: React.FC<PropsWithChildren<Props>> = (props) => {
     const {piece, engine, orientation, controlsTop, controlsBottom, boardRef, children} = props;
     return (
         <div className="d-block d-md-flex flex-wrap mb-2">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import clsx from "clsx";
 import {Md5} from 'ts-md5';
 import BaseAvatar from '@mui/material/Avatar';
@@ -14,7 +14,7 @@ type Props = {
     className?: string;
 };
 
-const Avatar: React.FC<Props> = (props) => {
+const Avatar: React.FC<PropsWithChildren<Props>> = (props) => {
     const {user, size, online, className, children} = props;
     const sizes = {
         'tiny': 24,

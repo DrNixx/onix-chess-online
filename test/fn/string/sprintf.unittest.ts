@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import {describe, expect, it} from '@jest/globals';
 import sprintf from "../../../src/js/fn/string/Sprintf";
 
 describe('fn/array/Sprintf', function() {
@@ -9,7 +9,7 @@ describe('fn/array/Sprintf', function() {
             const b = "val2";
             
             const res = sprintf(fmt, a, b);
-            expect(res).to.equal("val val1 and val2");
+            expect(res).toBe("val val1 and val2");
         });
 
         it('test mix format', function() {
@@ -18,7 +18,7 @@ describe('fn/array/Sprintf', function() {
             const b = "tree";
             
             const res = sprintf(fmt, a, b);
-            expect(res).to.equal("There are 5 monkeys in the tree");
+            expect(res).toBe("There are 5 monkeys in the tree");
         });
 
         it('test mix format with orders', function() {
@@ -27,13 +27,13 @@ describe('fn/array/Sprintf', function() {
             const b = "tree";
             
             const res = sprintf(fmt, a, b);
-            expect(res).to.equal("The tree contains 5 monkeys");
+            expect(res).toBe("The tree contains 5 monkeys");
         });
         
         it('test format numbers with lead zero', function() {
             const fmt = "%04d-%02d-%02d";
             const res = sprintf(fmt, 1971, 5, 12);
-            expect(res).to.equal("1971-05-12");
+            expect(res).toBe("1971-05-12");
         });
 
 

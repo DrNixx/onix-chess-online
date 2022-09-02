@@ -1,4 +1,4 @@
-import React from "react";
+import React, {PropsWithChildren} from "react";
 import {useDispatch} from "react-redux";
 import { useTranslation } from 'react-i18next';
 import clsx from "clsx";
@@ -15,7 +15,7 @@ type BoardToolbarProps = {
     configUrl?: string
 }
 
-const BoardToolbar: React.FC<BoardToolbarProps> = (props) => {
+const BoardToolbar: React.FC<PropsWithChildren<BoardToolbarProps>> = (props) => {
     const { configUrl, children } = props;
 
     const { t } = useTranslation(['game']);

@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import {describe, expect, it} from '@jest/globals';
 import { Chess } from "../src/js/chess/Chess";
 import { IGameData, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from "../src/js/chess/types/Interfaces";
 
@@ -4083,179 +4083,179 @@ describe('Chess', function() {
     describe('constructor()', function() {
         it('test construct without params', function() {
             const game = new Chess();
-            expect(game.StartFen).to.equal(fenStdStart);
+            expect(game.StartFen).toBe(fenStdStart);
             
             game.moveLast();
-            expect(game.StartPlyCount).to.equal(1);
-            expect(game.CurrentPlyCount).to.equal(0);
+            expect(game.StartPlyCount).toBe(1);
+            expect(game.CurrentPlyCount).toBe(0);
         });
 
         it('test construct with watch data', function() {
             const game = new Chess(dataWatch);
             game.moveLast();
-            expect(game.CurrentPlyCount).to.equal(70);
+            expect(game.CurrentPlyCount).toBe(70);
         });
 
         it('test moves', function() {
             const game = new Chess(dataWatch);
 
             game.moveBegin();
-            expect(game.CurrentMove.isBegin()).to.equal(true);
-            expect(game.CurrentMove.isFirst()).to.equal(true);
-            expect(game.CurrentMove.PlyCount).to.equal(0);
+            expect(game.CurrentMove.isBegin()).toBe(true);
+            expect(game.CurrentMove.isFirst()).toBe(true);
+            expect(game.CurrentMove.PlyCount).toBe(0);
             
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).to.equal(false);
-            expect(game.CurrentMove.isFirst()).to.equal(true);
-            expect(game.CurrentMove.PlyCount).to.equal(1);
+            expect(game.CurrentMove.isBegin()).toBe(false);
+            expect(game.CurrentMove.isFirst()).toBe(true);
+            expect(game.CurrentMove.PlyCount).toBe(1);
 
             game.moveFirst();
-            expect(game.CurrentMove.isBegin()).to.equal(false);
-            expect(game.CurrentMove.isFirst()).to.equal(true);
-            expect(game.CurrentMove.sm.color).to.equal(0);
-            expect(game.CurrentMove.PlyCount).to.equal(1);
+            expect(game.CurrentMove.isBegin()).toBe(false);
+            expect(game.CurrentMove.isFirst()).toBe(true);
+            expect(game.CurrentMove.sm.color).toBe(0);
+            expect(game.CurrentMove.PlyCount).toBe(1);
 
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).to.equal(false);
-            expect(game.CurrentMove.isFirst()).to.equal(false);
-            expect(game.CurrentMove.sm.color).to.equal(1);
-            expect(game.CurrentMove.PlyCount).to.equal(2);
+            expect(game.CurrentMove.isBegin()).toBe(false);
+            expect(game.CurrentMove.isFirst()).toBe(false);
+            expect(game.CurrentMove.sm.color).toBe(1);
+            expect(game.CurrentMove.PlyCount).toBe(2);
 
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).to.equal(false);
-            expect(game.CurrentMove.isFirst()).to.equal(false);
-            expect(game.CurrentMove.sm.color).to.equal(0);
-            expect(game.CurrentMove.PlyCount).to.equal(3);
+            expect(game.CurrentMove.isBegin()).toBe(false);
+            expect(game.CurrentMove.isFirst()).toBe(false);
+            expect(game.CurrentMove.sm.color).toBe(0);
+            expect(game.CurrentMove.PlyCount).toBe(3);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).to.equal(2);
+            expect(game.CurrentMove.PlyCount).toBe(2);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).to.equal(1);
-            expect(game.CurrentMove.isBegin()).to.equal(false);
-            expect(game.CurrentMove.isFirst()).to.equal(true);
+            expect(game.CurrentMove.PlyCount).toBe(1);
+            expect(game.CurrentMove.isBegin()).toBe(false);
+            expect(game.CurrentMove.isFirst()).toBe(true);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).to.equal(0);
-            expect(game.CurrentMove.isBegin()).to.equal(true);
-            expect(game.CurrentMove.isFirst()).to.equal(true);
+            expect(game.CurrentMove.PlyCount).toBe(0);
+            expect(game.CurrentMove.isBegin()).toBe(true);
+            expect(game.CurrentMove.isFirst()).toBe(true);
 
             game.moveEnd();
-            expect(game.CurrentMove.isEnd()).to.equal(true);
-            expect(game.CurrentMove.isLast()).to.equal(true);
+            expect(game.CurrentMove.isEnd()).toBe(true);
+            expect(game.CurrentMove.isLast()).toBe(true);
 
             game.moveBackward();
-            expect(game.CurrentMove.isEnd()).to.equal(false);
-            expect(game.CurrentMove.isLast()).to.equal(true);
+            expect(game.CurrentMove.isEnd()).toBe(false);
+            expect(game.CurrentMove.isLast()).toBe(true);
 
             game.moveBegin();
             game.moveLast();
-            expect(game.CurrentMove.isEnd()).to.equal(false);
-            expect(game.CurrentMove.isLast()).to.equal(true);
+            expect(game.CurrentMove.isEnd()).toBe(false);
+            expect(game.CurrentMove.isLast()).toBe(true);
 
             game.moveToPly(12);
-            expect(game.CurrentMove.PlyCount).to.equal(12);            
+            expect(game.CurrentMove.PlyCount).toBe(12);            
 
             game.moveToPly(60);
-            expect(game.CurrentMove.PlyCount).to.equal(60);
+            expect(game.CurrentMove.PlyCount).toBe(60);
 
             game.moveToKey("3");
-            expect(game.CurrentMove.PlyCount).to.equal(3);
+            expect(game.CurrentMove.PlyCount).toBe(3);
 
             game.moveToKey("1");
-            expect(game.CurrentMove.PlyCount).to.equal(1);
+            expect(game.CurrentMove.PlyCount).toBe(1);
         });
 
         it('test clock', function() {
             const game = new Chess(dataWatch);
 
             const raw = game.RawData;
-            expect(isBlitzClock(game.RawData.correspondence)).to.equal(false);
-            expect(isCorrespondenceClock(game.RawData.correspondence)).to.equal(false);
-            expect(isAdvanceClock(game.RawData.correspondence)).to.equal(true);
+            expect(isBlitzClock(game.RawData.correspondence)).toBe(false);
+            expect(isCorrespondenceClock(game.RawData.correspondence)).toBe(false);
+            expect(isAdvanceClock(game.RawData.correspondence)).toBe(true);
         });
 
         it('test construct with analysis data', function() {
             const game = new Chess(dataAnalyse);
             game.moveLast();
-            expect(game.CurrentPlyCount).to.equal(125);
+            expect(game.CurrentPlyCount).toBe(125);
         });
 
         it('test construct with not std start white', function() {
             const game = new Chess(dataWatchNonStdWhite);
             game.moveBegin();
-            expect(game.StartPlyCount).to.equal(13);
+            expect(game.StartPlyCount).toBe(13);
             game.moveFirst();
-            expect(game.StartPlyCount).to.equal(13);
-            expect(game.CurrentPlyCount).to.equal(13);
+            expect(game.StartPlyCount).toBe(13);
+            expect(game.CurrentPlyCount).toBe(13);
             game.moveForward();
             var cm = game.CurrentMove;
-            expect(game.CurrentPlyCount).to.equal(14);
+            expect(game.CurrentPlyCount).toBe(14);
         });
 
         it('test construct with not std start black', function() {
             const game = new Chess(dataWatchNonStdBlack);
             game.moveBegin();
-            expect(game.StartPlyCount).to.equal(8);
+            expect(game.StartPlyCount).toBe(8);
             game.moveFirst();
-            expect(game.StartPlyCount).to.equal(8);
-            expect(game.CurrentPlyCount).to.equal(8);
+            expect(game.StartPlyCount).toBe(8);
+            expect(game.CurrentPlyCount).toBe(8);
             game.moveForward();
-            expect(game.CurrentPlyCount).to.equal(9);
+            expect(game.CurrentPlyCount).toBe(9);
         });
 
         it('test plyToTurn', function() {
                 let turn = Chess.plyToTurn(0);
-                expect(turn).to.equal(0);
+                expect(turn).toBe(0);
 
                 turn = Chess.plyToTurn(1);
-                expect(turn).to.equal(1);
+                expect(turn).toBe(1);
 
                 turn = Chess.plyToTurn(2);
-                expect(turn).to.equal(1);
+                expect(turn).toBe(1);
 
                 turn = Chess.plyToTurn(3);
-                expect(turn).to.equal(2);
+                expect(turn).toBe(2);
 
                 turn = Chess.plyToTurn(4);
-                expect(turn).to.equal(2);
+                expect(turn).toBe(2);
         });
 
         it('test plyToColor', function() {
             let turn = Chess.plyToColor(0);
-            expect(turn).to.equal(0);
+            expect(turn).toBe(0);
 
             turn = Chess.plyToColor(1);
-            expect(turn).to.equal(0);
+            expect(turn).toBe(0);
 
             turn = Chess.plyToColor(2);
-            expect(turn).to.equal(1);
+            expect(turn).toBe(1);
 
             turn = Chess.plyToColor(3);
-            expect(turn).to.equal(0);
+            expect(turn).toBe(0);
 
             turn = Chess.plyToColor(4);
-            expect(turn).to.equal(1);
+            expect(turn).toBe(1);
         });
 
         it('test turnToPly', function() {
             let turn = Chess.turnToPly(0, 0);
-            expect(turn).to.equal(0);
+            expect(turn).toBe(0);
 
             turn = Chess.turnToPly(0, 1);
-            expect(turn).to.equal(0);
+            expect(turn).toBe(0);
 
             turn = Chess.turnToPly(1, 0);
-            expect(turn).to.equal(1);
+            expect(turn).toBe(1);
 
             turn = Chess.turnToPly(1, 1);
-            expect(turn).to.equal(2);
+            expect(turn).toBe(2);
 
             turn = Chess.turnToPly(2, 0);
-            expect(turn).to.equal(3);
+            expect(turn).toBe(3);
 
             turn = Chess.turnToPly(2, 1);
-            expect(turn).to.equal(4);
+            expect(turn).toBe(4);
         });
 
     });

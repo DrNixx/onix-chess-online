@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import clsx from "clsx";
 
 import ToggleButton from '@mui/material/ToggleButton';
@@ -28,7 +28,7 @@ export interface DumbMoveState {
     evals: boolean
 }
 
-export class DumbMoveElement extends React.Component<DumbMoveProps, DumbMoveState> {
+export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveProps>, DumbMoveState> {
     protected activeMove?: string;
     protected scrollerRef: HTMLDivElement|null = null;
     protected elRef: HTMLDivElement|null = null;

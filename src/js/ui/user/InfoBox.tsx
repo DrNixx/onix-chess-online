@@ -1,7 +1,7 @@
-import React from "react";
+import React, {PropsWithChildren} from "react";
 import Box from "@mui/material/Box";
 
-const InfoBox: React.FC = (props) => {
+const InfoBox: React.FC<PropsWithChildren> = (props) => {
     return (
         <Box sx={{
             pl: 1,

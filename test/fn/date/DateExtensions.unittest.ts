@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import {describe, expect, it} from '@jest/globals';
 import { DateExtensions } from "../../../src/js/fn/date/DateExtensions";
 
 describe('fn/date/DateExtensions', function() {
@@ -7,8 +7,8 @@ describe('fn/date/DateExtensions', function() {
             DateExtensions();
             const d = new Date(2020, 2, 10, 12, 0, 0)
             const d2 = d.addDays(5);
-            expect(d.getDate()).to.equal(10);
-            expect(d2.getDate()).to.equal(15);
+            expect(d.getDate()).toBe(10);
+            expect(d2.getDate()).toBe(15);
         });
     });
 

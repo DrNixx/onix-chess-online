@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 
 import i18next from 'i18next';
@@ -27,7 +27,7 @@ type GameData = {
 
 };
 
-const AnalyseGraphDumb: React.VFC<Props> = (props) => {
+const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
     const analysis = useSelector<CombinedGameState, IGameAnalysis>(
         (state) => state.game.engine.Analysis
     );
@@ -154,12 +154,14 @@ const AnalyseGraphDumb: React.VFC<Props> = (props) => {
         const progressInt = toInteger(progress);
         return (
             <div className="analysis-inprogress">
+                <>
                 { i18next.t("inprogress", { ns: "analyse" })}
                 { progress ? (
                         <div className="progress">
                             <div className="progress-bar progress-bar-primary" style={{width: `${progressInt}%`}} />
                         </div>)
                     : null }
+                </>
             </div>
         );
     }
@@ -167,7 +169,9 @@ const AnalyseGraphDumb: React.VFC<Props> = (props) => {
     const renderRequestBtn = () => {
         return (
             <span className="analysis-request">
-                <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>{ i18next.t("request", { ns: "analyse" })}</Button>
+                <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>
+                    <>{ i18next.t("request", { ns: "analyse" })}</>
+                </Button>
             </span>
         );
     };
@@ -186,16 +190,26 @@ const AnalyseGraphDumb: React.VFC<Props> = (props) => {
         return (
             <ul className="list-unstyled h-100 d-flex flex-column justify-content-center text-right">
                 <li>
-                    <Button variant="text" onClick={makeLink("inaccuracy")}>{ i18next.t("inaccuracies", { ns: "analyse" })}:<label>{item.inaccuracy}</label></Button>
+                    <Button variant="text" onClick={makeLink("inaccuracy")}>
+                        <>{ i18next.t("inaccuracies", { ns: "analyse" })}:<label>{item.inaccuracy}</label></>
+                    </Button>
                 </li>
                 <li>
-                    <Button variant="text" onClick={makeLink("mistake")}>{ i18next.t("mistakes", { ns: "analyse" })}:<label>{item.mistake}</label></Button>
+                    <Button variant="text" onClick={makeLink("mistake")}>
+                        <>{ i18next.t("mistakes", { ns: "analyse" })}:<label>{item.mistake}</label></>
+                    </Button>
                 </li>
                 <li>
-                    <Button variant="text" onClick={makeLink("blunder")}>{ i18next.t("blunders", { ns: "analyse" })}:<label>{item.blunder}</label></Button>
+                    <Button variant="text" onClick={makeLink("blunder")}>
+                        <>
+                        { i18next.t("blunders", { ns: "analyse" })}:<label>{item.blunder}</label>
+                        </>
+                    </Button>
                 </li>
                 <li>
+                    <>
                     { i18next.t("averageCentipawnLoss", { ns: "analyse" })}:<label title={i18next.t("averageCentipawnLossTitle", { ns: "analyse" })}>{item.acpl}</label>
+                    </>
                 </li>
             </ul>
         );
@@ -269,7 +283,7 @@ const AnalyseGraphDumb: React.VFC<Props> = (props) => {
     }
 
     return (
-        <span className="analysis-loading">{ i18next.t("loading", { ns: "analyse" })}</span>
+        <span className="analysis-loading"><>{ i18next.t("loading", { ns: "analyse" })}</></span>
     );
 };
 

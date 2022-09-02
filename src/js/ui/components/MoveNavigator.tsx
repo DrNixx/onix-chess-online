@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {PropsWithChildren, useEffect, useRef} from 'react';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
@@ -11,7 +11,7 @@ type Props = {
     onChange: (move: Move) => void,
 };
 
-const MoveNavigator: React.FC<Props> = (props) => {
+const MoveNavigator: React.FC<PropsWithChildren<Props>> = (props) => {
     const { currentMove, onChange, children } = props;
     const elRef = useRef<HTMLDivElement>(null);
 

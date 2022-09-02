@@ -1,5 +1,5 @@
+import React, {PropsWithChildren} from "react";
 import {IUser} from "../../app";
-import React from "react";
 import Box from "@mui/material/Box";
 
 type UserNameElementProps = {
@@ -7,7 +7,7 @@ type UserNameElementProps = {
     compact: boolean;
 };
 
-const UserNameElement: React.FC<UserNameElementProps> = (props) => {
+const UserNameElement: React.FC<PropsWithChildren<UserNameElementProps>> = (props) => {
     const { user, compact, children } = props;
     const name = (user.display && user.name && (user.display != '?') && (user.name != '?') && (user.display != user.name)) ? user.name : undefined;
     const separator = (name && !compact) ? " :: " : "";

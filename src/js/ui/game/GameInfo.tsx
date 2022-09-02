@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import {useSelector} from "react-redux";
 import clsx from 'clsx';
 
@@ -15,7 +15,7 @@ import {CombinedGameState} from "../../actions/CombinedGameState";
 import {GameState} from "../../actions/GameState";
 import {useTranslation} from "react-i18next";
 
-const GameInfo: React.FC = (props) => {
+const GameInfo: React.FC<PropsWithChildren> = (props) => {
 
     const { t } = useTranslation(['game']);
 

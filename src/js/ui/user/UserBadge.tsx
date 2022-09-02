@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, Suspense} from 'react';
+import React, { PropsWithChildren, useEffect, useCallback, useState, Suspense} from 'react';
 import clsx from "clsx";
 import {nanoid} from "nanoid";
 import toSafeInteger from "lodash/toSafeInteger";
@@ -37,7 +37,7 @@ type Props = {
 
 
 
-const UserBadge: React.FC<Props> = (props) => {
+const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
     const { language, user: propsUser, userId, size, popover, compact, children } = props;
 
     const { t, ready } = useTranslation(['actions'], { useSuspense: false });

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {PropsWithChildren, useEffect, useRef} from 'react';
 import {shallowEqual, useSelector} from "react-redux";
 import clsx from "clsx";
 
@@ -22,7 +22,7 @@ type DumbGameProps = {
     controlsBottom?: React.ReactNode;
 };
 
-const DumbGame: React.FC<DumbGameProps> = (props) => {
+const DumbGame: React.FC<PropsWithChildren<DumbGameProps>> = (props) => {
     const {cgRef: cgRefCallback, onGenerateConfig, controlsTop, controlsBottom, controlsLeft, children} = props;
 
     const boardRef = useRef<HTMLElement>();

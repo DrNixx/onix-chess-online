@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropsWithChildren} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 
 import { Move } from '../../chess/Move';
@@ -16,7 +16,7 @@ type ChessMovesProps = {
     toolbars?: React.ReactNode,
 }
 
-const ChessMoves: React.FC<ChessMovesProps> = (props) => {
+const ChessMoves: React.FC<PropsWithChildren<ChessMovesProps>> = (props) => {
     const { mode, nav, hasEvals, children, toolbars } = props;
 
     const game = useSelector<CombinedGameState, GameState>((state) => state.game );
