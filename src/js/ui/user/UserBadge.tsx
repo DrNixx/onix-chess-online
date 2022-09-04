@@ -22,7 +22,6 @@ import InfoBox from "./InfoBox";
 import UserTitle from "./UserTitle";
 import UserNameElement from "./UserNameElement";
 
-
 type Props = {
     language?: string;
     user?: IUser;

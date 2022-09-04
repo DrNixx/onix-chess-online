@@ -1,6 +1,6 @@
 import React, {useRef, useState, useCallback, useEffect} from 'react';
+import { createRoot } from 'react-dom/client';
 import {shallowEqual, useSelector, useStore} from "react-redux";
-import ReactDOM from 'react-dom';
 import {useTranslation} from "react-i18next";
 
 import Box from '@mui/material/Box';
@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import { createTheme } from '@mui/material/styles';
 
 import { Api } from 'chessground/api';
 import { FenString } from '../../chess/FenString';
@@ -20,8 +21,8 @@ import BoardToolbar from '../components/BoardToolbar';
 import ChessMoves from '../components/ChessMoves';
 import Captures from '../components/Captures';
 import GameInfo from './GameInfo';
-import { AnalyseGraphAsync } from '../components/AnalyseGraphAsync';
-import { MovesGraphAsync } from '../components/MovesGraphAsync';
+import AnalyseGraphAsync from '../components/analyse/AnalyseGraphAsync';
+import MovesGraphAsync from '../components/movetime/MovesGraphAsync';
 
 import GamePgn from '../components/GamePgn';
 import { Chat } from '../../chat/Chat';
@@ -30,6 +31,9 @@ import GameWrapper from "./GameWrapper";
 import {BoardState} from "../../actions/BoardState";
 import {GameState} from "../../actions/GameState";
 import DumbGame from "./DumbGame";
+
+
+const theme = createTheme();
 
 const AnalyseGame: React.VFC<GameProps> = (props) => {
     const { board: boardCfg } = props;
@@ -123,10 +127,10 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     };
 
     const renderAnalysis = () => {
+        const mh = 400 + parseFloat(theme.spacing(3)) * 2;
         return (
-            <TabPanel value="analysis">
+            <TabPanel value="analysis" sx={{ minHeight: mh }}>
                 <AnalyseGraphAsync
-                    store={store}
                     height={400} />
             </TabPanel>
         );
@@ -139,13 +143,11 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
     };
 
     const renderMovetime = () => {
+        const mh = 400 + parseFloat(theme.spacing(3)) * 2;
         return (
-            <TabPanel value="movetime">
-                <div style={{ width: '100%', height: 400 }}>
-                    <MovesGraphAsync
-                        height={400}
-                        store={store} />
-                </div>
+            <TabPanel value="movetime" sx={{ minHeight: mh }}>
+                <MovesGraphAsync
+                    height={400} />
             </TabPanel>
         );
     };
@@ -219,12 +221,13 @@ const AnalyseGame: React.VFC<GameProps> = (props) => {
 
 AnalyseGame.defaultProps = defaultProps;
 
-const GameRunner: React.VFC<GameProps> = (props) => {
+const GameRunner: React.FC<GameProps> = (props) => {
     return (
         <GameWrapper GameComponent={AnalyseGame} {...props} />
     );
 };
 
 export const analyseGame = (props: GameProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(GameRunner, props), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(GameRunner, props));
 };

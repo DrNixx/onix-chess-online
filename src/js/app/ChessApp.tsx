@@ -1,5 +1,5 @@
 import React, {Suspense} from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
 import { IntlMessageFormat } from 'intl-messageformat';
@@ -187,5 +187,6 @@ export class App extends React.Component<AppProps, AppState> implements IApplica
 }
 
 export const ChessApp = (props: AppProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(App, props), container);
+    const root = createRoot(container);
+    root.render(React.createElement(App, props));
 };

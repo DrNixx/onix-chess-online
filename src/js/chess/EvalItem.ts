@@ -2,7 +2,41 @@ import i18next from 'i18next';
 import sprintf from '../fn/string/Sprintf';
 import { IEval } from './types/Interfaces';
 
-export class EvalItem {
+export interface IEvalItem {
+    /**
+     * Position eval before move (centipawn)
+     */
+    cp?: number;
+
+    /**
+     * Ceiled position eval before move (centipawn)
+     */
+    ceil: number;
+
+    /**
+     * Ceiled position eval before move (pawn)
+     */
+    ceilPawn: number;
+
+    /**
+     * Position eval after move
+     */
+    advantage: number;
+
+    mate?: number;
+
+    best?: string;
+
+    variation?: string;
+
+    depth?: number;
+
+    time?: number;
+
+    desc?: string;
+}
+
+export class EvalItem implements IEvalItem {
 
     /**
      * Position eval before move (centipawn)

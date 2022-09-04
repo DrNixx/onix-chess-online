@@ -1,5 +1,4 @@
-import React, { useEffect} from 'react';
-import { nanoid } from 'nanoid';
+import React, { PropsWithChildren, useEffect} from 'react';
 import clsx from "clsx";
 import isString from "lodash/isString";
 import { Logger } from '../../common/Logger';
@@ -23,7 +22,7 @@ export interface IUserNameState {
     popoverContent?: string;
 }
 
-export class UserName extends React.Component<IUserNameProps, IUserNameState> {
+export class UserName extends React.Component<PropsWithChildren<IUserNameProps>, IUserNameState> {
     public static defaultProps: IUserNameProps = {
         language: 'ru-ru',
         user: { 

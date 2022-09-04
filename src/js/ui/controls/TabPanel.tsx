@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {PropsWithChildren, Fragment} from 'react';
 import clsx from "clsx";
 
 type TabPanelProps = {
@@ -9,7 +9,7 @@ type TabPanelProps = {
     activeKey: string;
 }
 
-const TabPanel: React.FC<TabPanelProps> = (props) => {
+const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = (props) => {
 
     const { children, id, eventKey, activeKey, className, ...other } = props;
 

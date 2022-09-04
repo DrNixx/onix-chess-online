@@ -2,7 +2,7 @@ import React, {Suspense, useEffect} from 'react';
 import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 
-import {CircularProgress} from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { ThemeProvider } from '@mui/material/styles';
 
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
@@ -14,7 +14,7 @@ type GamePropsVsComponent = GameProps & {
     GameComponent: React.VFC<GameProps>;
 };
 
-const GameWrapper: React.VFC<GamePropsVsComponent> = (props) => {
+const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {
     const {GameComponent, ...other} = props;
 
     const state = createCombinedGameState(other);
