@@ -1,6 +1,6 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 import isString from 'lodash/isString';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { nanoid } from 'nanoid';
 import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, SideBar, Social } from 'pages-ts';
 import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Notification';
@@ -13,7 +13,6 @@ import { simpleChat } from '../chat/Chat';
 import { Popover } from 'bootstrap';
 import React from "react";
 import UserBadge from "./user/UserBadge";
-
 
 function S(selector: string | JQuery<HTMLElement>): JQuery<HTMLElement> {
     return (isString(selector)) ? jQuery(selector) : selector;
@@ -179,7 +178,8 @@ export class Frontend implements IModule {
             const uid = el.dataset['id'];
             const size: any = el.dataset['size'];
             const compact = (el.dataset['compact'] === undefined) || (el.dataset['compact'] == 'true');
-            ReactDOM.render(React.createElement(UserBadge, {userId: uid, size: size, compact: compact}), el);
+            const root = createRoot(el);
+            root.render(React.createElement(UserBadge, {userId: uid, size: size, compact: compact}));
         });
         // }}} User badges
 

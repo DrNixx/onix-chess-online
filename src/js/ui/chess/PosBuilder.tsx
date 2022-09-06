@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import toSafeInteger from 'lodash/toSafeInteger';
 import clsx from "clsx";
 import i18next from 'i18next';
@@ -967,5 +967,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 }
 
 export const setupPosition = (props: PosBuilderProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(PosBuilder, props), container);
+    const root = createRoot(container);
+    root.render(React.createElement(PosBuilder, props));
 };

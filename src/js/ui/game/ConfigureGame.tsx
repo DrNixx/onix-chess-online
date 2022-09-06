@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -42,7 +42,7 @@ import IOSSwitch from "../controls/IOSSwitch";
 import {useTranslation} from "react-i18next";
 import {CircularProgress} from "@mui/material";
 
-const ConfigureGame: React.VFC<GameProps> = (props) => {
+const ConfigureGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
 
     const { t } = useTranslation(['game', 'chess']);
@@ -247,7 +247,7 @@ const ConfigureGame: React.VFC<GameProps> = (props) => {
 
 ConfigureGame.defaultProps = gameDefaults;
 
-const GameRunner: React.VFC<GameProps> = (props) => {
+const GameRunner: React.FC<GameProps> = (props) => {
     return (
         <GameWrapper GameComponent={ConfigureGame} {...props} />
     );
@@ -259,5 +259,6 @@ export const configureGame = (props: BoardSettings, container: HTMLElement) => {
         board: {...props}
     };
 
-    ReactDOM.render(React.createElement(GameRunner, gp), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(GameRunner, gp));
 };

@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {shallowEqual, useSelector} from "react-redux";
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Box from "@mui/material/Box";
 import TabList from "@mui/lab/TabList";
@@ -30,7 +30,7 @@ import DumbGame from "./DumbGame";
 import {useTranslation} from "react-i18next";
 import {CircularProgress} from "@mui/material";
 
-const PgnGame: React.VFC<GameProps> = (props) => {
+const PgnGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
 
     const { t } = useTranslation(['game']);
@@ -95,12 +95,13 @@ const PgnGame: React.VFC<GameProps> = (props) => {
 
 PgnGame.defaultProps = defaultProps;
 
-const GameRunner: React.VFC<GameProps> = (props) => {
+const GameRunner: React.FC<GameProps> = (props) => {
     return (
         <GameWrapper GameComponent={PgnGame} {...props} />
     );
 };
 
 export const pgnGame = (props: GameProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(GameRunner, props), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(GameRunner, props));
 };

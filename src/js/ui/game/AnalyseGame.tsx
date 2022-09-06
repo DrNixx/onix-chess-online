@@ -35,7 +35,7 @@ import DumbGame from "./DumbGame";
 
 const theme = createTheme();
 
-const AnalyseGame: React.VFC<GameProps> = (props) => {
+const AnalyseGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
 
     const { t, ready } = useTranslation(['game', 'analyse']);

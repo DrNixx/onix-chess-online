@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import clsx from "clsx";
 
 import Tooltip from '@mui/material/Tooltip';
@@ -429,5 +429,6 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 }
 
 export const notificationCenter = (props: NotificationCenterProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(NotificationCenter, props), container);
+    const root = createRoot(container);
+    root.render(React.createElement(NotificationCenter, props));
 };

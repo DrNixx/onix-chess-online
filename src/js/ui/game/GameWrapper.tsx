@@ -11,7 +11,7 @@ import {createCombinedGameStore} from "../../actions/CombinedGameStore";
 import {ChessTheme} from "../ChessTheme";
 
 type GamePropsVsComponent = GameProps & {
-    GameComponent: React.VFC<GameProps>;
+    GameComponent: React.FC<GameProps>;
 };
 
 const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {

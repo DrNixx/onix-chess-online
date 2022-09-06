@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import clsx from "clsx";
 
 import { styled, ThemeProvider } from '@mui/material/styles';
@@ -384,5 +384,6 @@ ForumWidget.defaultProps = {
 };
 
 export const forumWidget = (props: ForumWidgetProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(ForumWidget, props), container);
+    const root = createRoot(container);
+    root.render(React.createElement(ForumWidget, props));
 };

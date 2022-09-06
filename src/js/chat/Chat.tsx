@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { IChatMessage } from './Interfaces';
 import { Conversation } from './Conversation';
 import { ChatInput } from './ChatInput';
@@ -32,5 +32,6 @@ export class Chat extends React.Component<ChatProps, {}> {
 }
 
 export const simpleChat = (props: ChatProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(Chat, props), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(Chat, props));
 };

@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -879,5 +879,6 @@ const GameRunner: React.VFC<PlayGameProps> = (props) => {
 };
 
 export const playGame = (props: PlayGameProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(GameRunner, props), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(GameRunner, props));
 };

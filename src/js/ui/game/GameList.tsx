@@ -1,5 +1,5 @@
 import React, {Suspense, useEffect, useState} from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import clsx from "clsx";
 import {useTranslation} from "react-i18next";
@@ -375,5 +375,6 @@ const GameListWrapper = (props: GameListProps) => {
 };
 
 export const gameList = (props: GameListProps, container: HTMLElement) => {
-    ReactDOM.render(React.createElement(GameListWrapper, props), container, () => { });
+    const root = createRoot(container);
+    root.render(React.createElement(GameListWrapper, props));
 };
