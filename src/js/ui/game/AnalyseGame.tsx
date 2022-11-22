@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback, useEffect} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import { createRoot } from 'react-dom/client';
 import {shallowEqual, useSelector, useStore} from "react-redux";
 import {useTranslation} from "react-i18next";
@@ -48,10 +48,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
     const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
     const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
 
-    // const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-    }, []);
+    // const [mounted, setMounted] = useState(false);;
 
     const renderChatTab = () => {
         if (game.engine.ObserverId) {
@@ -106,7 +103,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
                                     <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
-                                    <Captures piece={boardCfg.piece!} />
+                                    <Captures piece={boardCfg.piece} />
                                 </div>
                             </div>
                         </TabPanel>

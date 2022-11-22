@@ -13,8 +13,6 @@ import TabPanel from "@mui/lab/TabPanel";
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
 import Scrollbar from "react-scrollbars-custom";
@@ -70,7 +68,7 @@ type ForumWidgetProps = {
     }
 }
 
-const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
+const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
     const {language, apiUrl, i18n} = props;
 
     const forumPrevStore = storage.make('dashboard-forum-diff');
@@ -164,7 +162,7 @@ const ForumWidget: React.VFC<ForumWidgetProps> = (props) => {
         }
     }
 
-    const fetchForumData = (withFade: boolean = false) => {
+    const fetchForumData = (withFade = false) => {
         if (timeout) {
             clearTimeout(timeout)
         }

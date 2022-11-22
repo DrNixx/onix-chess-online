@@ -2,7 +2,6 @@ import React, {Suspense} from 'react';
 import { createRoot } from 'react-dom/client';
 import { SnackbarProvider } from 'notistack';
 import toSafeInteger from 'lodash/toSafeInteger';
-import { IntlMessageFormat } from 'intl-messageformat';
 import { Centrifuge } from 'centrifuge';
 
 import { Logger } from '../common/Logger';

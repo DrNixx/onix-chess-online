@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
-import Skeleton from '@mui/material/Skeleton';
 import CircularProgress from '@mui/material/CircularProgress';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { IChessOpening } from '../../chess/types/Interfaces';
@@ -35,7 +34,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
 
     const convertOpeningData = (data: IChessOpening[]): IChessOpeningWithKey[] => {
         return [...data.map(item => {
-            const key = FenString.trim(item.fen!, FenFormat.castlingEp);
+            const key = FenString.trim(item.fen, FenFormat.castlingEp);
             return {
                 ...item,
                 key: key,

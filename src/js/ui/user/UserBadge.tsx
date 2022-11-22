@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useCallback, useState, Suspense} from 'react';
+import React, { PropsWithChildren, useEffect, useCallback, useState} from 'react';
 import clsx from "clsx";
 import {nanoid} from "nanoid";
 import toSafeInteger from "lodash/toSafeInteger";
@@ -49,7 +49,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
     useEffect(() => {
         if (!loading && !propsUser?.id && userId) {
             const uid = toSafeInteger(userId);
-            let cachedUser = userCache.get(uid);
+            const cachedUser = userCache.get(uid);
             if (cachedUser) {
                 setUser(cachedUser);
             } else {
@@ -76,7 +76,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
                 }
             }
         }
-    }, [propsUser, userId]);
+    }, [loading, propsUser, userId]);
 
     const getDisplay = useCallback(() => {
         if (user) {
@@ -89,8 +89,8 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
     const renderUserLinkSimple = () => {
         if (user) {
             const unClass = ["username"];
-            if (user!.status) {
-                unClass.push(user!.status);
+            if (user?.status) {
+                unClass.push(user.status);
             }
 
             const userLink = `/${language}/@/${user.id}`;

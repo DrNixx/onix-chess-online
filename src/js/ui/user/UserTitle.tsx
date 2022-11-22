@@ -5,7 +5,7 @@ import isString from "lodash/isString";
 type UserTitleProps = {
     title?: IUser['title']
 };
-const UserTitle: React.VFC<UserTitleProps> = (props) => {
+const UserTitle: React.FC<UserTitleProps> = (props) => {
     if (props.title) {
         if (isString(props.title)) {
             return (

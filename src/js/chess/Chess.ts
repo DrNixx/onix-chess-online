@@ -112,12 +112,12 @@ export class ChessTags {
 }
 
 export class ChessGameState {
-    public InCheckMate: boolean = false;
-    public InStaleMate: boolean = false;
-    public IsNoMaterialWhite: boolean = false;
-    public IsNoMaterialBlack: boolean = false;
-    public IsPosRepeation: boolean = false;
-    public Is50MovesRule: boolean = false;
+    public InCheckMate = false;
+    public InStaleMate = false;
+    public IsNoMaterialWhite = false;
+    public IsNoMaterialBlack = false;
+    public IsPosRepeation = false;
+    public Is50MovesRule = false;
 }
 
 type encodedMoves = [number, string, number, number, string, string];
@@ -153,10 +153,10 @@ export class Chess {
     private status?: IGameStatus;
     private savedMove: Move | null = null;
     private savedPos: Position | null = null;
-    private savedPlyCount: number = 0;
+    private savedPlyCount = 0;
     private pgnLastMovePos: number;
     private pgnNextMovePos: number;
-    private varDepth: number = 0;
+    private varDepth = 0;
     private supressEvents = false;
     private moveList: Map<string, Move> = new Map<string, Move>();
     
@@ -166,7 +166,7 @@ export class Chess {
     private startFen: string = FenString.standartStart;
 
     public Altered: boolean;
-    public InPromotion: boolean = false;
+    public InPromotion = false;
 
     public Fen?: string;
     
@@ -186,7 +186,7 @@ export class Chess {
     /// <summary>
     /// True if game has a promotion to R/B/N.
     /// </summary>
-    public NoQueenPromotion: boolean = false;
+    public NoQueenPromotion = false;
     public Tags: ChessTags;
     public GameId?: number | string = undefined;
     public White?: IChessPlayer;
@@ -403,7 +403,7 @@ export class Chess {
                     }
 
                     move = move.Next;
-                };
+                }
 
                 move = this.CurrentMove.Begin;
                 while (!move.END_MARKER) {
@@ -412,7 +412,7 @@ export class Chess {
                     }
 
                     move = move.Next;
-                };
+                }
             }
 
             if (game?.moveCentis) {
@@ -425,7 +425,7 @@ export class Chess {
                     }
 
                     move = move.Next;
-                };
+                }
             }
 
             this.supressEvents = false;
@@ -555,7 +555,11 @@ export class Chess {
         return state;
     }
 
-    public makeMove(fr: Squares.Square, to: Squares.Square, promote?: string): SimpleMove|undefined {
+    public makeMove(fr?: Squares.Square, to?: Squares.Square, promote?: string): SimpleMove | undefined {
+        if (!fr || !to) {
+            return undefined;
+        }
+
         const { curPos: currentPos } = this;
         const sm = new SimpleMove();
         sm.pieceNum = currentPos.getPieceNum(fr);
@@ -650,7 +654,7 @@ export class Chess {
     public removeProvisoryMoves() {
         this.moveLast();
         while (this.currentMove.provisional) {
-            let move = this.currentMove;
+            const move = this.currentMove;
             this.moveBackward();
             move.remove();
         }

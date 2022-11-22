@@ -40,7 +40,6 @@ import {GameActions as ga} from "../../actions/GameActions";
 import {getLegalMovesMap} from "../../utils/chess";
 import IOSSwitch from "../controls/IOSSwitch";
 import {useTranslation} from "react-i18next";
-import {CircularProgress} from "@mui/material";
 
 const ConfigureGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
@@ -54,7 +53,7 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
 
     const onMove = (orig: cg.Key, dest: cg.Key) => {
         const {engine} = game;
-        const sm = engine.makeMove(Square.parse(orig)!, Square.parse(dest)!);
+        const sm = engine.makeMove(Square.parse(orig), Square.parse(dest));
 
         if (sm) {
             dispatch({ type: ga.GAME_ADD_PROVISIONAL, sm: sm } as ga.AddProvisional);

@@ -1,4 +1,4 @@
-import React, {Suspense, useEffect} from 'react';
+import React, {Suspense} from 'react';
 import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 
@@ -19,9 +19,6 @@ const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {
 
     const state = createCombinedGameState(other);
     const store = createCombinedGameStore(state);
-
-    useEffect(() => {
-    }, []);
 
     return (
         <Suspense fallback={<CircularProgress />}>

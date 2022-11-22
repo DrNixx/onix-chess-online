@@ -11,7 +11,7 @@ declare global {
 export function DateExtensions() {
     if (!Date.prototype.addDays) {
         Date.prototype.addDays = function(days: number): Date {
-            let date = new Date(this.getTime());
+            const date = new Date(this.getTime());
             if (!days) return date;
             date.setDate(date.getDate() + days);
             return date;
@@ -20,7 +20,8 @@ export function DateExtensions() {
     
     if (!Date.prototype.diff) {
         Date.prototype.diff = function(date: Date): DateInterval {
-            let d1: Date = this; 
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
+            let d1: Date = this;
             let d2: Date = date; 
         
             const result: DateInterval = {
@@ -36,6 +37,7 @@ export function DateExtensions() {
             };
             
             if (date.getTime() > this.getTime()) {
+                // eslint-disable-next-line @typescript-eslint/no-this-alias
                 d1 = date; d2 = this; result.invert = true;
             }
         

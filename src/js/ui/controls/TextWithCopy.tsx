@@ -4,7 +4,6 @@ import { useSnackbar } from 'notistack';
 import IconButton from '@mui/material/IconButton';
 import Input, { InputProps } from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
-import Skeleton from '@mui/material/Skeleton';
 import CopyIcon from '@mui/icons-material/CopyAll';
 
 import { copy } from '../CopyToClipboard';

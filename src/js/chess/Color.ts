@@ -35,12 +35,14 @@ export namespace Color {
         return c === "w" || c === "b";
     }
     
-    export function toName(c: Colors.BW): Colors.Name {
+    export function toName(c?: Colors.BW): Colors.Name {
         switch (c) {
             case White:
                 return "white";
             case Black:
                 return "black";
+            default:
+                return "white";
         }
     }
 

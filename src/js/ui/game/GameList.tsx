@@ -39,7 +39,7 @@ interface GameListProps {
     isPostponed: boolean
 }
 
-const GameListComponent: React.VFC<GameListProps> = (props) => {
+const GameListComponent: React.FC<GameListProps> = (props) => {
     const {language, apiUrl, emptyText, isPostponed} = props;
 
     const { t } = useTranslation(['game', 'timer']);
@@ -118,7 +118,7 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
 
         if (game.tournament?.round) {
             return (
-                <Tooltip arrow title={viewTournament!}>
+                <Tooltip arrow title={viewTournament}>
                     <a href={`/${language}/tournaments/round/${game.tournament.round}`}>
                         <span className="p-l-5" title={viewTournament}><i className="xi-grid1" /></span>
                     </a>
@@ -130,19 +130,19 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
     };
 
     const isJoin = (game: IGameData) => {
-        return game.observer && (game.observer == game.owner) && (game.game!.status.name == "new");
+        return game.observer && (game.observer == game.owner) && (game.game?.status.name == "new");
     };
 
     const isChallengeFromMe = (game: IGameData) => {
-        return game.observer && (game.observer == game.owner) && (game.game!.status.name == "wait");
+        return game.observer && (game.observer == game.owner) && (game.game?.status.name == "wait");
     };
 
     const isChallengeToMe = (game: IGameData) => {
-        return game.observer && (game.observer != game.owner) && (game.game!.status.name == "wait");
+        return game.observer && (game.observer != game.owner) && (game.game?.status.name == "wait");
     };
 
     const isMyMove = (game: IGameData) => {
-        return game.observer && (game.game!.player === game.game!.mover);
+        return game.observer && (game.game?.player === game.game?.mover);
     };
 
     const playerTime = (game: IGameData) => {
@@ -258,7 +258,7 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
         const clock = ((game.clock as unknown) as IAdvanceClock);
 
         return (
-            <StripedListItem key={game.game!.id}>
+            <StripedListItem key={game.game?.id}>
                 <ListItemText>
                     <Grid container spacing={2}>
                         <Grid item md={8}>
@@ -327,7 +327,7 @@ const GameListComponent: React.VFC<GameListProps> = (props) => {
         } else {
             return loaded ? (
                 <CardContent>
-                    <div dangerouslySetInnerHTML={ {__html: emptyText!} } />
+                    <div dangerouslySetInnerHTML={ {__html: emptyText} } />
                 </CardContent>
             ) : (
                 <CardContent>

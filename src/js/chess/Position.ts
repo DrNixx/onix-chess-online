@@ -40,8 +40,8 @@ export enum GenerateMode
 export class Position {
     private brd: (Pieces.Piece | Pieces.Empty)[] = [];
     private capt: number[] = [];
-    private plyCnt: number = 0;
-    private strictCastling: boolean = false;
+    private plyCnt = 0;
+    private strictCastling = false;
     private pinned: Directions.Direction[] = [];
     private list: Squares.Square[][] = []; // list of piece squares for each side
     private listPos: number[] = []; // ListPos stores the position in list[][] for the piece on square x.
@@ -56,7 +56,7 @@ export class Position {
     private castling: Castling = new Castling();
 
     public EpTarget?: Squares.Square = ns;
-    public HalfMoveCount: number = 0;
+    public HalfMoveCount = 0;
     
 
     /**
@@ -348,7 +348,7 @@ export class Position {
         if ((ptype === Piece.King) &&
             (Square.fyle(from) === 4) &&
             (Square.fyle(to) === 2 || Square.fyle(to) === 6)) {
-            let rook = Piece.create(this.wm, Piece.Rook);
+            const rook = Piece.create(this.wm, Piece.Rook);
             let rookfrom: Squares.Square;
             let rookto: Squares.Square;
             if (Square.fyle(to) === 2) {
@@ -534,7 +534,7 @@ export class Position {
                 san += Square.fyleChar(to);
                 san += Square.rankChar(to);
             } else {
-                let ambiguity: number = 0;
+                let ambiguity = 0;
                 const f = Square.fyleChar(from);
                 const r = Square.rankChar(from);
                 mlist = [];
@@ -608,7 +608,7 @@ export class Position {
      * If the specified pieceType is not NOPIECE, then only legal moves for that type of piece 
      * are generated.
      */
-    public generateMoves(pieceType?: Pieces.PieceType, genType: number = GenerateMode.All, maybeInCheck: boolean = true) {
+    public generateMoves(pieceType?: Pieces.PieceType, genType: number = GenerateMode.All, maybeInCheck = true) {
         const genNonCaptures = (genType & GenerateMode.NonCaptures) !== 0;
         const capturesOnly = !genNonCaptures;
 
@@ -1560,7 +1560,7 @@ export class Position {
         let sq: Squares.Square | Squares.Empty;
 
         const kingSq = this.getKingSquare(this.wm);
-        let tryMove: Boolean;
+        let tryMove: boolean;
 
         // first, verify that the target square is NOPIECE or contains
         // an enemy piece:
@@ -1793,7 +1793,7 @@ export class Position {
      * @param str 
      * @param reverse 
      */
-    public readCoordMove(str: string, reverse: boolean = false): SimpleMove | null {
+    public readCoordMove(str: string, reverse = false): SimpleMove | null {
         const coords = this.readCoord(str);
         if (coords !== false) {
             const {from, to, promo } = coords;

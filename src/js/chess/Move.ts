@@ -9,7 +9,7 @@ import { Position } from './Position';
  */
 export class Move {
     private vars: Move[] = [];
-    private varNo: number = 0;
+    private varNo = 0;
     private ply: number;
     private parent: Move | null = null;
     
@@ -28,7 +28,7 @@ export class Move {
     
     public sm: SimpleMove;
 
-    public provisional: boolean = false;
+    public provisional = false;
 
     /**
      * @constructor
@@ -95,6 +95,7 @@ export class Move {
     }
 
     public get Begin() : Move {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let move: Move = this;
         while (move.prev_move) {
             move = move.prev_move;
@@ -120,6 +121,7 @@ export class Move {
     }
 
     public get End() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let move: Move = this;
         while (move.next_move) {
             move = move.next_move;

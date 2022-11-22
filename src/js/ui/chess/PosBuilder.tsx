@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import {createRoot} from 'react-dom/client';
 import toSafeInteger from 'lodash/toSafeInteger';
 import clsx from "clsx";
 import i18next from 'i18next';
@@ -17,24 +17,24 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
 import * as cg from 'chessground/types';
-import { Chessground } from 'chessground';
-import { Api } from 'chessground/api';
-import { Config } from 'chessground/config';
-import { dragNewPiece } from 'chessground/drag';
-import { DrawShape } from 'chessground/draw';
-import { eventPosition, isRightButton as isRightButtonEvent } from 'chessground/util';
+import {Chessground} from 'chessground';
+import {Api} from 'chessground/api';
+import {Config} from 'chessground/config';
+import {dragNewPiece} from 'chessground/drag';
+import {DrawShape} from 'chessground/draw';
+import {eventPosition, isRightButton as isRightButtonEvent} from 'chessground/util';
 
-import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
-import { IChessOpening } from '../../chess/types/Interfaces';
-import { Colors, Squares } from '../../chess/types/Types';
-import { Castling, CastlingSide, CastlingStr } from '../../chess/Castling';
-import { FenFormat, FenString } from '../../chess/FenString';
-import { pushif } from '../../fn/array/Pushif';
-import { Position } from '../../chess/Position';
-import { Chess } from '../../chess/Chess';
-import { Color } from '../../chess/Color';
-import { Square } from '../../chess/Square';
-import { Piece } from '../../chess/Piece';
+import {BoardSize, BoardSizeClasses} from 'onix-board-assets';
+import {IChessOpening} from '../../chess/types/Interfaces';
+import {Colors, Squares} from '../../chess/types/Types';
+import {Castling, CastlingSide, CastlingStr} from '../../chess/Castling';
+import {FenFormat, FenString} from '../../chess/FenString';
+import {pushif} from '../../fn/array/Pushif';
+import {Position} from '../../chess/Position';
+import {Chess} from '../../chess/Chess';
+import {Color} from '../../chess/Color';
+import {Square} from '../../chess/Square';
+import {Piece} from '../../chess/Piece';
 import SizeSelector from '../controls/SizeSelector';
 import SquareSelector from '../controls/SquareSelector';
 import PieceSelector from '../controls/PieceSelector';
@@ -42,7 +42,7 @@ import WhoMoveSelector from '../controls/WhoMoveSelector';
 import StartPosSelector from '../controls/StartPosSelector';
 import TextWithCopy from '../controls/TextWithCopy';
 
-import { postMessage } from '../../net/PostMessage';
+import {postMessage} from '../../net/PostMessage';
 import Input from '@mui/material/Input';
 
 type Selected = "pointer" | "trash" | [cg.Color, cg.Role];
@@ -142,7 +142,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
     private cg?: Api = undefined;
 
-    private sizeChanged: boolean = false;
+    private sizeChanged = false;
 
     constructor(props: PosBuilderProps) {
         super(props);
@@ -183,7 +183,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         this.cg = Chessground(this.boardElement!, {
             fen: fen,
             orientation: orientation,
-            turnColor: Color.toName(whoMove!),
+            turnColor: Color.toName(whoMove),
             coordinates: !!coordinates,
             autoCastle: false,
             movable: {
@@ -306,7 +306,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 }
             }
 
-            cg.setShapes(sh.filter((s) => { return !!cg.state.drawable.brushes[s.brush!]; }));
+            cg.setShapes(sh.filter(s => !!s.brush && !!cg.state.drawable.brushes[s.brush]));
             result = shapesToMarkers(cg.state.drawable.shapes);
         }
 
@@ -349,7 +349,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     };
 
     private onFlipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { cg, state } = this;
+        const { state } = this;
         const orientation = e.target.checked ? "black" : "white";
 
         this.setState({
@@ -380,7 +380,6 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     private onPositionChange = () => {
         const { cg, state, assignShapes } = this;
         if (cg !== undefined) {
-            const fen = cg.getFen();
             const shapes = state.markers;
             this.setState({
                 ...state,
@@ -519,7 +518,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         const cast = new Castling(castling);
         const ep = Square.isSquare(ep_target) ? Square.name(ep_target) : "-";
 
-        return fen! + " " + Color.toChar(whoMove!) + " " + cast.asFen() + " " + ep + " " + halfMove!.toString() + " " + moveNo!.toString();
+        return fen + " " + Color.toChar(whoMove ?? Color.White) + " " + cast.asFen() + " " + ep + " " + halfMove?.toString() + " " + moveNo?.toString();
     }
 
     private makeLink = (fen: string, params: any[]): string => {
@@ -536,7 +535,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     };
 
     private makeCode = (fen: string, params: any[]): string => {
-        let el = document.createElement("div");
+        const el = document.createElement("div");
         el.innerHTML = encodeURIComponent(fen);            
         
         params.forEach(element => {
@@ -549,9 +548,8 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     private renderDialogButton = (visible: boolean, code: string) => {
         const executeDialog = () => {
             if (window.parent) {
-                var parent_url = decodeURIComponent(document.location.hash.replace(/^#/, ""));
-                var text = code;
-                postMessage(text, parent_url, parent);
+                const parent_url = decodeURIComponent(document.location.hash.replace(/^#/, ""));
+                postMessage(code, parent_url, parent);
             }
         };
 
@@ -573,6 +571,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     }
 
     private onSelectSparePiece = (s: Selected, upEvent: "mouseup" | "touchend"): (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void => {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         return function(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
             const { cg, select } = that;
@@ -589,7 +588,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
 
                 document.addEventListener(upEvent, (e: MouseEvent | TouchEvent) => {
                     const eventPos = eventPosition(e as cg.MouchEvent) || lastTouchMovePos;
-                    if (eventPos && cg!.getKeyAtDomPos(eventPos)) {
+                    if (eventPos && cg?.getKeyAtDomPos(eventPos)) {
                         select('pointer');
                     } else {
                         select(s);
@@ -671,9 +670,9 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         const { deletePiece, cg } = this;
 
         if (e.type === 'touchstart') {
-            if (cg!.state.pieces.get(key)) {
-              (cg!.state.draggable.current!.element as HTMLElement).style.display = 'none';
-              cg!.cancelMove();
+            if (cg?.state.pieces.get(key)) {
+              (cg.state.draggable.current?.element as HTMLElement).style.display = 'none';
+              cg.cancelMove();
             }
 
             document.addEventListener('touchend', () => deletePiece(key), { once: true });
@@ -685,7 +684,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
     private deletePiece = (key: cg.Key): void => {
         const { cg } = this;
 
-        cg!.setPieces(new Map([
+        cg?.setPieces(new Map([
           [key, undefined]
         ]));
         
@@ -723,7 +722,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 return;
             }
 
-            const key = cg!.getKeyAtDomPos(pos);
+            const key = cg?.getKeyAtDomPos(pos);
             if (!key) {
                 return;
             }
@@ -732,7 +731,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
             if (sel === 'trash') {
                 deleteOrHidePiece(key, e.nativeEvent);
             } else {
-                const existingPiece = cg!.state.pieces.get(key);
+                const existingPiece = cg?.state.pieces.get(key);
                 const piece = {
                     color: sel[0],
                     role: sel[1]
@@ -746,12 +745,12 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                     const endEvents = { mousedown: 'mouseup', touchstart: 'touchend' };
                     document.addEventListener(endEvents[e.type], () => this.placeDelete = false, { once: true });
                 } else if (!this.placeDelete && (e.type === 'mousedown' || e.type === 'touchstart' || key !== this.lastKey)) {
-                    cg!.setPieces(new Map([
+                    cg?.setPieces(new Map([
                         [key, piece]
                     ]));
 
                     this.onPositionChange();
-                    cg!.cancelMove();
+                    cg?.cancelMove();
                 }
             }
 
@@ -774,13 +773,13 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         const shapes = markersToShapes(markers);
         const marks = shapesToMarkers(shapes);
 
-        let params: any[] = [];
+        const params: any[] = [];
         pushif(params, (size !== 2), ["size", size]);
         pushif(params, flipped, ["fb", 1]);
         pushif(params, !!showTurn, ["who", 1]);
 		pushif(params, !coordinates, ["hl", 1]);
-        pushif(params, (piece !== PosBuilder.defaultProps.piece), ["pset", encodeURIComponent(piece!)]);
-        pushif(params, (square !== PosBuilder.defaultProps.square), ["sset", encodeURIComponent(square!)]);
+        pushif(params, (piece !== PosBuilder.defaultProps.piece), ["pset", encodeURIComponent(piece ?? '')]);
+        pushif(params, (square !== PosBuilder.defaultProps.square), ["sset", encodeURIComponent(square ?? '')]);
         pushif(params, !!markers, ["mv", encodeURIComponent(marks)]);
 
         const code = makeCode(fenStr, params);
@@ -892,7 +891,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                             <InputLabel>{i18next.t("move_no", { ns: "chess" }).toString()}</InputLabel>
                                             <FormControl
                                                 size="small"
-                                                defaultValue={moveNo!.toString()}
+                                                defaultValue={moveNo?.toString()}
                                                 onChange={this.onMoveNoChange} />
                                         </FormControl>
                                     </Grid>

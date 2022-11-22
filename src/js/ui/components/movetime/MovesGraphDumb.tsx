@@ -82,7 +82,7 @@ const MovesGraphDumb: React.FC<MovesGraphProps> = (props) => {
             for (let i = 0; i < times.length; i = i + 2) {
                 const w = times[i];
                 const b = times[i + 1];
-                let ply = graphInfo.startPly + i;
+                const ply = graphInfo.startPly + i;
                 data.push({
                     turn: ChessEngine.plyToTurn(ply),
                     ply: ply,

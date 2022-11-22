@@ -14,7 +14,13 @@ type Props = {
     className?: string;
 };
 
-const Avatar: React.FC<PropsWithChildren<Props>> = (props) => {
+const defaultProps = {
+    user: undefined,
+    size: 'medium' as AvatarSizeType
+};
+
+const Avatar: React.FC<PropsWithChildren<Props>> = (propsIn) => {
+    const props = { ...defaultProps, ...propsIn };
     const {user, size, online, className, children} = props;
     const sizes = {
         'tiny': 24,
@@ -53,17 +59,17 @@ const Avatar: React.FC<PropsWithChildren<Props>> = (props) => {
     const sx: AvatarSx = {};
 
     if (size !== 'medium') {
-        sx.width = sx.height = sizes[size!];
+        sx.width = sx.height = sizes[size];
     }
 
 
-    const avatarUser = () => {
-        const url = getAvatarUrl(user!.id!, size);
+    const avatarUser = (id: number | string) => {
+        const url = getAvatarUrl(id, size);
 
         let onlineTime: string|undefined = undefined;
         if (online) {
             sx.borderStyle = 'solid'
-            sx.borderWidth = borders[size!];
+            sx.borderWidth = borders[size];
             if (online === true) {
                 onlineTime = 'now';
             } else if (online === 'none') {
@@ -99,28 +105,23 @@ const Avatar: React.FC<PropsWithChildren<Props>> = (props) => {
                 animation="wave"
                 variant="circular"
                 sx={{
-                    flexBasis: sizes[size!],
+                    flexBasis: sizes[size],
                     flexShrink: 0
                 }}
-                width={sizes[size!]}
-                height={sizes[size!]} />
+                width={sizes[size]}
+                height={sizes[size]} />
         );
     };
 
     if (user) {
         if (user.id && (user.id > 1)) {
-            return avatarUser();
+            return avatarUser(user.id);
         } else {
             return avatarDefault();
         }
     } else {
         return avatarSkeleton();
     }
-};
-
-Avatar.defaultProps = {
-    user: undefined,
-    size: 'medium'
 };
 
 export default Avatar;

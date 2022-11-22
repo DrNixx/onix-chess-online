@@ -8,7 +8,7 @@ class CastlingStrBrand {
 export type CastlingStr = CastlingStrBrand & string;
 
 function checkValidCastleStr(str: string): str is CastlingStr {
-    return /^(?:-|(?:K?Q?k?q?)){1}$/.test(str);
+    return /^(?:-|(?:K?Q?k?q?))$/.test(str);
 }
 
 export enum CastlingSide {
@@ -83,7 +83,7 @@ export class Castling {
      * Return castling is enabled.
      */
     public has(pc: Colors.BW | string, direction?: CastlingSide): boolean {
-        let mask: number = 0;
+        let mask = 0;
 
         if (typeof pc === "string") {
             switch (pc) {
@@ -106,14 +106,14 @@ export class Castling {
             }
         }
 
-        return (this.flag & mask) ? true : false;
+        return !!(this.flag & mask);
     }
 
     /**
      * Set castling flag.
      */
     public set(color: Colors.BW, direction: CastlingSide, enabled: boolean): void {
-        let mask = this.getMask(color, direction);
+        const mask = this.getMask(color, direction);
 
         if (enabled) {
             this.flag |= mask;

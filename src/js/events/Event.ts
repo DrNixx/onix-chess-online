@@ -6,14 +6,16 @@ import { EventArgs, EventArgs1 } from './EventArgs';
 import { EventHandler } from './EventHandler';
 
 export class Event implements IDisposable, ITyped, IEvent {
-    public _type: string = "Event";
+    public _type = "Event";
 
     private handlers: IEventHandler[];
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public OnHandlerAttached: () => void = ()=> { };
 
     public OnHandlerAttachedContext: any = null;
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     public OnHandlerDettached: () => void = () => { };
     
     public OnHandlerDettachedContext: any = null;
@@ -59,9 +61,10 @@ export class Event implements IDisposable, ITyped, IEvent {
      * @param triggerCount Number of calls before the handler is disconnected.
      */
     public bindFor(handler: IEventHandler, triggerCount: number): void {
-        var that = this;
-        var triggers: number = 0;
-        var wire: IEventHandler = new EventHandler((args: IEventArgs) => {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that = this;
+        let triggers = 0;
+        const wire: IEventHandler = new EventHandler((args: IEventArgs) => {
             if (++triggers >= triggerCount) {
                 that.unbind(wire);
             }
@@ -77,7 +80,7 @@ export class Event implements IDisposable, ITyped, IEvent {
      * @param handler Event handler.
      */
     public unbind(handler: IEventHandler): void {
-        for (var i = 0; i < this.handlers.length; i++) {
+        for (let i = 0; i < this.handlers.length; i++) {
             if (this.handlers[i] === handler) {
                 this.handlers.splice(i, 1);
                 return;
@@ -89,12 +92,12 @@ export class Event implements IDisposable, ITyped, IEvent {
      * Executes all linked handlers.
      */
     public trigger(args: IEventArgs): void {
-        var handlers: IEventHandler[];
+        let handlers: IEventHandler[];
 
         if (this.hasBindings()) {
             handlers = this.handlers.slice(0);
 
-            for (var i = 0; i < handlers.length; i++) {
+            for (let i = 0; i < handlers.length; i++) {
                 handlers[i].invoke(args);
             }
         }

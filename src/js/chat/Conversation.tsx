@@ -20,7 +20,7 @@ export interface ConversationState {
 
 export class Conversation extends React.Component<ConversationProps, ConversationState> {
     protected elRef: HTMLDivElement|null = null;
-    private size: number = 0;
+    private size = 0;
     private observer: IntersectionObserver|null = null;
     protected scrollerRef: HTMLDivElement|null = null;
 
@@ -39,6 +39,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         const { channel } = this.props;
         this.fetchConversation();
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         if (appInstance) {
             const { stream } = appInstance;
@@ -101,6 +102,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         }
 
         if (this.elRef) {
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             const that = this;
             that.observer = new IntersectionObserver(() => {
                 const newSize = that.elRef!.clientHeight;
@@ -189,7 +191,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         const result: JSX.Element[] = [];
 
         let prevuid: string | number | undefined = -1;
-        let cnt: number = 0;
+        let cnt = 0;
 
         return messages.reduce((res, msg) => {
             if (userid && msg.sender.id == userid) {

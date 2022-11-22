@@ -43,8 +43,8 @@ export function focusVisible() {
      * @return {boolean}
      */
     function focusTriggersKeyboardModality(el: HTMLInputElement) {
-        var type = el.type;
-        var tagName = el.tagName;
+        const type = el.type;
+        const tagName = el.tagName;
 
         if (tagName == 'INPUT' && inputTypesWhitelist[type] && !el.readOnly) {
         return true;

@@ -75,7 +75,7 @@ interface ProvisionalMove {
 
 type PlayGameProps = GameProps;
 
-const PlayGame: React.VFC<PlayGameProps> = (props) => {
+const PlayGame: React.FC<PlayGameProps> = (props) => {
     const { board: boardCfg } = props;
 
     const { t } = useTranslation(['game', 'core']);
@@ -535,7 +535,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                     size="small"
                     aria-label={t("next_game")}
                     title={t("next_game")}
-                    onClick={() => {}}>
+                    onClick={() => { return false; }}>
                     <Icon baseClassName="" className="xi-next-game" fontSize="inherit" />
                 </IconButton>
             </Stack>
@@ -576,7 +576,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
                             </ChessMoves>
                         </div>
                         <div className="mt-2 pt-2 border-top">
-                            <Captures piece={board.piece!} />
+                            <Captures piece={board.piece} />
                         </div>
                     </div>
                 </TabPanel>
@@ -726,7 +726,7 @@ const PlayGame: React.VFC<PlayGameProps> = (props) => {
 
     const infoAddForm = () => {
         const {engine} = game;
-        let form: JSX.Element | null = null;
+        const form: JSX.Element | null = null;
 
         if (!engine.isStarted) {
             if (engine.isChallengeFromMe) {
@@ -872,7 +872,7 @@ PlayGame.defaultProps = {
     ...defaultProps
 };
 
-const GameRunner: React.VFC<PlayGameProps> = (props) => {
+const GameRunner: React.FC<PlayGameProps> = (props) => {
     return (
         <GameWrapper GameComponent={PlayGame} {...props} />
     );

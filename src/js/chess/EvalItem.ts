@@ -46,17 +46,17 @@ export class EvalItem implements IEvalItem {
     /**
      * Ceiled position eval before move (centipawn)
      */
-    public ceil: number = 0;
+    public ceil = 0;
 
     /**
      * Ceiled position eval before move (pawn)
      */
-    public ceilPawn: number = 0;
+    public ceilPawn = 0;
 
     /**
      * Position eval after move
      */
-    public advantage: number = 0;
+    public advantage = 0;
 
     public mate?: number = undefined;
     

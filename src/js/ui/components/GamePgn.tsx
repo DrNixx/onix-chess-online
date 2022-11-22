@@ -15,7 +15,7 @@ type GamePgnProps = {
     pgn?: string
 }
 
-const GamePgn: React.VFC<GamePgnProps> = (props) => {
+const GamePgn: React.FC<GamePgnProps> = (props) => {
     const { fen, pgn } = props;
 
     const { t } = useTranslation(['chess']);

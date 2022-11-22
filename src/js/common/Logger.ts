@@ -28,7 +28,7 @@ const pass_methods: string[] =
     "assert clear count dir dirxml exception group groupCollapsed groupEnd profile profileEnd table time timeEnd trace".split(" ");
 
 // logs are stored here so that they can be recalled as necessary.
-let logs: any[] = [];
+const logs: any[] = [];
 
 // determine if the level is visible given the current log_level.
 function is_level(level: number) {

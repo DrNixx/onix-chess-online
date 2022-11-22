@@ -4,10 +4,10 @@ export interface CopyToClipboardProps {
     message?: string;
 }
 
-var defaultMessage = 'Copy to clipboard: #{key}, Enter';
+const defaultMessage = 'Copy to clipboard: #{key}, Enter';
 
 function format(message: string) {
-    var copyKey = (/mac os x/i.test(navigator.userAgent) ? '⌘' : 'Ctrl') + '+C';
+    const copyKey = (/mac os x/i.test(navigator.userAgent) ? '⌘' : 'Ctrl') + '+C';
     return message.replace(/#{\s*key\s*}/g, copyKey);
 }
 
@@ -51,7 +51,7 @@ export function copy(text?: string, options?: CopyToClipboardProps): boolean {
         range.selectNode(mark);
         selection.addRange(range);
 
-        var successful = document.execCommand('copy');
+        const successful = document.execCommand('copy');
         if (!successful) {
             throw new Error('copy command was unsuccessful');
         }
@@ -64,7 +64,7 @@ export function copy(text?: string, options?: CopyToClipboardProps): boolean {
                 success = true;
             }
         } catch (err) {
-            message = format('message' in options ? options.message! : defaultMessage);
+            message = format(('message' in options) && !!options.message ? options.message : defaultMessage);
             window.prompt(message, text);
         }
     } finally {

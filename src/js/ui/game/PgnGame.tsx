@@ -28,7 +28,6 @@ import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {useTranslation} from "react-i18next";
-import {CircularProgress} from "@mui/material";
 
 const PgnGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
@@ -68,7 +67,7 @@ const PgnGame: React.FC<GameProps> = (props) => {
                                     <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
-                                    <Captures piece={boardCfg.piece!} />
+                                    <Captures piece={boardCfg.piece} />
                                 </div>
                             </div>
                         </TabPanel>

@@ -21,7 +21,7 @@ export class DumbMoveTable extends DumbMoveElement {
 
     private renderMoveNo = (color: Colors.BW, ply: number) => {
         if (color === Color.White) {
-            var moveNo = ((ply + 1) >> 1);
+            const moveNo = ((ply + 1) >> 1);
             return (
                 <div className="moveno" data-moveno={moveNo} key={"mn" + moveNo.toString() }>{moveNo}</div>
             );
@@ -31,7 +31,7 @@ export class DumbMoveTable extends DumbMoveElement {
     }
 
     public renderDummy = (color: Colors.BW, ply: number) => {
-        let result: JSX.Element[] = [];
+        const result: JSX.Element[] = [];
 
         if (color === Color.White) {
             result.push(this.renderMoveNo(color, ply));
@@ -55,7 +55,7 @@ export class DumbMoveTable extends DumbMoveElement {
         m: Move, 
         classes?: any
     ) => {
-        let result = [];
+        const result = [];
 
         const { state } = this;
         const { sm, moveKey } = m;
@@ -75,7 +75,7 @@ export class DumbMoveTable extends DumbMoveElement {
         };
 
         let nags: JSX.Element[] = [];
-        let evals: JSX.Element[] = [];
+        const evals: JSX.Element[] = [];
 
         if (sm.glyphs) {
             nags = sm.glyphs.map((g, i) => {
@@ -158,7 +158,7 @@ export class DumbMoveTable extends DumbMoveElement {
 
                 if (sm.eval) {
                     const ev = sm.eval;
-                    comments.push(ev.desc!);
+                    !!ev.desc && comments.push(ev.desc);
 
                     const isBest = !ev.best;
                     if (!isBest) {

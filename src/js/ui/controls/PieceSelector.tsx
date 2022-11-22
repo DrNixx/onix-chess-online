@@ -3,6 +3,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
 import {PiecesConfig} from 'onix-board-assets';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const piecesData: PiecesConfig = require('onix-board-assets/dist/js/pieces.json');
 
 type PieceSelectorProps =  SelectProps<string> & {

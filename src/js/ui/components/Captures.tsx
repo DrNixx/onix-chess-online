@@ -10,12 +10,10 @@ import {CombinedGameState} from "../../actions/CombinedGameState";
 import {GameState} from "../../actions/GameState";
 
 type CapturesProps = {
-    piece: string;
+    piece?: string;
 }
 
-const Captures: React.VFC<CapturesProps> = (props) => {
-    const {piece} = props;
-
+const Captures: React.FC<CapturesProps> = ({piece}) => {
     const game = useSelector<CombinedGameState, GameState>((state) => state.game );
     const dispatch = useDispatch();
 
@@ -27,9 +25,9 @@ const Captures: React.VFC<CapturesProps> = (props) => {
         moveToPly(toSafeInteger(e.currentTarget.dataset["ply"]));
     }
 
-    let white = [];
+    const white = [];
     let whiteWeight = 0;
-    let black = [];
+    const black = [];
     let blackWeight = 0;
 
     if (game.engine) {

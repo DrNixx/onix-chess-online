@@ -34,7 +34,7 @@ export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveP
     protected elRef: HTMLDivElement|null = null;
 
     private observer: IntersectionObserver|null = null;
-    private size: number = 0;
+    private size = 0;
     
     /**
      * constructor
@@ -55,6 +55,7 @@ export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveP
         }
 
         if (this.elRef) {
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             const that = this;
             that.observer = new IntersectionObserver(() => {
                 const newSize = that.elRef!.clientHeight;
@@ -64,7 +65,7 @@ export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveP
                 }
             });
 
-            that.observer.observe(that.elRef!);
+            that.observer.observe(this.elRef);
         }
     };
 
@@ -98,7 +99,7 @@ export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveP
     scrollElementIntoViewIfNeeded(domNode: HTMLElement|null, parent: HTMLElement|null) {
         if (domNode && parent) {
             const centerIfNeeded = true;
-            var parentComputedStyle = window.getComputedStyle(parent, null),
+            const parentComputedStyle = window.getComputedStyle(parent, null),
                 parentBorderTopWidth = parseInt(parentComputedStyle.getPropertyValue('border-top-width')),
                 parentBorderLeftWidth = parseInt(parentComputedStyle.getPropertyValue('border-left-width')),
                 overTop = domNode.offsetTop - parent.offsetTop < parent.scrollTop,

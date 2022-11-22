@@ -50,8 +50,9 @@ export class Frontend implements IModule {
     }
 
     private initPages() {
-        var parallax = null;
-        var that = this;
+        const parallax = null;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that = this;
 
         pg.queryElements('[data-pages="list-view"]').forEach((el) => {
             new ListView(el, {});
@@ -131,22 +132,22 @@ export class Frontend implements IModule {
         };
 
         const userDataMiniList = <HTMLElement[]>[].slice.call(document.querySelectorAll('[data-mini]'));
-        var userDataPopoverList = userDataMiniList.map(function (el) {
+        const userDataPopoverList = userDataMiniList.map(function (el) {
             return new Popover(el, {
                 container: "body",
                 template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
-                content: function() {
+                content: function () {
                     const $that: JQuery<Element> = jQuery(this);
-                    let popupId = $that.data('popupId') ?? nanoid(8);
-                    let popupData = $that.data('popupData');
+                    const popupId = $that.data('popupId') ?? nanoid(8);
+                    const popupData = $that.data('popupData');
                     if (popupData) {
                         return popupData;
                     } else {
                         $that.data('popupId', popupId);
                         return userNamePopup($that, $that.data("mini"), popupId);
                     }
-                }, 
-                html: true, 
+                },
+                html: true,
                 sanitize: false,
                 trigger: "click"
             });
@@ -162,7 +163,7 @@ export class Frontend implements IModule {
             })
         });
         */
-        
+
         jQuery(document).on("click", function() {
             userDataPopoverList.forEach(p => p.hide());
         });
@@ -183,7 +184,7 @@ export class Frontend implements IModule {
         });
         // }}} User badges
 
-        // {{{ Chat 
+        // {{{ Chat
         if (this.uid) {
             pg.queryElements('[data-simple-chat]').forEach((el) => {
                 const channel = el.dataset['simpleChat'];
@@ -193,7 +194,7 @@ export class Frontend implements IModule {
                 }
             });
         }
-        
+
         // }}} Chat
     }
 
@@ -201,11 +202,12 @@ export class Frontend implements IModule {
      * Позиционирует скроллинг к указанному элементу
      */
     public scrollTo(el: string | JQuery, top?: boolean): void {
-        let offset = S(el).offset()!.top - toSafeInteger(this.content.container.css("padding-top"));
+        const offset = (S(el).offset()?.top ?? 0) - toSafeInteger(this.content.container.css("padding-top"));
         jQuery("html, body").animate({ scrollTop: offset }, 700);
     }
 
     wire() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
 
         jQuery("[data-height-adjust=\"true\"]").each(function () {
@@ -223,7 +225,7 @@ export class Frontend implements IModule {
         });
 
         this.window.on('scroll', function () {
-            if (jQuery(this).scrollTop()! > 100) {
+            if ((jQuery(this).scrollTop() ?? 0) > 100) {
                 that.scrollup.fadeIn();
             } else {
                 that.scrollup.fadeOut();
@@ -260,7 +262,7 @@ export class Frontend implements IModule {
 
     private syncHeights() {
         jQuery("[data-aspect-ratio=\"true\"]").each(function () {
-            jQuery(this).height(jQuery(this).width()!);
+            jQuery(this).height(jQuery(this).width() ?? 0);
         });
 
         jQuery("[data-sync-height=\"true\"]").each(function () {

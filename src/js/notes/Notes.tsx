@@ -6,7 +6,7 @@ export interface NotesProps {
     gameid?: number;
 }
 
-export class Notes extends React.Component<NotesProps, {}> {
+export class Notes extends React.Component<NotesProps, any> {
     /**
      * constructor
      */

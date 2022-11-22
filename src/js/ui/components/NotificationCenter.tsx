@@ -65,6 +65,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
     }
 
     componentDidMount() {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         that.originalTitle = document.title;
 
@@ -101,7 +102,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
 
     private markRead = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
-        fetch(`${this.props.apiUrl}/${id}`, {method: "HEAD"}).then(() => {});
+        fetch(`${this.props.apiUrl}/${id}`, {method: "HEAD"}).then(() => true);
     };
 
     private markReadAll = (e: React.MouseEvent) => {

@@ -23,7 +23,7 @@ const iconMap: IconMapType = {
     'exotic': <span className="label me-1">Ex</span>
 };
 
-const UserRatings: React.VFC<Props> = (props) => {
+const UserRatings: React.FC<Props> = (props) => {
 
     const { user } = props;
 
@@ -34,7 +34,7 @@ const UserRatings: React.VFC<Props> = (props) => {
     useEffect(() => {
         if (!loading && user?.id) {
             const uid = toSafeInteger(user?.id);
-            let cachedPrefs = prefsCache.get(uid);
+            const cachedPrefs = prefsCache.get(uid);
             if (cachedPrefs) {
                 setPrefs(cachedPrefs);
             } else {
@@ -61,7 +61,7 @@ const UserRatings: React.VFC<Props> = (props) => {
                 }
             }
         }
-    }, [user]);
+    }, [loading, user]);
 
     return (
         <div className="row no-gutters">

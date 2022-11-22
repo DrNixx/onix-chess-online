@@ -18,7 +18,7 @@ export class DumbMoveList extends DumbMoveElement {
 
     private renderMoveNo = (color: Colors.BW, ply: number) => {
         if (color === Color.White) {
-            var moveNo = ((ply + 1) >> 1);
+            const moveNo = ((ply + 1) >> 1);
             return (
                 <span className="moveno" data-moveno={moveNo} key={"mn" + moveNo.toString() }>{moveNo}.</span>
             );
@@ -29,7 +29,7 @@ export class DumbMoveList extends DumbMoveElement {
 
     private renderMove = (x: Move, uid: string|undefined, i: number, p: string, c: Colors.BW, s: string, n?: string[], m?: string, classes?: any) => {
         const { state } = this;
-        let result = [];
+        const result = [];
         if (c === Color.White) {
             result.push(this.renderMoveNo(c, i));
         }
@@ -103,7 +103,7 @@ export class DumbMoveList extends DumbMoveElement {
 
             let i = 1;
             do {
-                const { sm, moveKey } = move!;
+                const { sm, moveKey } = move;
                 
                 let nags: string[] = [];
                 if (sm.glyphs) {
@@ -128,7 +128,7 @@ export class DumbMoveList extends DumbMoveElement {
 
                 if (sm.eval) {
                     const ev = sm.eval;
-                    comments.push(ev.desc!);
+                    !!ev.desc && comments.push(ev.desc);
 
                     const isBest = !ev.best;
                     if (!isBest) {
@@ -163,7 +163,7 @@ export class DumbMoveList extends DumbMoveElement {
                 const comment = (comments.length > 0) ? comments.join(" ") : undefined;
 
                 moves = moves.concat(
-                    this.renderMove(currentMove, move.uid, sm.ply, moveKey, sm.color!, sm.san!, nags, comment, classes)
+                    this.renderMove(currentMove, move.uid, sm.ply, moveKey, sm.color ?? Color.White, sm.san ?? '', nags, comment, classes)
                 );
 
                 move = move.Next;

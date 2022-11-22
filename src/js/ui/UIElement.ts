@@ -13,7 +13,7 @@ export class UIElement {
     }
 
     public rebuild() {
-
+        return;
     }
 
     /**

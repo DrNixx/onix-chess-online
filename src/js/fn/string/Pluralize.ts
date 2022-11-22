@@ -9,7 +9,7 @@ export const pluralize = (num: number, strOne: string, strTwo: string, strFive: 
         return strFive;
     }
 
-    var d = num % 10;
+    const d = num % 10;
     if (d === 1) {
         return strOne;
     } else if ((d < 5) && (d !== 0)) {

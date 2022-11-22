@@ -13,7 +13,7 @@ import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianG
 import { Chess as ChessEngine } from '../../../chess/Chess';
 import { Logger } from '../../../common/Logger';
 import { Colors } from '../../../chess/types/Types';
-import {AnalyseStatus, IGameAnalysis, IGameData, IUserAnalysis} from '../../../chess/types/Interfaces';
+import {IGameAnalysis, IGameData} from '../../../chess/types/Interfaces';
 import { GameActions } from '../../../actions/GameActions';
 import { Color } from '../../../chess/Color';
 import sprintf from '../../../fn/string/Sprintf';
@@ -65,12 +65,14 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
             const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
             const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
 
-            evals.push({
-                ...move.sm.eval!,
-                color: move.sm.color!,
-                ply: move.PlyCount,
-                name: name
-            });
+            if (move.sm.eval) {
+                evals.push({
+                    ...move.sm.eval,
+                    color: move.sm.color ?? Color.White,
+                    ply: move.PlyCount,
+                    name: name
+                });
+            }
 
             move = move.Next;
         }
@@ -152,7 +154,7 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
     }
 
     const anTooltipValFmt = (...params: any[]) => {
-        let obj = params[2];
+        const obj = params[2];
         return (
             <span>
                 <strong>{obj.payload.desc}</strong><br/>

@@ -5,7 +5,6 @@ import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
 import { Color } from '../../chess/Color';
 import { Colors } from '../../chess/types/Types';
 import {useTranslation} from "react-i18next";
-import Skeleton from "@mui/material/Skeleton";
 
 type WhoMoveSelectorProps =  SelectProps<Colors.BW> & {
     onChangeTurn?: (color: Colors.BW) => void;

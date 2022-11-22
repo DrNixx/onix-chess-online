@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-export var appInstance: IApplication|null = null;
+export let appInstance: IApplication|null = null;
 
 export const setAppInstance = (app: IApplication) => {
     appInstance = app;

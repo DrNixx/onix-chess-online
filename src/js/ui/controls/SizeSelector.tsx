@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
 import { BoardSize, BoardConfig } from 'onix-board-assets';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const boardsData: BoardConfig = require('onix-board-assets/dist/js/boards.json');
 
 type SizeSelectorProps = SelectProps<BoardSize> & {

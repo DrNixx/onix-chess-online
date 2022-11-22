@@ -65,7 +65,7 @@ export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position
         }
 
         if (time) {
-            const isActive = (rawData.game!.player == color);
+            const isActive = (rawData.game?.player == color);
             const timerClass = [
                 "timer",
                 { "active": isActive }

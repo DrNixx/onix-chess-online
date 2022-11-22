@@ -5,7 +5,7 @@ import { Piece } from './Piece';
 import { Position } from './Position';
 import { Square } from './Square';
 import { Color } from './Color';
-import { Castling, CastlingSide, CastlingStr } from './Castling';
+import { Castling, CastlingSide } from './Castling';
 import { turnToPly } from './Common';
 
 // Forsite to piece map
@@ -51,7 +51,7 @@ function fenToSquare(sq: number): Squares.Square
     return ((7 - Math.floor(sq / 8)) * 8 + (sq % 8)) as Squares.Square;
 }
 
-function normalizeFen(fen: string): string {
+function normalizeFen(fen?: string): string {
     if (!fen) {
         return fenEmptyBoardStd;
     }
@@ -75,7 +75,7 @@ export interface PositionDef {
     board: string;
     color: Colors.BW;
     castling: Castling;
-    castlingSet: Boolean;
+    castlingSet: boolean;
     eptarget?: Squares.Square;
     halfMoves: number;
     moveNo: number;
@@ -85,7 +85,7 @@ export class FenString {
     public static standartStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static emptyBoard = fenEmptyBoardStd;
 
-    public static trim(fen: string, flag: FenFormat) {
+    public static trim(fen?: string, flag: FenFormat = FenFormat.castlingEp) {
         fen = normalizeFen(fen);
 
         const tok = fen.split(/\s+/);
@@ -180,11 +180,11 @@ export class FenString {
         return result;
     }
 
-    public static toPosition(pos: Position, fen: string, forceCastling: boolean = true) {
+    public static toPosition(pos: Position, fen: string, forceCastling = true) {
         const def = FenString.toDefenition(fen);
         
-        let i: number = 0;
-        let sq: number = 0;
+        let i: number;
+        let sq = 0;
 
         // replace NOPIECE square with repeated "1" string
         for (i = 2; i <= 8; i++) {

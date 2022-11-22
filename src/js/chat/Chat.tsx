@@ -11,7 +11,7 @@ export interface ChatProps {
     userid?: number;
 }
 
-export class Chat extends React.Component<ChatProps, {}> {
+export class Chat extends React.Component<ChatProps, any> {
     /**
      * constructor
      */

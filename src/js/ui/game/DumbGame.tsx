@@ -61,13 +61,16 @@ const DumbGame: React.FC<PropsWithChildren<DumbGameProps>> = (props) => {
     };
 
     useEffect(() => {
-        cgRef.current = Chessground(boardRef.current!, {
-            ...generateConfig(),
-        });
+        if (boardRef.current) {
+            cgRef.current = Chessground(boardRef.current, {
+                ...generateConfig(),
+            });
 
-        cgRefCallback(cgRef.current);
+            cgRefCallback(cgRef.current);
 
-        window.addEventListener("resize", redrawBoard);
+            window.addEventListener("resize", redrawBoard);
+        }
+
 
         return () => {
             window.removeEventListener("resize", redrawBoard);

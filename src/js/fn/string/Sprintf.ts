@@ -28,7 +28,7 @@ const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 	let i = 0;
 
 	// finalFormat()
-	let doFormat = function(substring: string, valueIndex: number, flags: string, minWidth: number | string, _: any, precision?: number | string, type?: string) {
+	const doFormat = function(substring: string, valueIndex: number, flags: string, minWidth: number | string, _: any, precision?: number | string, type?: string) {
 		if (substring == '%%') return '%';
 
 		// parse flags

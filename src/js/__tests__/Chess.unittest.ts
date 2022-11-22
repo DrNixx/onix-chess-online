@@ -4173,7 +4173,7 @@ describe('Chess', function() {
         it('test clock', function() {
             const game = new Chess(dataWatch);
 
-            const raw = game.RawData;
+            // const raw = game.RawData;
             expect(isBlitzClock(game.RawData.correspondence)).toBe(false);
             expect(isCorrespondenceClock(game.RawData.correspondence)).toBe(false);
             expect(isAdvanceClock(game.RawData.correspondence)).toBe(true);
@@ -4193,7 +4193,8 @@ describe('Chess', function() {
             expect(game.StartPlyCount).toBe(13);
             expect(game.CurrentPlyCount).toBe(13);
             game.moveForward();
-            var cm = game.CurrentMove;
+
+            //const cm = game.CurrentMove;
             expect(game.CurrentPlyCount).toBe(14);
         });
 

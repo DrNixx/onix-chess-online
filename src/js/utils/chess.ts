@@ -7,8 +7,8 @@ export function getLegalMovesMap(engine: Chess) {
     const mlist = engine.CurrentPos.generateMoves();
 
     const dests: cg.Dests = mlist.reduce((map, m) => {
-        const from = Square.name(m.from!) as cg.Key;
-        const to = Square.name(m.to!) as cg.Key;
+        const from = Square.name(m.from) as cg.Key;
+        const to = Square.name(m.to) as cg.Key;
 
         const toa: cg.Key[] = map.get(from) ?? [];
         toa.push(to);

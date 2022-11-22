@@ -12,7 +12,7 @@ const np = Piece.None;
  * Move data.
  */
 export class SimpleMove {
-    public pieceNum: number = 0;
+    public pieceNum = 0;
     public movingPiece?: Pieces.Piece = np;
     public from?: Squares.Square = ns;
     public to?: Squares.Square = ns;
@@ -27,13 +27,13 @@ export class SimpleMove {
 
     public ply = 0;
     public san?: string;
-    public time: number = 0;
+    public time = 0;
     public comments?: string;
     public eval?: EvalItem;
     public judgments?: IJudgment[];
     public glyphs?: IGlyph[];
     
-    public permanent: boolean = true;
+    public permanent = true;
 
     public toString(): string {
         return this.san || "";

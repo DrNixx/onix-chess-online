@@ -12,13 +12,13 @@ export interface ConnectionInfoProps  {
 const names = ['Offline', 'Connect', 'Online', 'Offline'];
 const classes = ['gray', 'yellow', 'green', 'red'];
 
-export class ConnectionInfo extends React.Component<ConnectionInfoProps, {}> {
+export class ConnectionInfo extends React.Component<ConnectionInfoProps, any> {
     constructor(props: ConnectionInfoProps) {
         super(props);
     }
 
     onClick = (e: React.MouseEvent) => {
-
+        return;
     }
 
     render() {

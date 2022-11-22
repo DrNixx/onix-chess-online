@@ -1,6 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const grep = (elems: any[], callback: Function, invert?: boolean) => {
     let callbackInverse: boolean;
-    let matches: any[] = [];
+    const matches: any[] = [];
     let i = 0;
     const length = elems.length;
     const callbackExpect = !invert;

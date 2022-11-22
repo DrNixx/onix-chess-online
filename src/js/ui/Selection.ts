@@ -3,14 +3,16 @@ export class Selection {
         const active = document.activeElement;
         const selection = document.getSelection();
         if (!active || !selection || !selection.rangeCount) {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
             return function () {};
         }
 
         const ranges: Range[] = [];
-        for (var i = 0; i < selection.rangeCount; i++) {
+        for (let i = 0; i < selection.rangeCount; i++) {
             ranges.push(selection.getRangeAt(i));
         }
 
+        // eslint-disable-next-line @typescript-eslint/ban-types
         let focus: Function | undefined;
         switch (active.tagName.toUpperCase()) { // .toUpperCase handles XHTML
             case 'INPUT':

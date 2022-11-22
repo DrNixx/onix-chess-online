@@ -11,6 +11,7 @@ let rm_callback: ((this: Window, ev: MessageEvent<any>) => any) | undefined = un
 
 const _postMessage = 'postMessage';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 let p_receiveMessage: Function;
 
 const has_postMessage = !!window[_postMessage];
@@ -28,7 +29,7 @@ export const postMessage = function(message: any, target_url: string, target?: W
     if (has_postMessage) {
         // The browser supports window.postMessage, so call it with a targetOrigin
         // set appropriately, based on the target_url parameter.
-        var url = target_url.replace(/([^:]+:\/\/[^\/]+).*/, '$1');
+        const url = target_url.replace(/([^:]+:\/\/[^\/]+).*/, '$1');
         target[_postMessage](message, url);
     } else if (target_url) {
         // The browser does not support window.postMessage, so set the location
@@ -39,6 +40,7 @@ export const postMessage = function(message: any, target_url: string, target?: W
     }
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const receiveMessage = p_receiveMessage = function(callback: Function, source_origin: string|Function, delay: number) {
     if (has_postMessage) {
         // Since the browser supports window.postMessage, the callback will be
@@ -76,7 +78,7 @@ export const receiveMessage = p_receiveMessage = function(callback: Function, so
             saved_hash = document.location.hash;
             delay = typeof source_origin === 'number' ? source_origin : typeof delay === 'number' ? delay : 100;
             listenerLoop = window.setInterval(function() {
-                var hash = document.location.hash, re = /^#?\d+&/;
+                const hash = document.location.hash, re = /^#?\d+&/;
                 if (hash !== last_hash && re.test(hash)) {
                     last_hash = hash;
                     callback({ data: hash.replace(re, '') });

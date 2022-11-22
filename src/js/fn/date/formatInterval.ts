@@ -1,7 +1,7 @@
 import i18next, {TFunctionResult} from 'i18next';
 import { DateInterval, normalize } from './DateInterval';
 
-export const formatInterval = (interval: DateInterval, parts: number = 0): string => {
+export const formatInterval = (interval: DateInterval, parts = 0): string => {
     interval = normalize(interval);
 
     const format: (TFunctionResult|boolean)[] = [];

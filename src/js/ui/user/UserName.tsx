@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect} from 'react';
+import React, { PropsWithChildren } from 'react';
 import clsx from "clsx";
 import isString from "lodash/isString";
 import { Logger } from '../../common/Logger';

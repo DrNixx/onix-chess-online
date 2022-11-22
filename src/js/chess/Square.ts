@@ -324,8 +324,8 @@ export namespace Square {
         return ns;
     }
 
-    export function name(s: Squares.Square) {
-        return notation_Pos2Note(s);
+    export function name(s?: Squares.Square) {
+        return !!s ? notation_Pos2Note(s) : '';
     }
 
     /**

@@ -3,8 +3,8 @@ import { Logger } from '../common/Logger';
 import { IEventArgs } from '../events/IEventArgs';
 import { stdDeviation } from '../fn/number/StdDeviation';
 
-var REQUEST_PING_EVERY = 5;
-var PING_DATA_POINTS = 100;
+const REQUEST_PING_EVERY = 5;
+const PING_DATA_POINTS = 100;
 
 export class LatencyResolver {
     private tryCount: number;
@@ -30,12 +30,12 @@ export class LatencyResolver {
     }
 
     private updateLatency(): void {
-        var validItemCount = 0,
-            totalValue = 0,
-            standardDeviation = stdDeviation(this.pingData),
+        let validItemCount = 0,
+            totalValue = 0;
+        const standardDeviation = stdDeviation(this.pingData),
             baseAverage = mean(this.pingData);
 
-        for (var i = 0; i < this.pingData.length; i++) {
+        for (let i = 0; i < this.pingData.length; i++) {
             if (Math.abs(this.pingData[i] - baseAverage) <= standardDeviation) {
                 validItemCount++;
                 totalValue += this.pingData[i];

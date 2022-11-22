@@ -7,7 +7,7 @@ const defaultTheme = createTheme();
 type ColorPair = [string, string];
 type IOSSwitchProps = Omit<SwitchProps, "focusVisibleClassName" | "disableRipple">
 
-const IOSSwitch: React.VFC<IOSSwitchProps> = (props) => {
+const IOSSwitch: React.FC<IOSSwitchProps> = (props) => {
     const { sx, ...other } = props;
 
     const getColors = useCallback(() => {

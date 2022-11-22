@@ -1,7 +1,7 @@
 
 class TtlMemCacheEntry<K, V> {
     public value: V;
-    public expires: number = Infinity;
+    public expires = Infinity;
 
     constructor(value: V, ttl: number) {
         this.value = value;
@@ -22,7 +22,7 @@ export class MemCache<K, V> {
 
     public ttl = 5 * 60 * 1000;
 
-    public stale: boolean = false;
+    public stale = false;
 
     constructor() {
         this.store = new Map<K, TtlMemCacheEntry<K, V>>();

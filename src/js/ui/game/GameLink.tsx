@@ -10,7 +10,7 @@ type Props = {
     withColor?: boolean
 };
 
-const GameLink: React.VFC<Props> = (props) => {
+const GameLink: React.FC<Props> = (props) => {
     const { game, withColor } = props;
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -34,13 +34,13 @@ const GameLink: React.VFC<Props> = (props) => {
 
     return (
         <>
-            <a href={`/${game.game!.id}`}
+            <a href={`/${game.game?.id}`}
                aria-owns={open ? popupId : undefined}
                aria-haspopup="true"
                onMouseEnter={handlePopoverOpen}
                onMouseLeave={handlePopoverClose}>
-                {withColor && renderColorIcon(game.game!)}
-                <span className="p-l-5">{ game.game!.event }</span>
+                {withColor && !!game.game && renderColorIcon(game.game)}
+                <span className="p-l-5">{ game.game?.event }</span>
             </a>
             <Popover
                 id={popupId}
