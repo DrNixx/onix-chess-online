@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
-import {IUser} from '../../app';
 import {IChessPerfs, PerfNameType} from '../../chess/types/Interfaces';
-import {appInstance} from '../../app/IApplication';
 import {Logger} from '../../common/Logger';
 import prefsCache from '../../app/prefsCache';
+import {IUser} from "../../models/user/IUser";
+import {apiGet} from "../../api/Api";
 
 type Props = {
     user: IUser;
@@ -38,27 +38,18 @@ const UserRatings: React.FC<Props> = (props) => {
             if (cachedPrefs) {
                 setPrefs(cachedPrefs);
             } else {
-                if (appInstance) {
-                    setLoading(true);
-                    fetch(appInstance.getApiUrl(`/user/prefs/${uid}`), {mode: "cors"})
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw Error(response.statusText);
-                            }
-                            // Read the response as json.
-                            return response.json();
-                        })
-                        .then((prefsData) => {
-                            if (prefsData) {
-                                setLoading(false);
-                                setPrefs(prefsData);
-                                prefsCache.set(uid, prefsData);
-                            }
-                        })
-                        .catch(function(error) {
-                            Logger.error('Looks like there was a problem when reading user data: \n', error);
-                        });
-                }
+                setLoading(true);
+                apiGet(`/user/prefs/${uid}`)
+                    .then((prefsData) => {
+                        if (prefsData) {
+                            setLoading(false);
+                            setPrefs(prefsData);
+                            prefsCache.set(uid, prefsData);
+                        }
+                    })
+                    .catch(function(error) {
+                        Logger.error('Looks like there was a problem when reading user data: \n', error);
+                    });
             }
         }
     }, [loading, user]);

@@ -1,4 +1,4 @@
-import { IUser } from '../app/IUser';
+import {IUser} from "../models/user/IUser";
 
 export interface INotify {
     id: string,

@@ -11,16 +11,16 @@ import Popover from "@mui/material/Popover";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from '@mui/material/Stack';
 
-import {IUser} from "../../app";
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import Avatar from "./Avatar";
 import userCache from "../../app/userCache";
 import {Logger} from "../../common/Logger";
-import {appInstance} from "../../app/IApplication";
 import UserRatings from "./UserRatings";
 import InfoBox from "./InfoBox";
 import UserTitle from "./UserTitle";
 import UserNameElement from "./UserNameElement";
+import {IUser} from "../../models/user/IUser";
+import {apiGet} from "../../api/Api";
 
 type Props = {
     language?: string;
@@ -53,27 +53,18 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
             if (cachedUser) {
                 setUser(cachedUser);
             } else {
-                if (appInstance) {
-                    setLoading(true);
-                    fetch(appInstance.getApiUrl(`/user/mini/${uid}`), {mode: "cors"})
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw Error(response.statusText);
-                            }
-                            // Read the response as json.
-                            return response.json();
-                        })
-                        .then((userData) => {
-                            if (userData) {
-                                setLoading(false);
-                                setUser(userData);
-                                userCache.set(uid, userData);
-                            }
-                        })
-                        .catch(function(error) {
-                            Logger.error('Looks like there was a problem when reading user data: \n', error);
-                        });
-                }
+                setLoading(true);
+                apiGet(`/user/mini/${uid}`)
+                    .then((userData) => {
+                        if (userData) {
+                            setLoading(false);
+                            setUser(userData);
+                            userCache.set(uid, userData);
+                        }
+                    })
+                    .catch(function(error) {
+                        Logger.error('Looks like there was a problem when reading user data: \n', error);
+                    });
             }
         }
     }, [loading, propsUser, userId]);

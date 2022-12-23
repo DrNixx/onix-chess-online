@@ -1,6 +1,6 @@
 import React, {PropsWithChildren} from "react";
-import {IUser} from "../../app";
 import Box from "@mui/material/Box";
+import {IUser} from "../../models/user/IUser";
 
 type UserNameElementProps = {
     user: IUser;

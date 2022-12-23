@@ -1,68 +1,36 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Logger } from '../common/Logger';
-import { IChatMessage } from './Interfaces';
+import {apiPost} from "../api/Api";
 
-export interface ChatInputProps {
+type Props = {
     channel: string;
     apiUrl: string;
-}
+};
 
-interface ChatInputState {
-    message?: string;
-}
+const ChatInput: React.FC<Props> = ({ channel, apiUrl}) =>  {
 
-export class ChatInput extends React.Component<ChatInputProps, ChatInputState> {
-    /**
-     * constructor
-     */
-    constructor(props: ChatInputProps) {
-        super(props);
+    const [message, setMessage] = useState("");
 
-        this.state = {
-            message: ""
-        };
-    }
-
-    private msgChange = (e: React.ChangeEvent) => {
+    const msgChange = (e: React.ChangeEvent) => {
         const val = (e.target as HTMLInputElement).value;
-
-        this.setState({
-            ...this.state,
-            message: val
-        });
+        setMessage(val);
     };
 
-    private keyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            this.doSend();
-        }
+    const clearMessage = () => {
+        setMessage("");
     };
 
-    private clearMessage = () => {
-        const { message, ...other } = this.state;
-        this.setState({
-            ...other,
-            message: ""
-        });
-    };
-
-    private doSend = (e?: React.MouseEvent) => {
-        const { props, state, clearMessage } = this;
-
+    const doSend = (e?: React.MouseEvent) => {
         e && e.preventDefault();
 
-        if (state.message) {
+        if (message) {
             const data = {
-                channel: props.channel,
-                message: state.message
+                channel: channel,
+                message: message
             };
-    
-            fetch(props.apiUrl, {method: "POST", mode: "cors", body: JSON.stringify(data)})
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw Error(response.statusText);
-                    }
 
+            apiPost(apiUrl, data)
+                .then(() => {
                     clearMessage();
                 })
                 .catch(function(error) {
@@ -71,20 +39,25 @@ export class ChatInput extends React.Component<ChatInputProps, ChatInputState> {
         }
     };
 
-    render() {
-        const { message } = this.state;
-        return (
-            <div className="chat-controls b-t b-grey bg-white clearfix px-2">
-                <div className="d-flex align-items-center">
-                    <div className="flex-grow-1 no-padding">
-                        <label className="sr-only">Message</label>
-                        <input type="text" className="form-control chat-input" value={message} onKeyPress={this.keyPress} onChange={this.msgChange} />
-                    </div>
-                    <div className="link text-color ms-2 ps-2 b-l b-grey">
-                        <a href="#" className="link text-color" onClick={this.doSend}><i className="pg-icon">send</i></a>
-                    </div>
+    const keyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            doSend();
+        }
+    };
+
+    return (
+        <div className="chat-controls b-t b-grey bg-white clearfix px-2">
+            <div className="d-flex align-items-center">
+                <div className="flex-grow-1 no-padding">
+                    <label className="sr-only">Message</label>
+                    <input type="text" className="form-control chat-input" value={message} onKeyDown={keyPress} onChange={msgChange} />
+                </div>
+                <div className="link text-color ms-2 ps-2 b-l b-grey">
+                    <a href="#" className="link text-color" onClick={doSend}><i className="pg-icon">send</i></a>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }
+
+export default ChatInput;

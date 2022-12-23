@@ -1,5 +1,5 @@
-import { IUser } from '../../app';
 import { Colors } from './Types';
+import {IUser} from "../../models/user/IUser";
 
 export interface IChessPref {
     games?: number;

@@ -1,20 +1,18 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import { createRoot } from 'react-dom/client';
-import { SnackbarProvider } from 'notistack';
+import {useSnackbar, SnackbarProvider} from "notistack";
 import toSafeInteger from 'lodash/toSafeInteger';
-import { Centrifuge } from 'centrifuge';
 
 import { Logger } from '../common/Logger';
 import { IModule } from './IModule';
-import { IApplication, setAppInstance } from './IApplication';
-import { ConnectionStatus } from '../net/ConnectionStatus';
 import serviceWorker from '../push/ServiceWorker';
-import { ConnectionInfo } from '../ui/components/ConnectionInfo';
+import ConnectionInfo from '../ui/components/ConnectionInfo';
 import { Frontend } from '../ui/Frontend';
-import { IStreamMessage } from '../net/IStreamMessage';
 import {init as initI18N} from '../i18n/i18Init';
+import {setCentrifugeConfig, useCentrifuge} from "../hooks/useCentrifuge";
+import {setApiRoot} from "../api/Api";
 
-export interface AppProps {
+type Props = {
     locale?: string,
     uid?: number | string,
     channel?: string,
@@ -25,167 +23,118 @@ export interface AppProps {
     ui?: boolean,
     sw?: boolean,
     modules?: IModule[],
-}
+};
 
-export interface AppState {
-    status: ConnectionStatus,
-    pmsg: number,
-    moves: number,
-}
+const defaultProps = {
+    locale: 'en-US',
+    wsHost: 'ws://localhost:8000',
+    apiRoot: 'https://www.chess-online.com/api',
+    ui: true,
+    sw: false,
+    modules: [],
+};
 
-export class App extends React.Component<AppProps, AppState> implements IApplication {
-    public static defaultProps: AppProps = {
-        locale: 'en-US',
-        wsHost: 'ws://localhost:8000',
-        apiRoot: 'https://www.chess-online.com/api',
-        ui: true,
-        sw: false,
-        modules: [],
-    };
+const ChessApplication: React.FC<Props> = (propsIn) => {
+    const props = {...defaultProps, ...propsIn};
+    const { enqueueSnackbar } = useSnackbar();
+    const { uid, locale, apiRoot, wsHost, sw, token, channel, ui, modules } = props;
 
-    public stream: Centrifuge|null = null;
+    const [connected, setConnected] = useState(false);
 
-    public ui?: Frontend;
+    setCentrifugeConfig(wsHost, {token: token ?? ''});
+    const [centrifuge] = useCentrifuge();
 
-    private apiRoot: string;
+    setApiRoot(apiRoot);
 
-    constructor(props: AppProps) {
-        super(props);
-
-        this.apiRoot = props.apiRoot ?? App.defaultProps.apiRoot!;
-        
-        this.state = {
-            status: ConnectionStatus.Uninitialized,
-            pmsg: 0,
-            moves: 0,
-        };
-    }
-
-    componentDidMount() {
-        const { locale, ui, wsHost, token, secret, channel, modules, uid } = this.props;
-
-        initI18N(locale!).then(() => {
+    useEffect(() => {
+        initI18N(locale).then(() => {
             if (ui) {
-                this.ui = new Frontend(uid);
-                this.ui.init();
+                const uiInstance = new Frontend(uid);
+                uiInstance.init();
             }
 
-            modules!.forEach((value, index) => {
+            modules.forEach((value) => {
                 value.init();
             });
         });
+    }, [locale, modules, ui, uid]);
 
-        if (token) {
-            this.wsConnect();
+    useEffect(() => {
+        if (centrifuge) {
+            centrifuge.on('connected', (context) => {
+                Logger.debug('connect', context);
+                setConnected(true);
+            });
+
+            centrifuge.on('disconnected', (context) => {
+                Logger.debug('disconnect', context);
+                setConnected(false);
+            });
+
+            centrifuge.on('publication', function(ctx) {
+                const channel = ctx.channel;
+                const payload = JSON.stringify(ctx.data);
+                Logger.debug('Publication from server-side channel', channel, payload);
+
+                if (ctx?.data?.t == "notify") {
+                    if (ctx?.data?.c == "telegram") {
+                        if (window.location.href.indexOf('account/profile') !== -1) {
+                            window.location.reload();
+                        }
+
+                        return;
+                    }
+                }
+            });
+
+            if (channel) {
+                //this.stream.subscribe(channel, this.onAlertMessage);
+            }
+
+            //this.stream.subscribe("$chat:2-3", function(messageCtx) {
+            //    Logger.debug(messageCtx);
+            //});
+
+            centrifuge.connect();
         }
-        
-        if (this.props.sw) {
+
+        return function cleanup() {
+            /*
+            if (stream.current) {
+                stream.current.removeAllListeners();
+                stream.current.disconnect();
+                stream.current = null;
+            }
+             */
+        };
+    }, [centrifuge, channel]);
+
+    useEffect(() => {
+        if (sw) {
             serviceWorker();
         }
+    }, [sw]);
 
-        setAppInstance(this);
+    /*
+    const getUserId = (): number => {
+        return toSafeInteger(uid);
     }
 
-    componentDidUpdate() {
-
+    const getApiUrl = (urlPart: string): string => {
+        return apiRoot + urlPart;
     }
+    */
 
-    componentWillUnmount() {
-        if (this.stream) {
-            this.stream.removeAllListeners();
-            this.stream.disconnect();
-        }
-    }
-
-    private wsConnect = () => {
-        const { wsHost, token, secret, channel, modules } = this.props;
-
-        this.stream = new Centrifuge(`${wsHost}/connection/websocket`, {
-            token: token!
-        });
-
-        this.stream.on('connected', (context) => {
-            Logger.debug('connect', context);
-            // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
-        });
-
-        this.stream.on('disconnected', (context) => {
-            Logger.debug('disconnect', context);
-            // this.stream.connectionStatus$.subscribe(this.onConnectionStatusChange);
-        });
-
-        this.stream.on('publication', function(ctx) {
-            const channel = ctx.channel;
-            const payload = JSON.stringify(ctx.data);
-            Logger.debug('Publication from server-side channel', channel, payload);
-        });
-
-        if (channel) {
-            // Allocate Subscription to a channel.
-            const sub = this.stream.newSubscription(channel);
-            sub.on('publication', (ctx) => {
-                this.onAlertMessage(ctx.data);
-            });
-        }
-
-        //this.stream.subscribe("$chat:2-3", function(messageCtx) {
-        //    Logger.debug(messageCtx);
-        //});
-
-        this.stream.connect();
-    };
-
-    public requestSubscription() {
-        if ('Notification' in window) {
-            Notification.requestPermission()
-                .then((p) => {
-                    if (p === 'granted') {
-                        serviceWorker();
-                    }
-                })
-                .catch(function(err) {
-                    console.error(err);
-                });
-        }
-    }
-
-    onAlertMessage = (msg: IStreamMessage) => {
-        Logger.debug("on alert message", msg);
-    };
-
-    onConnectionStatusChange = (e: ConnectionStatus) => {
-        const { state } = this;
-        Logger.debug("Connection status changed", e);
-        this.setState({
-            ...state,
-            status: e
-
-        });
-
-        this.forceUpdate();
-    };
-
-    public getUserId(): number {
-        return toSafeInteger(this.props.uid);
-    }
-
-    public getApiUrl(urlPart: string): string {
-        return this.apiRoot + urlPart;
-    }
-
-    render() {
-        const { status } = this.state;
-        return (
-            <Suspense fallback="loading...">
-                <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
-                    <ConnectionInfo status={status} />
-                </SnackbarProvider>
-            </Suspense>
-        );
-    }
+    return (
+        <Suspense fallback="loading...">
+            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
+                <ConnectionInfo online={connected} />
+            </SnackbarProvider>
+        </Suspense>
+    );
 }
 
-export const ChessApp = (props: AppProps, container: HTMLElement) => {
+export const ChessApp = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
-    root.render(React.createElement(App, props));
+    root.render(React.createElement(ChessApplication, props));
 };

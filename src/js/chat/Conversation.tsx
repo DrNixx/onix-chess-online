@@ -1,84 +1,62 @@
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Scrollbar from "react-scrollbars-custom";
 import { dateToAgo } from '../fn/date/DateToAgo';
 import { IChatMessage } from './Interfaces';
-import { IUser } from '../app';
 import { Logger } from '../common/Logger';
-import { appInstance } from '../app/IApplication';
 import UserBadge from "../ui/user/UserBadge";
+import {IUser} from "../models/user/IUser";
+import {useRoom} from "../hooks/useRoom";
+import {CHAT, IChatContext} from "../models/stream/IStreamMessage";
+import {apiGet} from "../api/Api";
 
-export interface ConversationProps {
+type Props = {
     channel: string;
     messages: IChatMessage[];
     userid?: number;
     apiUrl: string;
-}
+};
 
-export interface ConversationState {
-    messages: IChatMessage[];
-}
+const Conversation: React.FC<Props> = (props) => {
 
-export class Conversation extends React.Component<ConversationProps, ConversationState> {
-    protected elRef: HTMLDivElement|null = null;
-    private size = 0;
-    private observer: IntersectionObserver|null = null;
-    protected scrollerRef: HTMLDivElement|null = null;
+    const { channel } = props;
 
-    /**
-     * constructor
-     */
-    constructor(props: ConversationProps) {
-        super(props);
+    const [messages, setMessages] = useState(props.messages);
+    const elRef = useRef<HTMLDivElement|null>(null);
+    const [size, setSize] = useState(0);
+    const scrollerRef = useRef<HTMLDivElement|null>(null);
 
-        this.state = {
-            messages: props.messages
-        };
-    }
+    const [lastMessage] = useRoom(channel);
 
-    componentDidMount() {
-        const { channel } = this.props;
-        this.fetchConversation();
+    const observer = useMemo<IntersectionObserver | null>(() => {
+        if (observer !== null) {
+            observer.disconnect();
+        }
 
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that = this;
-        if (appInstance) {
-            const { stream } = appInstance;
-            if (stream) {
-                const sub = stream.newSubscription(channel);
-                sub.on('publication', function(ctx: any) {
-                    if (ctx?.data) {
-                        const { messages, ...other } = that.state;
-
-                        const response: IChatMessage[] = ctx?.data;
-                        response.forEach((m) => messages.push(m));
-
-                        that.setState({
-                            ...other,
-                            messages: messages
-                        });
+        let result = null;
+        if (elRef.current) {
+            const ref = elRef.current;
+            result = new IntersectionObserver(() => {
+                const newSize = ref.clientHeight;
+                if (newSize !== size) {
+                    setSize(newSize);
+                    if (scrollerRef.current) {
+                        const div = scrollerRef.current;
+                        div.scrollTop = div.scrollHeight - div.clientHeight;
                     }
-                });
-            }
+                }
+            });
+
+            result.observe(elRef.current);
         }
-    }
 
-    componentWillUnmount() {
-        if (this.observer !== null) {
-            this.observer.disconnect();
-            this.observer = null;
-        }
-    }
+        return result;
+    }, [size]);
 
-    componentDidUpdate() {
-        this.scrollHandle();
-    }
-
-    private scrollHandle = () => {
-        const { messages } = this.state;
+    const scrollHandle = useCallback(() => {
         if (messages.length > 0) {
             const last = messages[messages.length - 1];
             const msg = document.getElementById(last.id);
-            const div = this.scrollerRef;
+            const div = scrollerRef.current;
             if (msg && div) {
                 if (msg.offsetTop < div.offsetHeight) {
                     div.scrollTop = div.scrollHeight - div.clientHeight;
@@ -92,35 +70,9 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
                 }
             }
         }
-    };
+    }, [messages]);
 
-    protected setElRef = (el: HTMLDivElement|null) => {
-        this.elRef = el;
-        if (this.observer !== null) {
-            this.observer.disconnect();
-            this.observer = null;
-        }
-
-        if (this.elRef) {
-            // eslint-disable-next-line @typescript-eslint/no-this-alias
-            const that = this;
-            that.observer = new IntersectionObserver(() => {
-                const newSize = that.elRef!.clientHeight;
-                if (newSize !== that.size) {
-                    that.size = newSize;
-                    if (that.scrollerRef) {
-                        const div = that.scrollerRef;
-                        div.scrollTop = div.scrollHeight - div.clientHeight;
-                    }
-                }
-            });
-
-            that.observer.observe(that.elRef!);
-        }
-    };
-
-    private fetchConversation = (offset?: number) => {
-        const { props, applyMessages} = this;
+    const fetchConversation = (offset?: number) => {
         const { apiUrl, channel } = props;
 
         let url = `${apiUrl}/@` + btoa(channel);
@@ -129,31 +81,37 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
             url += `?offset=${offset}`;
         }
 
-        fetch(url, {method: "GET", mode: "cors"})
-                .then(function(response) {
-                    if (!response.ok) {
-                        throw Error(response.statusText);
-                    }
-
-                    return response.json();
-                })
-                .then(function(responseAsJson) {
-                    applyMessages(responseAsJson);
-                })
-                .catch(function(error) {
-                    Logger.error('Looks like there was a problem when reading forums: \n', error);
-                });
+        apiGet<IChatContext>(url)
+            .then((data) => {
+                setMessages([...messages, ...data]);
+            })
+            .catch(function(error) {
+                Logger.error('Looks like there was a problem when reading forums: \n', error);
+            });
     };
 
-    private applyMessages = (response: IChatMessage[]) => {
-        const { messages, ...other } = this.state;
-        this.setState({
-            ...other,
-            messages: response
-        }, () => this.scrollHandle() );
-    };
+    useEffect(() => {
+        fetchConversation();
 
-    private myMessage = (message: IChatMessage) => {
+        return function cleanup() {
+            if (observer !== null) {
+                observer.disconnect();
+            }
+        };
+    }, [observer]);
+
+    useEffect(() => {
+        if (lastMessage?.t == CHAT) {
+            const response = Array.isArray(lastMessage.ctx) ? lastMessage.ctx : [lastMessage.ctx];
+            setMessages([...messages, ...response]);
+        }
+    }, [lastMessage]);
+
+    useEffect(() => {
+        scrollHandle();
+    }, [messages, scrollHandle]);
+
+    const myMessage = (message: IChatMessage) => {
         return (
             <div id={message.id} key={message.id} className="message clearfix">
                     <div className="chat-bubble from-me">
@@ -164,7 +122,7 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         );
     };
 
-    private themUser = (user: IUser) => {
+    const themUser = (user: IUser) => {
         return (
             <div className="message-header">
                 <UserBadge user={user} size="tiny" compact={true} popover={false} />
@@ -172,10 +130,10 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         );
     };
 
-    private themMessage = (message: IChatMessage, withUser?: boolean) => {
+    const themMessage = (message: IChatMessage, withUser?: boolean) => {
         return (
             <div id={message.id} key={message.id} className="message clearfix">
-                {withUser ? this.themUser(message.sender) : null}
+                {withUser ? themUser(message.sender) : null}
                 <div className="chat-bubble from-them">
                     <div dangerouslySetInnerHTML={ {__html: message.text} } />
                     <div className="time">{ dateToAgo(new Date(message.date)) }</div>
@@ -184,10 +142,8 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         );
     };
 
-    private renderMessages = () => {
-        const { props, state, myMessage, themMessage } = this;
+    const renderMessages = () => {
         const { userid } = props;
-        const { messages } = state;
         const result: JSX.Element[] = [];
 
         let prevuid: string | number | undefined = -1;
@@ -216,13 +172,13 @@ export class Conversation extends React.Component<ConversationProps, Conversatio
         }, result);
     };
 
-    render() {
-        return (
-            <div className="chat-inner chat-conversation flex-grow-1" ref={(el) => this.setElRef(el)}>
-                <Scrollbar trackYProps={{style: {width: 5}}} scrollerProps={{elementRef: (el) => this.scrollerRef = el}}>
-                    {this.renderMessages()}
-                </Scrollbar>
-            </div>
-        );
-    }
-}
+    return (
+        <div className="chat-inner chat-conversation flex-grow-1" ref={elRef}>
+            <Scrollbar trackYProps={{style: {width: 5}}} scrollerProps={{elementRef: (el) => scrollerRef.current = el}}>
+                {renderMessages()}
+            </Scrollbar>
+        </div>
+    );
+};
+
+export default Conversation;

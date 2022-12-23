@@ -50,15 +50,14 @@ import GamePgn from '../components/GamePgn';
 import {FenString} from '../../chess/FenString';
 import {Chat} from '../../chat/Chat';
 import {Logger} from '../../common/Logger';
-import {appInstance} from '../../app/IApplication';
-import {IGameMessage} from '../../chess/types/Interfaces';
 import {GameState} from "../../actions/GameState";
 import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {getLegalMovesMap} from "../../utils/chess";
 import {useTranslation} from "react-i18next";
-import {Subscription} from "centrifuge";
+import {useRoom} from "../../hooks/useRoom";
+import {GAME} from "../../models/stream/IStreamMessage";
 
 enum BoardMode {
     Play = 0,
@@ -94,6 +93,8 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     const [confirmResign, setConfirmResign] = useState(false);
     const [manualFrom, setManualFrom] = useState<string|undefined>();
     const [manualTo, setManualTo] = useState<string|undefined>();
+
+    const [lastMessage, onlineUsers] = useRoom(`game:${game.engine.GameId}`);
 
     const isPlay = useCallback(() => {
         return mode === BoardMode.Play;
@@ -158,13 +159,16 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
         }
     };
 
-    const gameMessage = (msg: IGameMessage) => {
-        if (msg.c == "delete") {
-            window.location.href = "/";
-        } else if (msg.c == "reload") {
-            window.location.reload();
+    useEffect(() => {
+        if (lastMessage?.t == GAME) {
+            if (lastMessage?.ctx.c == "delete") {
+                window.location.href = "/";
+            } else if (lastMessage?.ctx.c == "reload") {
+                window.location.reload();
+            }
         }
-    };
+
+    }, [lastMessage]);
 
     const validFrom = (sq: Squares.Square) => {
         const { engine } = game;
@@ -836,27 +840,6 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
             </div>
         );
     };
-
-    useEffect(() => {
-        let sub: Subscription | null = null;
-        const id = game.engine.GameId;
-        if (appInstance && id) {
-            const { stream } = appInstance;
-            const channel = `game:${id}`;
-            if (stream) {
-                sub = stream.newSubscription(channel);
-                sub.on('publication', function(ctx: any) {
-                    if (ctx?.data) {
-                        gameMessage(ctx?.data as IGameMessage);
-                    }
-                });
-            }
-        }
-
-        return () => {
-            sub && sub.unsubscribe();
-        };
-    }, []);
 
     return (
         <DumbGame

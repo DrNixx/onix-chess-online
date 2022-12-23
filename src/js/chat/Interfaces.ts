@@ -1,4 +1,4 @@
-import { IUser } from "../app";
+import {IUser} from "../models/user/IUser";
 
 export interface IChatMessage {
     id: string;

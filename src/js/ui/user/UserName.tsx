@@ -4,7 +4,7 @@ import isString from "lodash/isString";
 import { Logger } from '../../common/Logger';
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import Avatar from "./Avatar";
-import { IUser } from '../../app';
+import {IUser} from "../../models/user/IUser";
 
 export interface IUserNameProps {
     language?: string;

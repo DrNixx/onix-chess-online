@@ -4,8 +4,8 @@ import {Md5} from 'ts-md5';
 import BaseAvatar from '@mui/material/Avatar';
 import Skeleton from "@mui/material/Skeleton";
 import PersonIcon from "@mui/icons-material/Person";
-import { IUser } from '../../app';
 import { AvatarSizeType } from './Interfaces';
+import {IUser} from "../../models/user/IUser";
 
 type Props = {
     user?: IUser,

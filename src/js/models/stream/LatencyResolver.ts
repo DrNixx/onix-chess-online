@@ -1,7 +1,7 @@
 import mean from 'lodash/mean';
-import { Logger } from '../common/Logger';
-import { IEventArgs } from '../events/IEventArgs';
-import { stdDeviation } from '../fn/number/StdDeviation';
+import {IEventArgs} from "../../events";
+import {stdDeviation} from "../../fn/number";
+import {Logger} from "../../common/Logger";
 
 const REQUEST_PING_EVERY = 5;
 const PING_DATA_POINTS = 100;

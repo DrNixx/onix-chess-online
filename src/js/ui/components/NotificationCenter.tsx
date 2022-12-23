@@ -5,7 +5,6 @@ import clsx from "clsx";
 import Tooltip from '@mui/material/Tooltip';
 
 import { notify } from 'pages-ts';
-import { appInstance } from '../../app/IApplication';
 import Avatar from '../user/Avatar';
 import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';

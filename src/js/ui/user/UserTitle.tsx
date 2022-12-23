@@ -1,6 +1,6 @@
-import {IUser} from "../../app";
 import React from "react";
 import isString from "lodash/isString";
+import {IUser} from "../../models/user/IUser";
 
 type UserTitleProps = {
     title?: IUser['title']
