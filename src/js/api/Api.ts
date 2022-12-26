@@ -43,6 +43,9 @@ export function apiPatch<T = any>(url: string, data?: any) {
     return api<T>(getApiUrl(url), data, 'PATCH');
 }
 
+export function apiHead<T = any>(url: string, data?: any) {
+    return api<T>(getApiUrl(url), data, 'HEAD');
+}
 export function apiDelete<T = any>(url: string, data?: any) {
     return api<T>(getApiUrl(url), data, 'DELETE');
 }

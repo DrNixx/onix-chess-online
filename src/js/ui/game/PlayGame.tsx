@@ -48,7 +48,7 @@ import {Piece} from '../../chess/Piece';
 
 import GamePgn from '../components/GamePgn';
 import {FenString} from '../../chess/FenString';
-import {Chat} from '../../chat/Chat';
+import Chat from '../../chat/Chat';
 import {Logger} from '../../common/Logger';
 import {GameState} from "../../actions/GameState";
 import {BoardState} from "../../actions/BoardState";

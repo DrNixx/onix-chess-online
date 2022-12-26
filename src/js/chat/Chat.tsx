@@ -21,6 +21,8 @@ const Chat: React.FC<Props> = ({channel, messages, userid, apiUrl}) => {
     );
 }
 
+export default Chat;
+
 export const simpleChat = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
     root.render(React.createElement(Chat, props));

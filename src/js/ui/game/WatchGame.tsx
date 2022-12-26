@@ -1,6 +1,7 @@
 import React, {useState, useRef} from 'react';
 import {shallowEqual, useSelector} from "react-redux";
 import { createRoot } from 'react-dom/client';
+import {useTranslation} from "react-i18next";
 
 import Box from "@mui/material/Box";
 import Tab from '@mui/material/Tab';
@@ -23,10 +24,10 @@ import GameWrapper from "./GameWrapper";
 
 import { NavigatorMode, MovesMode } from '../components/Constants';
 import { renderTimer } from './GameUtils';
-import { Chat } from '../../chat/Chat';
 import {BoardState} from "../../actions/BoardState";
+import Chat from '../../chat/Chat';
 import DumbGame from "./DumbGame";
-import {useTranslation} from "react-i18next";
+
 
 const WatchGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;

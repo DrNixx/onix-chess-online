@@ -42,7 +42,7 @@ const ChessApplication: React.FC<Props> = (propsIn) => {
     const [connected, setConnected] = useState(false);
 
     setCentrifugeConfig(wsHost, {token: token ?? ''});
-    const [centrifuge] = useCentrifuge();
+    const [,,centrifuge] = useCentrifuge();
 
     setApiRoot(apiRoot);
 

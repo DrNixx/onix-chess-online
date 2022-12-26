@@ -7,7 +7,7 @@ import {IStreamMessage} from "../models/stream/IStreamMessage";
 type RoomResult = [IStreamMessage | null, string[], Subscription | null];
 
 export function useRoom(id: string): RoomResult {
-    const [centrifuge, connected, getToken] = useCentrifuge();
+    const [, connected, centrifuge, getToken] = useCentrifuge();
     const [users, setUsers] = useState<string[]>([]);
     const [lastMessage, setLastMessage] = useState<IStreamMessage | null>(null);
     const subRef = useRef<Subscription | null>(null);

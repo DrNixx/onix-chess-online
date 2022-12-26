@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { createRoot } from 'react-dom/client';
 import clsx from "clsx";
 
@@ -10,8 +10,11 @@ import { CSSTransition } from 'react-transition-group';
 import { Logger } from '../../common/Logger';
 import { Scrollbar } from 'react-scrollbars-custom';
 import { IChallengeAcceptContent, IChallengeCancelContent, IChallengeDeclineContent, IChallengeNewContent, IJoinAcceptContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
+import {useCentrifuge} from "../../hooks/useCentrifuge";
+import {NOTIFY} from "../../models/stream/IStreamMessage";
+import {apiDelete, apiGet, apiHead} from "../../api/Api";
 
-export interface NotificationCenterProps {
+type Props = {
     language: string;
     apiUrl: string,
     i18n: {
@@ -24,7 +27,7 @@ export interface NotificationCenterProps {
         challengeAccept: string,
         joinAccept: string,
     }
-}
+};
 
 export interface NotificationCenterState {
     hasEvents: boolean,
@@ -33,142 +36,106 @@ export interface NotificationCenterState {
     details: Map<string, boolean>
 }
 
-export class NotificationCenter extends React.Component<NotificationCenterProps, NotificationCenterState> {
-    private originalTitle?: string;
-
-
-    public static defaultProps: NotificationCenterProps = {
-        language: 'ru-ru',
-        apiUrl: '/api/notify/notify-center',
-        i18n: {
-            readAll: 'Mark all as read',
-            markRead: 'Mark as read',
-            newMessage: 'New message',
-            challengeNew: "New challenge",
-            challengeCancel: "Challenge canceled",
-            challengeDecline: "Challenge declined",
-            challengeAccept: "Challenge accepted",
-            joinAccept: "Joined to a game",
-        }
+const defaultProps = {
+    language: 'ru-ru',
+    apiUrl: '/api/notify/notify-center',
+    i18n: {
+        readAll: 'Mark all as read',
+        markRead: 'Mark as read',
+        newMessage: 'New message',
+        challengeNew: "New challenge",
+        challengeCancel: "Challenge canceled",
+        challengeDecline: "Challenge declined",
+        challengeAccept: "Challenge accepted",
+        joinAccept: "Joined to a game",
     }
+};
 
-    constructor(props: NotificationCenterProps) {
-        super(props);
+const NotificationCenter: React.FC<Props> = (propsIn) => {
+    const props = {...defaultProps, ...propsIn};
 
-        this.state = {
-            hasEvents: false,
-            countEvents: 0,
-            notifications: [],
-            details: new Map<string, boolean>(),
-        };
-    }
+    const [hasEvents, setHasEvents] = useState(false);
+    const [countEvents, setCountEvents] = useState(0);
+    const [notifications, setNotifications] = useState<INotify[]>([]);
+    const [details, setDetails] = useState(new Map<string, boolean>());
 
-    componentDidMount() {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that = this;
-        that.originalTitle = document.title;
+    const [lastMessage] = useCentrifuge();
 
-        if (appInstance) {
-            const { stream } = appInstance;
-            if (stream) {
-                stream.on('publication', function(ctx: any) {
-                    if (ctx?.data?.t == "notify") {
-                        if (ctx?.data?.c == "privateMessage") {
-                            notify({
-                                message: that.props.i18n.newMessage,
-                                position: "bottom-right",
-                                style: 'simple' 
-                            });
-                        } else if (ctx?.data?.c == "telegram") {
-                            if (window.location.href.indexOf('settings/telegram') !== -1) {
-                                window.location.reload();
-                            }
+    let originalTitle: string;
 
-                            return;
-                        }
-
-                        that.fetchNotifyData();
-                    }
-
-                    Logger.debug('Notification recieved', ctx);
-                });
-            }
-        }
-        
-
-        that.fetchNotifyData();
-    }
-
-    private markRead = (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        fetch(`${this.props.apiUrl}/${id}`, {method: "HEAD"}).then(() => true);
-    };
-
-    private markReadAll = (e: React.MouseEvent) => {
-        e.preventDefault();
-        fetch(this.props.apiUrl, {method: "DELETE"}).then(() => {
-            document.body.click();
-        });
-    }
-
-    private reloadList = (e: React.MouseEvent) => {
-        e.preventDefault();
-        this.fetchNotifyData();
-    }
-
-    private fetchNotifyData = () => {
-        const { fetchCallback } = this;
-        
-        fetch(this.props.apiUrl)
-            .then(function(response) {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                
-                return response.json();
-            })
-            .then(function(responseAsJson) {
-                fetchCallback(responseAsJson);
+    const fetchNotifyData = () => {
+        apiGet(props.apiUrl)
+            .then(data => {
+                setNotifications(data.notifications);
+                setCountEvents(data.countEvents);
+                setHasEvents(data.countEvents > 0);
             })
             .catch(function(error) {
                 Logger.error('Looks like there was a problem when reading notifications: \n', error);
             });
     };
 
-    private fetchCallback = (data: INotify[]) => {
-        const { ...state } = this.state;
+    useEffect(() => {
+        originalTitle = document.title;
+        fetchNotifyData();
+    }, [1]);
 
-        state.notifications = data;
-        state.countEvents = data.filter((n) => !n.read).length; 
-        state.hasEvents = state.countEvents > 0;
+    useEffect(() => {
+        if (lastMessage?.t === NOTIFY) {
+            if (lastMessage.ctx.c == 'privateMessage') {
+                notify({
+                    message: props.i18n.newMessage,
+                    position: 'bottom-right',
+                    style: 'simple'
+                });
+            } else if (lastMessage.ctx.c == 'telegram') {
+                if (window.location.href.indexOf('settings/telegram') !== -1) {
+                    window.location.reload();
+                }
 
-        this.setState(state);
-    }
+                return;
+            }
 
-    private toggleDetail = (e: React.MouseEvent, id: string) => {
+            fetchNotifyData();
+        }
+    }, [lastMessage]);
+
+    const markRead = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
-
-        const { ...state } = this.state;
-        state.details.set(id, !state.details.get(id));
-
-        this.setState(state);
+        apiHead(`${props.apiUrl}/${id}`).then(() => true);
     };
 
-    private renderMarkRead = (notify: INotify) => {
-        const { i18n } = this.props;
+    const markReadAll = (e: React.MouseEvent) => {
+        e.preventDefault();
+        apiDelete(props.apiUrl).then(() => {
+            document.body.click();
+        });
+    }
 
+    const reloadList = (e: React.MouseEvent) => {
+        e.preventDefault();
+        fetchNotifyData();
+    }
+
+    const toggleDetail = (e: React.MouseEvent, id: string) => {
+        e.preventDefault();
+        details.set(id, !details.get(id));
+        setDetails(details);
+    };
+
+    const renderMarkRead = (notify: INotify) => {
         if (notify.read) {
             return (<div className="option"><span className="mark" /></div>);
         } else {
             return (
-                <Tooltip title={i18n.markRead}>
-                    <a href="#" className="mark" onClick={(e) => this.markRead(e, notify.id)} />
+                <Tooltip title={props.i18n.markRead}>
+                    <a href="#" className="mark" onClick={(e) => markRead(e, notify.id)} />
                 </Tooltip>
             );
         }
     };
 
-    private timeAgo = (notify: INotify) => {
+    const timeAgo = (notify: INotify) => {
         return (
             <div className="lh-normal">
                 <div className="text-right">
@@ -178,11 +145,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderPmItem = (notify: INotify, content: INotifyPmContent) => {
-        const { props, state, toggleDetail, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-        const { details } = state;
-
+    const renderPmItem = (notify: INotify, content: INotifyPmContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -198,7 +161,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <div className="thumbnail-wrapper d24 circular b-white b-a b-white m-t-10 m-r-10">
                                 <Avatar user={content.sender} size="tiny" />
                             </div>
-                            <span className="bold">{i18n.newMessage}</span>
+                            <span className="bold">{props.i18n.newMessage}</span>
                             <span className="fs-12 m-l-10">{content.sender.display}</span>
                         </a>
                         <div className="pull-right">
@@ -223,10 +186,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderChallengeNew = (notify: INotify, content: IChallengeNewContent) => {
-        const { props, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-
+    const renderChallengeNew = (notify: INotify, content: IChallengeNewContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -239,7 +199,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
-                            <span className="bold">{i18n.challengeNew}</span>
+                            <span className="bold">{props.i18n.challengeNew}</span>
                             <span className="fs-12 m-l-10">{content.opponent.display}</span>
                         </a>
                     </div>
@@ -250,10 +210,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderChallengeCancel = (notify: INotify, content: IChallengeCancelContent) => {
-        const { props, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-
+    const renderChallengeCancel = (notify: INotify, content: IChallengeCancelContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -266,7 +223,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <span className="text-complete pull-left">
-                            <span className="bold">{i18n.challengeCancel}</span>
+                            <span className="bold">{props.i18n.challengeCancel}</span>
                             <span className="fs-12 m-l-10">{content.opponent.display}</span>
                         </span>
                     </div>
@@ -277,10 +234,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderChallengeDecline = (notify: INotify, content: IChallengeDeclineContent) => {
-        const { props, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-
+    const renderChallengeDecline = (notify: INotify, content: IChallengeDeclineContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -293,7 +247,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <span className="text-complete pull-left">
-                            <span className="bold">{i18n.challengeDecline}</span>
+                            <span className="bold">{props.i18n.challengeDecline}</span>
                             <span className="fs-12 m-l-10">{content.opponent.display}</span>
                         </span>
                     </div>
@@ -304,10 +258,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderChallengeAccept = (notify: INotify, content: IChallengeAcceptContent) => {
-        const { props, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-
+    const renderChallengeAccept = (notify: INotify, content: IChallengeAcceptContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -320,7 +271,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
-                            <span className="bold">{i18n.challengeAccept}</span>
+                            <span className="bold">{props.i18n.challengeAccept}</span>
                             <span className="fs-12 m-l-10">{content.opponent.display}</span>
                         </a>
                     </div>
@@ -331,10 +282,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderJoinAccept = (notify: INotify, content: IJoinAcceptContent) => {
-        const { props, renderMarkRead, timeAgo } = this;
-        const { i18n } = props;
-
+    const renderJoinAccept = (notify: INotify, content: IJoinAcceptContent) => {
         const itemClass = clsx("notification-item", "clearfix", {
             "unread": !notify.read
         });
@@ -347,7 +295,7 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                             <Avatar user={content.opponent} size="tiny" />
                         </div>
                         <a href={`/${content.id}`} className="text-complete pull-left">
-                            <span className="bold">{i18n.joinAccept}</span>
+                            <span className="bold">{props.i18n.joinAccept}</span>
                             <span className="fs-12 m-l-10">{content.opponent.display}</span>
                         </a>
                     </div>
@@ -358,12 +306,10 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         );
     };
 
-    private renderList = () => {
-        const { state, renderPmItem, renderChallengeNew, renderChallengeCancel, renderChallengeDecline, renderChallengeAccept, renderJoinAccept } = this;
-
+    const renderList = () => {
         const items: JSX.Element[] = [];
 
-        state.notifications.forEach((n) => {
+        notifications.forEach((n) => {
             if (n.content) {
                 if (n.content.type == "privateMessage") {
                     items.push(renderPmItem(n, n.content as INotifyPmContent));
@@ -386,24 +332,27 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
         return items;
     };
 
+    return (
+        <></>
+    );
+
+    /*
     render() {
         const { props, state, renderList, markReadAll, reloadList } = this;
         const { i18n } = props;
         const { hasEvents, countEvents } = state;
 
-        if (this.originalTitle) {
+        if (originalTitle) {
             if (hasEvents) {
-                document.title = `(${countEvents}) ${this.originalTitle}`;
+                document.title = `(${countEvents}) ${originalTitle}`;
             } else {
-                document.title = this.originalTitle;   
+                document.title = originalTitle;
             }
         }
 
 
         // { hasEvents ? (<span className="bubble"></span>) : "" }
         return (
-            <></>
-            /*
             <Dropdown className="notification-center">
                 <Dropdown.Toggle as="a" href="#" className="header-icon btn-icon-link" bsPrefix="notification">
                     <i data-icon="" data-count={countEvents} className={ hasEvents ? "active" : ""} />
@@ -423,12 +372,12 @@ export class NotificationCenter extends React.Component<NotificationCenterProps,
                     </div>
                 </Dropdown.Menu>            
             </Dropdown>
-             */
         );
     }
+    */
 }
 
-export const notificationCenter = (props: NotificationCenterProps, container: HTMLElement) => {
+export const notificationCenter = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
     root.render(React.createElement(NotificationCenter, props));
 };

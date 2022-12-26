@@ -1,8 +1,9 @@
 import {useMemo, useState} from 'react';
-import {Centrifuge, Options, SubscriptionTokenContext} from 'centrifuge';
+import {Centrifuge, Options, ServerPublicationContext, SubscriptionTokenContext} from 'centrifuge';
 import {singletonHook} from "react-singleton-hook";
 import {useEvent} from "./useEvent";
 import {apiPost} from "../api/Api";
+import {IStreamMessage} from "../models/stream/IStreamMessage";
 
 let wsHostConfig: string | undefined = undefined;
 let optionsConfig: Partial<Options> | undefined = undefined;
@@ -12,11 +13,12 @@ export function setCentrifugeConfig(wsHost?: string, options?: Partial<Options>)
     optionsConfig = options;
 }
 
-type CentrifugeResult = [Centrifuge | undefined, boolean, (ctx: SubscriptionTokenContext) => Promise<string>];
+type CentrifugeResult = [IStreamMessage | null, boolean, Centrifuge | undefined, (ctx: SubscriptionTokenContext) => Promise<string>];
 
 function useCentrifugeImpl(): CentrifugeResult {
     const [connected, setConnected] = useState(false);
     const centrifuge = useMemo(() => !!wsHostConfig ? new Centrifuge(`${wsHostConfig}/connection/websocket`, optionsConfig) : undefined, []);
+    const [lastMessage, setLastMessage] = useState<IStreamMessage | null>(null);
 
     const connectedListener = useEvent(() => {
         setConnected(true);
@@ -26,9 +28,18 @@ function useCentrifugeImpl(): CentrifugeResult {
         setConnected(false);
     });
 
+    const publicationListener = useEvent((ctx: ServerPublicationContext) => {
+        console.debug('message', ctx);
+        const msg = ctx?.data as IStreamMessage | undefined;
+        if (msg) {
+            setLastMessage(msg);
+        }
+    });
+
     if (centrifuge) {
         centrifuge.on('connected', connectedListener);
         centrifuge.on('disconnected', disconnectedListener);
+        centrifuge.on('publication', publicationListener);
     }
 
     const getToken = (ctx: SubscriptionTokenContext): Promise<string> => {
@@ -39,7 +50,7 @@ function useCentrifugeImpl(): CentrifugeResult {
             .catch(() => '');
     }
 
-    return [centrifuge, connected, getToken];
+    return [lastMessage, connected, centrifuge, getToken];
 }
 
-export const useCentrifuge = singletonHook([undefined, false, () => Promise.reject('Centrifugo client not configured')], useCentrifugeImpl);
+export const useCentrifuge = singletonHook([null, false, undefined, () => Promise.reject('Centrifugo client not configured')], useCentrifugeImpl);

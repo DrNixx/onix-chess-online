@@ -25,7 +25,7 @@ import AnalyseGraphAsync from '../components/analyse/AnalyseGraphAsync';
 import MovesGraphAsync from '../components/movetime/MovesGraphAsync';
 
 import GamePgn from '../components/GamePgn';
-import { Chat } from '../../chat/Chat';
+import Chat from '../../chat/Chat';
 
 import GameWrapper from "./GameWrapper";
 import {BoardState} from "../../actions/BoardState";
