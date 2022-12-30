@@ -1,14 +1,16 @@
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import toSafeInteger from 'lodash/toSafeInteger';
 import clsx from "clsx";
-import i18next from 'i18next';
+
+import {useTranslation} from "react-i18next";
 
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
@@ -17,19 +19,17 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
 import * as cg from 'chessground/types';
-import {Chessground} from 'chessground';
-import {Api} from 'chessground/api';
-import {Config} from 'chessground/config';
+import {Config as CgConfig} from 'chessground/config';
 import {dragNewPiece} from 'chessground/drag';
 import {DrawShape} from 'chessground/draw';
 import {eventPosition, isRightButton as isRightButtonEvent} from 'chessground/util';
 
 import {BoardSize, BoardSizeClasses} from 'onix-board-assets';
 import {IChessOpening} from '../../chess/types/Interfaces';
-import {Colors, Squares} from '../../chess/types/Types';
+import {Colors} from '../../chess/types/Types';
 import {Castling, CastlingSide, CastlingStr} from '../../chess/Castling';
 import {FenFormat, FenString} from '../../chess/FenString';
-import {pushif} from '../../fn/array/Pushif';
+import {pushif} from '../../fn/array';
 import {Position} from '../../chess/Position';
 import {Chess} from '../../chess/Chess';
 import {Color} from '../../chess/Color';
@@ -43,7 +43,8 @@ import StartPosSelector from '../controls/StartPosSelector';
 import TextWithCopy from '../controls/TextWithCopy';
 
 import {postMessage} from '../../net/PostMessage';
-import Input from '@mui/material/Input';
+import {Api} from "chessground/api";
+import Chessground from "./Chessground";
 
 type Selected = "pointer" | "trash" | [cg.Color, cg.Role];
 
@@ -75,7 +76,7 @@ function classToSelected(c: string): Selected | undefined {
 
 let lastTouchMovePos: cg.NumberPair | undefined;
 
-export interface PosBuilderProps {
+type Props = {
     locale?: string,
     url?: string,
     dialog?: boolean,
@@ -92,171 +93,67 @@ export interface PosBuilderProps {
     markers?: string,
 
     openings?: IChessOpening[],
-}
+};
 
-export interface PosBuilderState {
-    piece?: string,
-    square?: string,
-    size: BoardSize,
+const defaultProps = {
+    locale: "ru-ru",
+    url: "https://www.chess-online.com/fen.png",
+    dialog: false,
 
-    coordinates?: boolean,
-    orientation?: cg.Color,
-    showTurn?: boolean,
-    
-    fen?: string,
-    whoMove?: Colors.BW,
-    castling?: CastlingStr,
-    ep_target?: Squares.Square,
-    halfMove?: number,
-    moveNo?: number,
-    
-    markers?: string,
-    markersVal: string,
+    fen: FenString.standartStart,
 
-    openings?: IChessOpening[],
+    orientation: 'white' as cg.Color,
+    showTurn: false,
+    coordinates: true,
 
-    selected: Selected
-}
+    size: BoardSize.Normal,
+    piece: "alpha",
+    square: "color-blue",
+    markers: "",
+    openings: []
+};
 
-export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState> {
-    public static defaultProps: PosBuilderProps = {
-        locale: "ru-ru",
-        url: "https://www.chess-online.com/fen.png",
-        dialog: false,
+const PosBuilder: React.FC<Props> = (propsIn) => {
+    const props = {...defaultProps, ...propsIn};
 
-        fen: FenString.standartStart,
+    const [piece, setPiece] = useState(props.piece);
+    const [square, setSquare] = useState(props.square);
+    const [size, setSize] = useState(props.size);
+    const [coordinates, setCoordinates] = useState(props.coordinates);
+    const [orientation, setOrientation] = useState(props.orientation);
+    const [showTurn, setShowTurn] = useState(props.showTurn);
 
-        orientation: "white",
-        showTurn: false,
-        coordinates: true,
+    const pos = useMemo(() => {
+        return new Position(props.fen);
+    }, [props.fen]);
 
-        size: BoardSize.Normal,
-        piece: "alpha",
-        square: "color-blue",
-        markers: "",
-        openings: []
-    }
+    const [fen, setFen] = useState(FenString.fromPosition(pos, FenFormat.board));
+    const [whoMove, setWhoMove] = useState(pos.WhoMove);
+    const [castling, setCastling] = useState(pos.Castling.asFen());
+    const [ep_target, setEpTarget] = useState(pos.EpTarget);
+    const [halfMove, setHalfMove] = useState(pos.HalfMoveCount);
+    const [moveNo, setMoveNo] = useState(Chess.plyToTurn(pos.PlyCount));
+    const [markers, setMarkers] = useState(props.markers);
+    const [selected, setSelected] = useState<Selected>('pointer');
 
-    private boardElement: HTMLDivElement | null = null;
-    private markElement: HTMLInputElement | null = null;
+    const cgRef = useRef<Api>();
 
-    private cg?: Api = undefined;
+    const { t } = useTranslation(['builder', 'core']);
 
-    private sizeChanged = false;
-
-    constructor(props: PosBuilderProps) {
-        super(props);
-
-        const { fen, orientation, showTurn, coordinates, size, piece, square, markers } = this.props;
-
-        const pos = new Position(fen);
-        const fen2 = FenString.fromPosition(pos, FenFormat.board)
-        
-        this.state = {
-            piece: piece,
-            square: square,
-            size: size,
-
-            coordinates: coordinates,
-            orientation: orientation,
-            showTurn: showTurn,
-
-            fen: fen2,
-            whoMove: pos.WhoMove,
-            castling: pos.Castling.asFen(),
-            ep_target: pos.EpTarget,
-            halfMove: pos.HalfMoveCount,
-            moveNo: Chess.plyToTurn(pos.PlyCount),
-
-            markers: markers,
-            markersVal: markers || "",
-
-            openings: [],
-            selected: "pointer"
-        };
-    }
-
-    componentDidMount() {
-        const { state, onPositionChange, onDrawShape: onDraw } = this;
-        const { orientation, coordinates, fen, whoMove, markers } = state;
-
-        this.cg = Chessground(this.boardElement!, {
-            fen: fen,
-            orientation: orientation,
-            turnColor: Color.toName(whoMove),
-            coordinates: !!coordinates,
-            autoCastle: false,
-            movable: {
-                free: true,
-                color: 'both'
-            },
-            premovable: {
-                enabled: false
-            },
-            drawable: {
-                enabled: true,
-                visible: true,
-                eraseOnClick: false      
-            },
-            draggable: {
-                showGhost: true,
-                deleteOnDropOff: true
-            },
-            selectable: {
-                enabled: false
-            },
-            highlight: {
-                lastMove: false
-            },
-            events: {
-                change: onPositionChange
-            },
-        });
-        this.cg.state.drawable.onChange = onDraw;
-        this.assignShapes(markers);
-        
-        window.addEventListener("resize", this.redrawBoard);
-    }
-
-    componentWillUnmount() {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.destroy();
-        }
-        
-        window.removeEventListener("resize", this.redrawBoard);
-    }
-
-    private redrawBoard = () => {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.redrawAll();
-        }
-    };
-
-    private flipBoard = (orientation: cg.Color) => {
-        const { cg } = this;
-        if (cg !== undefined) {
-            if (cg.state.orientation != orientation) {
-                cg.toggleOrientation();
+    const flipBoard = (orientation: cg.Color) => {
+        if (cgRef.current) {
+            if (cgRef.current.state.orientation != orientation) {
+                cgRef.current.toggleOrientation();
             }
         }
     };
 
-    private updateConfig = (config: Config) => {
-        const { cg } = this;
-
-        if (cg !== undefined) {
-            cg.set(config);
-        }
-    };
-
-    private markersToShapes = (str?: string) => {
+    const markersToShapes = (str?: string) => {
         const shapes: DrawShape[] = [];
 
         if (str !== undefined) {
-            const r = /(\w+\[[\w\d]{2,4}\])/g;
-            const ri = /(?<brush>[a-zA-Z]+)\[(?<orig>[a-h][1-8])(?<dest>[a-h][1-8])?\]/;
+            const r = /(\w+\[\w{2,4}])/g;
+            const ri = /(?<brush>[a-zA-Z]+)\[(?<orig>[a-h][1-8])(?<dest>[a-h][1-8])?]/;
             const matches = str.match(r);
             if (matches) {
                 for (let i = 0; i < matches.length; i++) {
@@ -275,7 +172,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         return shapes;
     };
 
-    private shapesToMarkers = (shapes: DrawShape[]) => {
+    const shapesToMarkers = (shapes: DrawShape[]) => {
         const marks: string[] = [];
         shapes.forEach((shape) => {
             let str = shape.brush + "[" + shape.orig;
@@ -292,11 +189,9 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         return marks.join(";");
     };
 
-    private assignShapes = (shapes?: string | DrawShape[]) => {
-        const { cg, markersToShapes, shapesToMarkers } = this;
-
+    const assignShapes = (shapes?: string | DrawShape[]) => {
         let result = "";
-        if (cg !== undefined) {
+        if (cgRef.current) {
             let sh: DrawShape[] = [];
             if (shapes !== undefined) {
                 if (typeof shapes === "string") {
@@ -306,182 +201,128 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 }
             }
 
-            cg.setShapes(sh.filter(s => !!s.brush && !!cg.state.drawable.brushes[s.brush]));
-            result = shapesToMarkers(cg.state.drawable.shapes);
+            cgRef.current.setShapes(sh.filter(s => !!s.brush && !!cgRef.current?.state.drawable.brushes[s.brush]));
+            result = shapesToMarkers(cgRef.current.state.drawable.shapes);
         }
 
         return result;
-    }
-
-    private onDrawShape = (shapes: DrawShape[]) => {
-        const { state } = this;
-        const markers = this.shapesToMarkers(shapes);
-        this.setState({
-            ...state,
-            markers: markers,
-            markersVal: markers
-        });
     };
 
-    private onSizeChange = (size: BoardSize) => {
-        const { state } = this;
-        
-        this.setState({
-            ...state,
-            size: size
-        }, () => { this.redrawBoard(); });
-    };
-
-    private onPieceChange = (piece: string) => {
-        const { state } = this;
-        this.setState({
-            ...state,
-            piece: piece
-        });
-    };
-
-    private onSquareChange = (square: string) => {
-        const { state } = this;
-        this.setState({
-            ...state,
-            square: square
-        });
-    };
-
-    private onFlipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-        const orientation = e.target.checked ? "black" : "white";
-
-        this.setState({
-            ...state,
-            orientation: orientation
-        }, () => { this.flipBoard(orientation) });
-    };
-
-    private onCoordsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-        const coordinates = e.target.checked;
-
-        this.setState({
-            ...state,
-            coordinates: coordinates
-        }, () => { this.updateConfig({ coordinates: coordinates }); });
-    };
-
-    private onTurnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-
-        this.setState({
-            ...state,
-            showTurn: e.target.checked
-        });
-    };
-
-    private onPositionChange = () => {
-        const { cg, state, assignShapes } = this;
-        if (cg !== undefined) {
-            const shapes = state.markers;
-            this.setState({
-                ...state,
-                fen: FenString.trim(cg.getFen(), FenFormat.board)
-            }, () => { assignShapes(shapes); });
+    const onPositionChange = () => {
+        if (cgRef.current) {
+            setFen(FenString.trim(cgRef.current.getFen(), FenFormat.board));
         }
 
         return true;
     };
 
-    private onStartChange = (fen: string) => {
-        const { state, assignShapes } = this;
+    const onDrawShape = (shapes: DrawShape[]) => {
+        const ms = shapesToMarkers(shapes);
+        setMarkers(ms);
+    };
 
-        const shapes = state.markers;
+    const initialConfig = useCallback((): CgConfig => {
+        const p = new Position(props.fen);
+        return {
+            fen: FenString.fromPosition(p, FenFormat.board),
+            orientation: props.orientation,
+            turnColor: Color.toName(p.WhoMove),
+            coordinates: !!props.coordinates,
+            autoCastle: false,
+            movable: {
+                free: true,
+                color: 'both'
+            },
+            premovable: {
+                enabled: false
+            },
+            drawable: {
+                enabled: true,
+                visible: true,
+                eraseOnClick: false
+            },
+            draggable: {
+                showGhost: true,
+                deleteOnDropOff: true
+            },
+            selectable: {
+                enabled: false
+            },
+            highlight: {
+                lastMove: false
+            },
+            events: {
+                change: onPositionChange
+            },
+        }
+    }, [props.coordinates, props.fen, props.orientation]);
+
+    useEffect(() => {
+        if (cgRef.current) {
+            cgRef.current.state.drawable.onChange = onDrawShape;
+            assignShapes(markers);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cgRef.current]);
+
+    useEffect(() => {
+        const shapes = markers;
+
+        cgRef.current && cgRef.current?.set({
+            coordinates: coordinates,
+            turnColor: Color.toName(whoMove),
+            fen: fen
+        });
+
+        assignShapes(shapes);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [coordinates, whoMove, fen]);
+
+    const onFlipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const orientation = e.target.checked ? 'black' : 'white';
+        setOrientation(orientation);
+        flipBoard(orientation);
+    };
+
+    const onStartChange = (fen: string) => {
         const def = FenString.toDefenition(fen);
-        let cast = state.castling;
+        let cast = castling;
         if (def.castlingSet) {
             cast = def.castling.asFen();
         }
 
-        this.setState({
-            ...state,
-            fen: def.board,
-            whoMove: def.color,
-            castling: cast,
-            ep_target: def.eptarget,
-            halfMove: def.halfMoves,
-            moveNo: def.moveNo
-        }, () => { 
-            this.updateConfig({
-                fen: def.board,
-                turnColor: Color.toName(def.color)
-            });
-
-            assignShapes(shapes);
-        });
+        setMoveNo(def.moveNo);
+        setHalfMove(def.halfMoves);
+        setEpTarget(def.eptarget);
+        setCastling(cast);
+        setWhoMove(def.color);
+        setFen(def.board);
     };
 
-    private onMoverChange = (color: Colors.BW) => {
-        const { state } = this;
-        this.setState({
-            ...state,
-            whoMove: color
-        }, () => { 
-            this.updateConfig({
-                turnColor: Color.toName(color)
-            });
-        });
-    };
-
-    private onCastleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-        const cast = new Castling(state.castling);
+    const onCastleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const cast = new Castling(castling);
         if (e.target.checked) {
             cast.on(e.target.value);
         } else {
             cast.off(e.target.value);
         }
 
-        this.setState({
-            ...state,
-            castling: cast.asFen()
-        });
+        setCastling(cast.asFen());
     };
 
-    private onMoveNoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-        const n = toSafeInteger(e.target.value);
-        this.setState({
-            ...state,
-            moveNo: n
-        });
-    };
-
-    private onEpChange? = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state } = this;
-
-        const ep = Square.parse(e.target.value);
-        this.setState({
-            ...state,
-            ep_target: ep
-        });
+    const onMarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMarkers(e.target.value);
+        assignShapes(e.target.value);
     }
 
-    private onMarkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { state, assignShapes } = this;
-        const markers = e.target.value;
-        
-        this.setState({
-            ...state,
-            markers: markers,
-            markersVal: markers
-        }, () => { assignShapes(markers); });
-    }
-
-    private renderCastlingGroup = (color: Colors.BW, castling?: CastlingStr) => {
+    const renderCastlingGroup = (color: Colors.BW, castling?: CastlingStr) => {
         const cast = new Castling(castling);
         
         return (
             <Card>
                 <CardHeader>
-                    {i18next.t(Color.toName(color), { ns: "chess" })}
+                    {t(Color.toName(color), { ns: "chess" })}
                 </CardHeader>
                 <CardContent>
                     <Grid container spacing={2}>
@@ -490,7 +331,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                 control={
                                     <Switch id ="wck" 
                                         value={Piece.toChar(Piece.create(color, Piece.King))}
-                                        onChange={this.onCastleChange}
+                                        onChange={onCastleChange}
                                         defaultChecked={cast.has(color, CastlingSide.King)} />
                                 } 
                                 label={Castling.K} />
@@ -500,7 +341,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                                 control={
                                     <Switch id ="wcq" 
                                         value={Piece.toChar(Piece.create(color, Piece.Queen))}
-                                        onChange={this.onCastleChange}
+                                        onChange={onCastleChange}
                                         defaultChecked={cast.has(color, CastlingSide.Queen)} />
                                 } 
                                 label={Castling.Q} />
@@ -511,41 +352,7 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         );
     }
 
-    private fullFen = (): string => {
-        const { state } = this;
-        const { fen, whoMove, castling, ep_target, halfMove, moveNo } = state;
-
-        const cast = new Castling(castling);
-        const ep = Square.isSquare(ep_target) ? Square.name(ep_target) : "-";
-
-        return fen + " " + Color.toChar(whoMove ?? Color.White) + " " + cast.asFen() + " " + ep + " " + halfMove?.toString() + " " + moveNo?.toString();
-    }
-
-    private makeLink = (fen: string, params: any[]): string => {
-        let img = this.props.url || "https://www.chess-online.com/fen.png"
-        img += "?fen=" + encodeURIComponent(fen);
-
-        if (params.length > 0) {
-            img += "&" + params.map(function(val){
-                return val.join("=");
-            }).join("&")
-        }
-        
-        return img;
-    };
-
-    private makeCode = (fen: string, params: any[]): string => {
-        const el = document.createElement("div");
-        el.innerHTML = encodeURIComponent(fen);            
-        
-        params.forEach(element => {
-            el.setAttribute(element[0], element[1]);
-        });
-        
-        return el.outerHTML.replace(/div/g, "gc:fen");
-    }
-
-    private renderDialogButton = (visible: boolean, code: string) => {
+    const renderDialogButton = (visible: boolean, code: string) => {
         const executeDialog = () => {
             if (window.parent) {
                 const parent_url = decodeURIComponent(document.location.hash.replace(/^#/, ""));
@@ -556,51 +363,41 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         return (visible) ? (
             <Box className="py-3">
                 <Button variant="contained" onClick={executeDialog}>
-                    {i18next.t("paste_forum_code", { ns: "builder" }).toString()}
+                    {t("paste_forum_code", { ns: "builder" }).toString()}
                 </Button>
             </Box>
         ) : null;
     }
 
-    private select = (value: Selected) => {
-        const { state } = this;
-        this.setState({
-            ...state,
-            selected: value
-        });
-    }
-
-    private onSelectSparePiece = (s: Selected, upEvent: "mouseup" | "touchend"): (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void => {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that = this;
+    const onSelectSparePiece = (s: Selected, upEvent: "mouseup" | "touchend"): (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void => {
         return function(e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) {
-            const { cg, select } = that;
             e.preventDefault();
             if (s === 'pointer' || s === 'trash') {
-                select(s);
+                setSelected(s);
             } else {
-                select('pointer');
+                setSelected('pointer');
 
-                dragNewPiece(cg!.state, {
-                    color: s[0],
-                    role: s[1]
-                }, e.nativeEvent as cg.MouchEvent, true);
+                if (cgRef.current) {
+                    dragNewPiece(cgRef.current.state, {
+                        color: s[0],
+                        role: s[1]
+                    }, e.nativeEvent as cg.MouchEvent, true);
 
-                document.addEventListener(upEvent, (e: MouseEvent | TouchEvent) => {
-                    const eventPos = eventPosition(e as cg.MouchEvent) || lastTouchMovePos;
-                    if (eventPos && cg?.getKeyAtDomPos(eventPos)) {
-                        select('pointer');
-                    } else {
-                        select(s);
-                    }
-                }, { once: true });
+                    document.addEventListener(upEvent, (e: MouseEvent | TouchEvent) => {
+                        const eventPos = eventPosition(e as cg.MouchEvent) || lastTouchMovePos;
+                        if (eventPos && cgRef.current?.getKeyAtDomPos(eventPos)) {
+                            setSelected('pointer');
+                        } else {
+                            setSelected(s);
+                        }
+                    }, { once: true });
+                }
             }
         }
     };
 
-    private renderSpare = (color: cg.Color, position: "top" | "bottom") => {
-        const { onSelectSparePiece, cg, state } = this;
-        const selectedClass = selectedToClass(state.selected);
+    const renderSpare = (color: cg.Color, position: "top" | "bottom") => {
+        const selectedClass = selectedToClass(selected);
         const pieces = ["king", "queen", "rook", "bishop", "knight", "pawn"].map((role): Selected => {
             return [color, role as cg.Role];
         });
@@ -615,9 +412,9 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
             return squares.map((s: Selected, i) => {
                 const pieceClass = selectedToClass(s);
                 const selectedSquare = selectedClass === pieceClass && (
-                    !cg ||
-                    !cg.state.draggable.current ||
-                    !cg.state.draggable.current.newPiece);
+                    !cgRef.current ||
+                    !cgRef.current.state.draggable.current ||
+                    !cgRef.current.state.draggable.current.newPiece);
 
                 const attrs = {
                     ...((s !== "pointer" && s !== "trash") ? {
@@ -662,36 +459,32 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         );
     };
 
-    private downKey: cg.Key | undefined;
-    private lastKey: cg.Key | undefined;
-    private placeDelete: boolean | undefined;
+    let downKey: cg.Key | undefined;
+    let lastKey: cg.Key | undefined;
+    let placeDelete: boolean | undefined;
 
-    private deleteOrHidePiece = (key: cg.Key, e: Event) => {
-        const { deletePiece, cg } = this;
-
+    const deleteOrHidePiece = (key: cg.Key, e: Event) => {
         if (e.type === 'touchstart') {
-            if (cg?.state.pieces.get(key)) {
-              (cg.state.draggable.current?.element as HTMLElement).style.display = 'none';
-              cg.cancelMove();
+            if (cgRef.current?.state.pieces.get(key)) {
+                (cgRef.current.state.draggable.current?.element as HTMLElement).style.display = 'none';
+                cgRef.current.cancelMove();
             }
 
             document.addEventListener('touchend', () => deletePiece(key), { once: true });
-        } else if (e.type === 'mousedown' || key !== this.downKey) {
+        } else if (e.type === 'mousedown' || key !== downKey) {
             deletePiece(key);
         }
     };
 
-    private deletePiece = (key: cg.Key): void => {
-        const { cg } = this;
-
-        cg?.setPieces(new Map([
+    const deletePiece = (key: cg.Key): void => {
+        cgRef.current?.setPieces(new Map([
           [key, undefined]
         ]));
         
-        this.onPositionChange();
+        onPositionChange();
     };
 
-    private boardEvent = (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
+    const boardEvent = (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
         function isLeftButton(e: MouseEvent | TouchEvent): boolean {
             return (e instanceof MouseEvent) && (e.buttons === 1 || e.button === 1);
         }
@@ -704,16 +497,15 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
             return ((e instanceof MouseEvent) && isRightButtonEvent(e)) || (e.ctrlKey && isLeftButton(e));
         }
 
-        const { state, cg, deleteOrHidePiece } = this;
-        const sel = state.selected;
+        const sel = selected;
         // do not generate corresponding mouse event
         // (https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Supporting_both_TouchEvent_and_MouseEvent)
-        if (sel !== 'pointer' && e.cancelable !== false && (e.type === 'touchstart' || e.type === 'touchmove')) {
+        if (sel !== 'pointer' && e.cancelable && (e.type === 'touchstart' || e.type === 'touchmove')) {
             e.preventDefault();
         }
 
         if (isLeftClick(e.nativeEvent) || e.type === 'touchstart' || e.type === 'touchmove') {
-            if (sel === 'pointer' || (cg && cg.state.draggable.current && cg.state.draggable.current.newPiece)) {
+            if (sel === 'pointer' || (cgRef.current && cgRef.current.state.draggable.current && cgRef.current.state.draggable.current.newPiece)) {
                 return;
             }
 
@@ -722,39 +514,39 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
                 return;
             }
 
-            const key = cg?.getKeyAtDomPos(pos);
+            const key = cgRef.current?.getKeyAtDomPos(pos);
             if (!key) {
                 return;
             }
 
-            if (e.type === 'mousedown' || e.type === 'touchstart') this.downKey = key;
+            if (e.type === 'mousedown' || e.type === 'touchstart') downKey = key;
             if (sel === 'trash') {
                 deleteOrHidePiece(key, e.nativeEvent);
             } else {
-                const existingPiece = cg?.state.pieces.get(key);
+                const existingPiece = cgRef.current?.state.pieces.get(key);
                 const piece = {
-                    color: sel[0],
-                    role: sel[1]
+                    color: sel[0] as cg.Color,
+                    role: sel[1] as cg.Role
                 };
                 
                 const samePiece = existingPiece && piece.color == existingPiece.color && piece.role == existingPiece.role;
 
                 if ((e.type === 'mousedown' || e.type === 'touchstart') && samePiece) {
                     deleteOrHidePiece(key, e.nativeEvent);
-                    this.placeDelete = true;
+                    placeDelete = true;
                     const endEvents = { mousedown: 'mouseup', touchstart: 'touchend' };
-                    document.addEventListener(endEvents[e.type], () => this.placeDelete = false, { once: true });
-                } else if (!this.placeDelete && (e.type === 'mousedown' || e.type === 'touchstart' || key !== this.lastKey)) {
-                    cg?.setPieces(new Map([
+                    document.addEventListener(endEvents[e.type], () => placeDelete = false, { once: true });
+                } else if (!placeDelete && (e.type === 'mousedown' || e.type === 'touchstart' || key !== lastKey)) {
+                    cgRef.current?.setPieces(new Map([
                         [key, piece]
                     ]));
 
-                    this.onPositionChange();
-                    cg?.cancelMove();
+                    onPositionChange();
+                    cgRef.current?.cancelMove();
                 }
             }
 
-            this.lastKey = key;
+            lastKey = key;
 
 
         } else if (isRightClick(e.nativeEvent)) {
@@ -762,14 +554,27 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         }
     }
 
-    render() {
-        const { props, state, fullFen, makeLink, makeCode, renderDialogButton, renderSpare, shapesToMarkers, markersToShapes, boardEvent } = this;
-        const { dialog } = props;
-        const { whoMove, castling, ep_target, openings, size, orientation, showTurn, moveNo, coordinates, piece, square, markers, markersVal, selected } = state;
+    const fullFen = useMemo((): string => {
+        const cast = new Castling(castling);
+        const ep = Square.isSquare(ep_target) ? Square.name(ep_target) : "-";
+        return fen + " " + Color.toChar(whoMove ?? Color.White) + " " + cast.asFen() + " " + ep + " " + halfMove?.toString() + " " + moveNo?.toString();
+    }, [castling, ep_target, fen, halfMove, moveNo, whoMove]);
 
-        const flipped = orientation != "white";
-        const fenStr = fullFen();
+    const containerClass = useMemo(() => {
+        return [
+            "pos-builder",
+            "is2d",
+            square,
+            BoardSizeClasses[size],
+            { "coords-no": !coordinates }
+        ];
+    }, [coordinates, size, square]);
 
+    const flipped = useMemo(() => {
+        return orientation != 'white'
+    }, [orientation]);
+
+    const fenParams = useCallback(() => {
         const shapes = markersToShapes(markers);
         const marks = shapesToMarkers(shapes);
 
@@ -777,195 +582,223 @@ export class PosBuilder extends React.Component<PosBuilderProps, PosBuilderState
         pushif(params, (size !== 2), ["size", size]);
         pushif(params, flipped, ["fb", 1]);
         pushif(params, !!showTurn, ["who", 1]);
-		pushif(params, !coordinates, ["hl", 1]);
-        pushif(params, (piece !== PosBuilder.defaultProps.piece), ["pset", encodeURIComponent(piece ?? '')]);
-        pushif(params, (square !== PosBuilder.defaultProps.square), ["sset", encodeURIComponent(square ?? '')]);
+        pushif(params, !coordinates, ["hl", 1]);
+        pushif(params, (piece !== defaultProps.piece), ["pset", encodeURIComponent(piece ?? '')]);
+        pushif(params, (square !== defaultProps.square), ["sset", encodeURIComponent(square ?? '')]);
         pushif(params, !!markers, ["mv", encodeURIComponent(marks)]);
 
-        const code = makeCode(fenStr, params);
+        return params;
+    }, [coordinates, flipped, markers, piece, showTurn, size, square]);
 
-        const containerClass = [
-            "pos-builder", 
-            "is2d",
-            square,
-            BoardSizeClasses[size],
-            { "coords-no": !coordinates }
-        ];
+    const makeCode = useCallback((): string => {
+        const el = document.createElement("div");
+        el.innerHTML = encodeURIComponent(fullFen);
 
-        const cursor = selectedToCursor(selected);
-                
-        return (
-            <Container maxWidth="xl" className={clsx(containerClass)}>
-                <Box>
-                    <div className="d-block d-lg-flex">
-                        <div className={clsx("board-container", piece)}>
-                            <div className="holder-container">
-                                { renderSpare((flipped ? "white": "black"), "top") }
-                            </div>
-                            <div className={clsx(cursor)}
-                                onTouchStart={boardEvent}
-                                onTouchMove={boardEvent}
-                                onMouseDown={boardEvent}
-                                onMouseMove={boardEvent}
-                                onContextMenu={boardEvent}>
-                                <div className="main-board" ref={el => this.boardElement = el} />
-                            </div>
-                            <div className="holder-container">
-                                { renderSpare((flipped ? "black": "white"), "bottom") }
-                            </div>
+        const params = fenParams();
 
-                            {renderDialogButton(!!dialog, code)}
-                            <div>
-                                <div className="code-row">
-                                    <Box>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("fen", { ns: "chess" }).toString()}</InputLabel>
-                                            <TextWithCopy value={fenStr} size="small" placeholder={i18next.t("fen", { ns: "chess" })} />
-                                        </FormControl>
-                                    </Box>
-                                    <Box>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("image_link", { ns: "builder" }).toString()}</InputLabel>
-                                            <TextWithCopy value={makeLink(fenStr, params)} size="small" placeholder={i18next.t("image_link", { ns: "builder" })} />
-                                        </FormControl>
-                                    </Box>
-                                    <Box>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("forum_code", { ns: "builder" }).toString()}</InputLabel>
-                                            <TextWithCopy value={code} size="small" placeholder={i18next.t("forum_code", { ns: "builder" })} />
-                                        </FormControl>
-                                    </Box>
-                                </div>
-                            </div>
+        params.forEach(element => {
+            el.setAttribute(element[0], element[1]);
+        });
+
+        return el.outerHTML.replace(/div/g, "gc:fen");
+    }, [fenParams, fullFen]);
+
+    const makeLink = useCallback((): string => {
+        let img = props.url || "https://www.chess-online.com/fen.png"
+        img += "?fen=" + encodeURIComponent(fullFen);
+
+        const params = fenParams();
+
+        if (params.length > 0) {
+            img += "&" + params.map(function(val){
+                return val.join("=");
+            }).join("&")
+        }
+
+        return img;
+    }, [fenParams, fullFen, props.url]);
+
+    return (
+        <Container maxWidth="xl" className={clsx(containerClass)}>
+            <Box>
+                <div className="d-block d-lg-flex">
+                    <div className={clsx("board-container", piece)}>
+                        <div className="holder-container">
+                            { renderSpare((flipped ? "white": "black"), "top") }
                         </div>
-                        <div className="controls flex-grow-1 ps-lg-4">
-                            <div className="pos-sets">
-                                <Grid container spacing={2}>
-                                    <Grid item md={4}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("board_size", { ns: "builder" }).toString()}</InputLabel>
-                                            <SizeSelector value={size} onChangeSize={this.onSizeChange} />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item md={4}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("pieces", { ns: "chess" }).toString()}</InputLabel>
-                                            <PieceSelector value={piece} onChangePiece={this.onPieceChange} />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item md={4}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("squares", { ns: "chess" }).toString()}</InputLabel>
-                                            <SquareSelector value={square} onChangeSquare={this.onSquareChange} />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                            </div>
+                        <div className={clsx(selectedToCursor(selected))}
+                             onTouchStart={boardEvent}
+                             onTouchMove={boardEvent}
+                             onMouseDown={boardEvent}
+                             onMouseMove={boardEvent}
+                             onContextMenu={boardEvent}>
+                            <Chessground config={initialConfig()} cgRef={(api) => cgRef.current = (api ?? undefined)} />
+                        </div>
+                        <div className="holder-container">
+                            { renderSpare((flipped ? "black": "white"), "bottom") }
+                        </div>
 
-                            <div className="pos-start">
-                                <Grid container spacing={2}>
-                                    <Grid item md={8} sm={12}>
-                                        <FormControl>
-                                            <InputLabel className="sr-only">{i18next.t("position_label", { ns: "builder" }).toString()}</InputLabel>
-                                            <StartPosSelector
-                                                fen={fenStr}
-                                                openingsPos={openings}
-                                                onChangeFen={this.onStartChange}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item md={4} sm={12}>
-                                        <FormControl>
-                                            <InputLabel className="sr-only">{i18next.t("who_move", { ns: "chess" }).toString()}</InputLabel>
-                                            <WhoMoveSelector value={whoMove} onChangeTurn={this.onMoverChange} />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                            </div>
-
-                            <div className="pos-params">
-                                <div><strong>{i18next.t("pos_param", { ns: "builder" }).toString()}</strong></div>
-                                <Grid container spacing={2}>
-                                    <Grid item md={3} sm={6}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("move_no", { ns: "chess" }).toString()}</InputLabel>
-                                            <FormControl
-                                                size="small"
-                                                defaultValue={moveNo?.toString()}
-                                                onChange={this.onMoveNoChange} />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item md={3} sm={6}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("ep_target", { ns: "chess" }).toString()}</InputLabel>
-                                            <FormControl
-                                                size="small"
-                                                defaultValue={ep_target}
-                                                title={i18next.t("ep_target_hint", { ns: "builder" })}
-                                                onChange={this.onEpChange} />
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <FormControl>
-                                            <InputLabel>{i18next.t("marks", { ns: "builder" }).toString()}</InputLabel>
-                                            <Input
-                                                size="small"
-                                                value={markersVal}
-                                                title={i18next.t("marks_hint", { ns: "builder" })}
-                                                onChange={this.onMarkChange} />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                            </div>
-
-                            <div className="pos-castle">
-                                <div><strong>{i18next.t("castle", { ns: "chess" }).toString()}</strong></div>
-                                <Grid container spacing={2}>
-                                    <Grid item md={6}>
-                                        {this.renderCastlingGroup(Color.White, castling)}
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        {this.renderCastlingGroup(Color.Black, castling)}
-                                    </Grid>
-                                </Grid>
-                            </div>
-                            <div className="pos-display">
-                                <Grid container spacing={2}>
-                                    <Grid item md={3} sm={6}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch defaultChecked onChange={this.onFlipChange} />
-                                            }
-                                            label={i18next.t("display_flip", { ns: "builder" }).toString()}
-                                        />
-                                    </Grid>
-                                    <Grid item md={3} sm={6}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch defaultChecked onChange={this.onCoordsChange} />
-                                            }
-                                            label={i18next.t("display_coord", { ns: "builder" }).toString()}
-                                        />
-                                    </Grid>
-                                    <Grid item md={3} sm={6}>
-                                        <FormControlLabel
-                                            control={
-                                                <Switch defaultChecked onChange={this.onTurnChange} />
-                                            }
-                                            label={i18next.t("display_showturn", { ns: "builder" }).toString()}
-                                        />
-                                    </Grid>
-                                </Grid>
+                        {renderDialogButton(!!props.dialog, makeCode())}
+                        <div>
+                            <div className="code-row">
+                                <Box>
+                                    <FormControl>
+                                        <InputLabel>{t("fen", { ns: "chess" }).toString()}</InputLabel>
+                                        <TextWithCopy value={fullFen} size="small" placeholder={t("fen", { ns: "chess" })} />
+                                    </FormControl>
+                                </Box>
+                                <Box>
+                                    <FormControl>
+                                        <InputLabel>{t("image_link", { ns: "builder" }).toString()}</InputLabel>
+                                        <TextWithCopy value={makeLink()} size="small" placeholder={t("image_link", { ns: "builder" })} />
+                                    </FormControl>
+                                </Box>
+                                <Box>
+                                    <FormControl>
+                                        <InputLabel>{t("forum_code", { ns: "builder" }).toString()}</InputLabel>
+                                        <TextWithCopy value={makeCode()} size="small" placeholder={t("forum_code", { ns: "builder" })} />
+                                    </FormControl>
+                                </Box>
                             </div>
                         </div>
                     </div>
-                </Box>
-            </Container>
-        );
-    }
+                    <div className="controls flex-grow-1 ps-lg-4">
+                        <div className="pos-sets">
+                            <Grid container spacing={2}>
+                                <Grid item md={4}>
+                                    <FormControl>
+                                        <InputLabel>{t("board_size", { ns: "builder" }).toString()}</InputLabel>
+                                        <SizeSelector value={size} onChangeSize={(e) => setSize(e)} />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={4}>
+                                    <FormControl>
+                                        <InputLabel>{t("pieces", { ns: "chess" }).toString()}</InputLabel>
+                                        <PieceSelector value={piece} onChangePiece={(e) => setPiece(e)} />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={4}>
+                                    <FormControl>
+                                        <InputLabel>{t("squares", { ns: "chess" }).toString()}</InputLabel>
+                                        <SquareSelector value={square} onChangeSquare={(e) => setSquare(e)} />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </div>
+
+                        <div className="pos-start">
+                            <Grid container spacing={2}>
+                                <Grid item md={8} sm={12}>
+                                    <FormControl>
+                                        <InputLabel className="sr-only">{t("position_label", { ns: "builder" }).toString()}</InputLabel>
+                                        <StartPosSelector
+                                            fen={fullFen}
+                                            openingsPos={props.openings}
+                                            onChangeFen={onStartChange}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={4} sm={12}>
+                                    <FormControl>
+                                        <InputLabel className="sr-only">{t("who_move", { ns: "chess" }).toString()}</InputLabel>
+                                        <WhoMoveSelector value={whoMove} onChangeTurn={(color) => {
+                                            setWhoMove(color);
+                                        }} />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </div>
+
+                        <div className="pos-params">
+                            <div><strong>{t("pos_param", { ns: "builder" }).toString()}</strong></div>
+                            <Grid container spacing={2}>
+                                <Grid item md={3} sm={6}>
+                                    <FormControl>
+                                        <InputLabel>{t("move_no", { ns: "chess" }).toString()}</InputLabel>
+                                        <FormControl
+                                            size="small"
+                                            defaultValue={moveNo?.toString()}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setMoveNo(toSafeInteger(e.target.value));
+                                            }} />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={3} sm={6}>
+                                    <FormControl>
+                                        <InputLabel>{t("ep_target", { ns: "chess" }).toString()}</InputLabel>
+                                        <FormControl
+                                            size="small"
+                                            defaultValue={ep_target}
+                                            title={t("ep_target_hint", { ns: "builder" })}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setEpTarget(Square.parse(e.target.value));
+                                            }} />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={6}>
+                                    <FormControl>
+                                        <InputLabel>{t("marks", { ns: "builder" }).toString()}</InputLabel>
+                                        <Input
+                                            size="small"
+                                            value={markers ?? ''}
+                                            title={t("marks_hint", { ns: "builder" })}
+                                            onChange={onMarkChange} />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </div>
+
+                        <div className="pos-castle">
+                            <div><strong>{t("castle", { ns: "chess" }).toString()}</strong></div>
+                            <Grid container spacing={2}>
+                                <Grid item md={6}>
+                                    {renderCastlingGroup(Color.White, castling)}
+                                </Grid>
+                                <Grid item md={6}>
+                                    {renderCastlingGroup(Color.Black, castling)}
+                                </Grid>
+                            </Grid>
+                        </div>
+                        <div className="pos-display">
+                            <Grid container spacing={2}>
+                                <Grid item md={3} sm={6}>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch defaultChecked onChange={onFlipChange} />
+                                        }
+                                        label={t("display_flip", { ns: "builder" }).toString()}
+                                    />
+                                </Grid>
+                                <Grid item md={3} sm={6}>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch defaultChecked onChange={(e) => {
+                                                setCoordinates(e.target.checked);
+                                            }} />
+                                        }
+                                        label={t("display_coord", { ns: "builder" }).toString()}
+                                    />
+                                </Grid>
+                                <Grid item md={3} sm={6}>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch defaultChecked onChange={(e) => {
+                                                setShowTurn(e.target.checked);
+                                            }} />
+                                        }
+                                        label={t("display_showturn", { ns: "builder" }).toString()}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </div>
+                </div>
+            </Box>
+        </Container>
+    );
 }
 
-export const setupPosition = (props: PosBuilderProps, container: HTMLElement) => {
+export const setupPosition = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
     root.render(React.createElement(PosBuilder, props));
 };

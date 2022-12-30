@@ -5,33 +5,6 @@ import { formatTimer } from '../../fn/date/formatTimer';
 import { Chess as ChessEngine } from "../../chess/Chess";
 import { IChessPlayer, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
-import UserBadge from "../user/UserBadge";
-
-
-export const renderPlayer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
-    const { White: white, Black: black } = engine;
-
-    let player: IChessPlayer | undefined;
-    if (orientation == "white") {
-        player = (position == "bottom") ? white : black; 
-    } else {
-        player = (position == "bottom") ? black : white; 
-    }
-
-    if (player) {
-        if (player.rating) {
-            return (
-                <UserBadge user={player.user} size="small" popover={false}>{player.rating}</UserBadge>
-            );
-        } else {
-            return (
-                <UserBadge user={player.user} size="small" popover={false} />
-            );
-        }
-    }
-
-    return null;   
-};
 
 export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
     const rawData = engine.RawData;

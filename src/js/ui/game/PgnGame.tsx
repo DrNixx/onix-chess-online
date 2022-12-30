@@ -2,6 +2,8 @@ import React, {useRef, useState} from 'react';
 import {shallowEqual, useSelector} from "react-redux";
 import { createRoot } from 'react-dom/client';
 
+import {useTranslation} from "react-i18next";
+
 import Box from "@mui/material/Box";
 import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
@@ -27,7 +29,6 @@ import {GameState} from "../../actions/GameState";
 import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
-import {useTranslation} from "react-i18next";
 
 const PgnGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;

@@ -122,6 +122,12 @@ export class ChessGameState {
 
 type encodedMoves = [number, string, number, number, string, string];
 
+export type GamePlayers = {
+    white?: IChessPlayer;
+
+    black?: IChessPlayer;
+};
+
 const defaultGameData: IGameData = {
     game: {
         id: 0,
@@ -159,7 +165,6 @@ export class Chess {
     private varDepth = 0;
     private supressEvents = false;
     private moveList: Map<string, Move> = new Map<string, Move>();
-    
     private currentMove!: Move;
     private curPos!: Position;
     private startPos: Position;
@@ -191,6 +196,14 @@ export class Chess {
     public GameId?: number | string = undefined;
     public White?: IChessPlayer;
     public Black?: IChessPlayer;
+
+    public getPlayers(): GamePlayers {
+        return {
+            white: this.White,
+            black: this.Black,
+        };
+    }
+
     public Event?: string;
     public Site?: string;
     public GameDate?: string;

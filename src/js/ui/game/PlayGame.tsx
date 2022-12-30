@@ -381,9 +381,9 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                 </div>
                 { confirmMove ?  (
                     <div className="ms-auto ps-4 move-form">
-                        <input aria-label={t("move_from")} type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
+                        <input aria-label={t('move_from')} type="text" value={fromVal} onChange={changeFrom} disabled={disableForm} />
                         <span className="px-2">&mdash;</span>
-                        <input aria-label={t("move_to")} type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
+                        <input aria-label={t('move_to')} type="text" value={toVal} onChange={changeTo} disabled={disableForm} />
                         <Button color="success" className="ms-2" onClick={moveClick} disabled={!provisionalMove.isValid || disableForm}>{t("move_button")}</Button>
                         <Button className="ms-2" onClick={returnToPlay} disabled={disableForm || (!fromVal && !toVal)}>{t("reset_button")}</Button>
                     </div>
@@ -843,7 +843,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     return (
         <DumbGame
-            cgRef={(api) => cgRef.current = api ?? undefined}
+            cgRef={(api) => cgRef.current = (api ?? undefined)}
             onGenerateConfig={generateConfig}
             controlsLeft={renderControls()}
             controlsTop={renderTimer(game.engine, board.orientation, "top")}

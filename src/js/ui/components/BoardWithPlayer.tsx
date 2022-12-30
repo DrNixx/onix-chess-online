@@ -1,52 +1,57 @@
 import React, {PropsWithChildren} from 'react';
-import * as cg from "chessground/types";
 
-import clsx from "clsx";
 import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 
-import {renderPlayer} from "../game/GameUtils";
 import {Chess as ChessEngine} from "../../chess/Chess";
+import Chessground from "../chess/Chessground";
+import {Api} from "chessground/api";
+import {Config as CgConfig} from "chessground/config";
+import BoardPlayer from "./BoardPlayer";
 
 type Props = {
     piece: string;
     engine: ChessEngine;
-    orientation: cg.Color;
+    config: CgConfig;
     controlsTop?: React.ReactNode;
     controlsBottom?: React.ReactNode;
-    boardRef?: React.Ref<HTMLDivElement>;
+    cgRef: React.RefCallback<Api>;
 }
 
 const BoardWithPlayer: React.FC<PropsWithChildren<Props>> = (props) => {
-    const {piece, engine, orientation, controlsTop, controlsBottom, boardRef, children} = props;
+    const {piece, engine, config, controlsTop, controlsBottom, cgRef, children} = props;
     return (
         <div className="d-block d-md-flex flex-wrap mb-2">
             <div>
-                <div className={clsx("board-container", piece)}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={7}>
-                            {renderPlayer(engine, orientation, "top")}
+                <Chessground
+                    sx={{paddingY: 1}}
+                    piece={piece}
+                    config={config}
+                    cgRef={cgRef}
+                    contentTop={
+                        <Grid container spacing={2}>
+                            <Grid item xs={7}>
+                                <BoardPlayer players={engine.getPlayers()} orientation={config.orientation} position="top" />
+                            </Grid>
+                            <Grid item xs={5}>
+                                <div className="text-right position-relative">
+                                    {controlsTop}
+                                </div>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={5}>
-                            <div className="text-right position-relative">
-                                {controlsTop}
-                            </div>
+                    }
+                    contentBottom={
+                        <Grid container spacing={2}>
+                            <Grid item xs={7}>
+                                <BoardPlayer players={engine.getPlayers()} orientation={config.orientation} position="bottom" />
+                            </Grid>
+                            <Grid item xs={5}>
+                                <div className="text-right position-relative">
+                                    {controlsBottom}
+                                </div>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Box sx={{paddingY: 1}}>
-                        <div className="main-board" ref={boardRef} />
-                    </Box>
-                    <Grid container spacing={2}>
-                        <Grid item xs={7}>
-                            {renderPlayer(engine, orientation, "bottom")}
-                        </Grid>
-                        <Grid item xs={5}>
-                            <div className="text-right position-relative">
-                                {controlsBottom}
-                            </div>
-                        </Grid>
-                    </Grid>
-                </div>
+                    }
+                />
             </div>
             { children }
         </div>

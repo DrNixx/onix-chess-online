@@ -35,5 +35,9 @@
         "src/js/configure.ts",
         "src/js/play.ts",
         "src/js/watch.ts",
+        "src/js/setup.ts"
+    ],
+    "include": [
+        "src/js/**/*.d.ts"
     ]
 }

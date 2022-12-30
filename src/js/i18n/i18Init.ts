@@ -26,6 +26,7 @@ export function init(locale: string) {
             load: "languageOnly",
             ns: ['core'],
             defaultNS: 'core',
+            returnNull: false,
             debug: process.env.NODE_ENV !== 'production',
         });
 }

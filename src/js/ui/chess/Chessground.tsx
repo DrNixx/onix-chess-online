@@ -1,76 +1,68 @@
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import clsx from "clsx";
-import * as cg from 'chessground/types';
+import Box from "@mui/material/Box";
+
 import { Chessground as ChessgroundNative } from 'chessground';
-import { Api } from 'chessground/api';
-import { Config } from 'chessground/config';
-import { BoardSize, BoardSizeClasses } from 'onix-board-assets';
-import Container from '@mui/material/Container';
 
-export interface BoardProps {
-    locale?: string,
-    size: BoardSize,
-    piece?: string,
-    square?: string,
+import { Api as CgApi } from 'chessground/api';
+import {Config as CgConfig} from "chessground/config";
 
-    myColor?: cg.Color,
-    turnColor?: number,
-    flip?: boolean,
+import {SxProps} from "@mui/system";
+import {Theme} from "@mui/material";
 
-    inPromotion?: boolean,
+type Props = {
+    piece?: string;
+    square?: string;
 
-    board: Config,
-}
+    inPromotion?: boolean;
 
-export interface BoardState {
-    inPromotion: boolean,
-}
+    config?: CgConfig;
 
-export class Chessground extends React.Component<BoardProps, BoardState> {
-    public static defaultProps: BoardProps = {
-        locale: "ru-ru",
-        size: BoardSize.Normal,
-        piece: "alpha",
-        square: "color-blue",
-        inPromotion: false,
-        board: {},
-    }
+    cgRef?: React.RefCallback<CgApi>;
 
-    private boardElement: HTMLDivElement | null = null;
-    private cg?: Api = undefined;
+    contentTop?: React.ReactNode;
 
-    constructor(props: BoardProps) {
-        super(props);
+    contentBottom?: React.ReactNode;
 
-        this.state = {
-            inPromotion: !!props.inPromotion
+    sx?: SxProps<Theme>;
+};
+
+const defaultProps = {
+    piece: "alpha",
+    square: "color-blue",
+    inPromotion: false,
+    config: {},
+};
+
+const Chessground: React.FC<Props> = (propsIn) => {
+    const props = {...defaultProps, ...propsIn};
+
+    const { cgRef: cgRefCallback, config, square, piece, contentTop, contentBottom, sx } = props;
+
+    const [inPromotion, setInPromotion] = useState(props.inPromotion);
+    const boardElement = useRef<HTMLDivElement>(null);
+
+    const cg = useMemo(() => {
+        cg && cg.destroy();
+        const result = boardElement.current ? ChessgroundNative(boardElement.current, config) : null;
+        cgRefCallback && cgRefCallback(result);
+        return result;
+    }, [cgRefCallback, config]);
+
+    const redrawBoard = useCallback(() => {
+        cg && cg.redrawAll();
+    }, [cg]);
+
+    useEffect(() => {
+        window.addEventListener("resize", redrawBoard);
+
+        return () => {
+            window.removeEventListener("resize", redrawBoard);
+            cg && cg.destroy();
         };
+    }, [cg, redrawBoard]);
 
-    }
-
-    componentDidMount() {
-        this.cg = ChessgroundNative(this.boardElement!, this.props.board);        
-        window.addEventListener("resize", this.redrawBoard);
-    }
-
-    componentWillUnmount() {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.destroy();
-        }
-        
-        window.removeEventListener("resize", this.redrawBoard);
-    }
-
-    private redrawBoard = () => {
-        const { cg } = this;
-        if (cg !== undefined) {
-            cg.redrawAll();
-        }
-    };
-
-    private renderPromotion = () => {
-        const { inPromotion } = this.state;
+    const renderPromotion = () => {
         const pieces = ["queen", "rook", "bishop", "knight"].map((role) => {
             return 1; //[color, role as cg.Role];
         });
@@ -84,25 +76,16 @@ export class Chessground extends React.Component<BoardProps, BoardState> {
         return null;
     }
 
-    public render() {
-        const { props, renderPromotion } = this;
-        const { size, square, piece, board } = props;
+    return (
+        <Box className={clsx("board-container", piece)} sx={sx}>
+            {contentTop}
+            <Box sx={{paddingY: 1}}>
+                <div className="main-board" ref={boardElement} />
+                { renderPromotion() }
+            </Box>
+            {contentBottom}
+        </Box>
+    );
+};
 
-        const containerClass = [
-            "pos-builder", 
-            "is2d",
-            square,
-            BoardSizeClasses[size],
-            { "coords-no": !(board.coordinates) }
-        ];
-
-        return (
-            <Container className={clsx(containerClass)} maxWidth="xl">
-                <div className={clsx("board-container", piece)}>
-                    <div className="main-board" ref={el => this.boardElement = el} />
-                    { renderPromotion() }
-                </div>
-            </Container>
-        );
-    }
-}
+export default Chessground;
