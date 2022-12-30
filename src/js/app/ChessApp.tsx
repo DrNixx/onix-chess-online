@@ -1,7 +1,6 @@
 import React, {Suspense, useEffect, useState} from 'react';
 import { createRoot } from 'react-dom/client';
-import {useSnackbar, SnackbarProvider} from "notistack";
-import toSafeInteger from 'lodash/toSafeInteger';
+import {useSnackbar} from "notistack";
 
 import { Logger } from '../common/Logger';
 import { IModule } from './IModule';
@@ -11,6 +10,7 @@ import { Frontend } from '../ui/Frontend';
 import {init as initI18N} from '../i18n/i18Init';
 import {setCentrifugeConfig, useCentrifuge} from "../hooks/useCentrifuge";
 import {setApiRoot} from "../api/Api";
+import AlertContext from "../context/AlertContext";
 
 type Props = {
     locale?: string,
@@ -127,14 +127,20 @@ const ChessApplication: React.FC<Props> = (propsIn) => {
 
     return (
         <Suspense fallback="loading...">
-            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
-                <ConnectionInfo online={connected} />
-            </SnackbarProvider>
+            <ConnectionInfo online={connected} />
         </Suspense>
+    );
+}
+
+const ChessApplicationComponent : React.FC<Props> = (props) => {
+    return (
+        <AlertContext>
+            <ChessApplication {...props} />
+        </AlertContext>
     );
 }
 
 export const ChessApp = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
-    root.render(React.createElement(ChessApplication, props));
+    root.render(React.createElement(ChessApplicationComponent, props));
 };

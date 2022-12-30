@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 
 import { Chessground as ChessgroundNative } from 'chessground';
 
-import { Api as CgApi } from 'chessground/api';
+import {Api as CgApi} from 'chessground/api';
 import {Config as CgConfig} from "chessground/config";
 
 import {SxProps} from "@mui/system";
@@ -38,27 +38,24 @@ const Chessground: React.FC<Props> = (propsIn) => {
     const props = {...defaultProps, ...propsIn};
 
     const { cgRef: cgRefCallback, config, square, piece, contentTop, contentBottom, sx } = props;
-
+    const cg = useRef<CgApi|null>(null);
     const [inPromotion, setInPromotion] = useState(props.inPromotion);
-    const boardElement = useRef<HTMLDivElement>(null);
 
-    const cg = useMemo(() => {
-        cg && cg.destroy();
-        const result = boardElement.current ? ChessgroundNative(boardElement.current, config) : null;
-        cgRefCallback && cgRefCallback(result);
-        return result;
+    const handleRef = useCallback((node: HTMLDivElement) => {
+        cg.current = node ? ChessgroundNative(node, config) : null;
+        cgRefCallback && cgRefCallback(cg.current);
     }, [cgRefCallback, config]);
 
     const redrawBoard = useCallback(() => {
-        cg && cg.redrawAll();
-    }, [cg]);
+        cg.current && cg.current.redrawAll();
+    }, []);
 
     useEffect(() => {
         window.addEventListener("resize", redrawBoard);
 
         return () => {
             window.removeEventListener("resize", redrawBoard);
-            cg && cg.destroy();
+            cg.current && cg.current.destroy();
         };
     }, [cg, redrawBoard]);
 
@@ -80,7 +77,7 @@ const Chessground: React.FC<Props> = (propsIn) => {
         <Box className={clsx("board-container", piece)} sx={sx}>
             {contentTop}
             <Box sx={{paddingY: 1}}>
-                <div className="main-board" ref={boardElement} />
+                <div className="main-board" ref={handleRef} />
                 { renderPromotion() }
             </Box>
             {contentBottom}

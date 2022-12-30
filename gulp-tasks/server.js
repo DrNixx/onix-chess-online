@@ -11,7 +11,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
 			PATHS.build.styles + '*.css'
 		];
 		
-		
+
 		watchFiles.push(PATHS.build.scripts + '*.js');
 		watchFiles.push(PATHS.watch.scripts);
 
