@@ -3,7 +3,7 @@ import clsx from "clsx";
 import * as cg from 'chessground/types';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { Chess as ChessEngine } from "../../chess/Chess";
-import { IChessPlayer, isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
+import { isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
 import { GameResult } from '../../chess/GameResult';
 
 export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {

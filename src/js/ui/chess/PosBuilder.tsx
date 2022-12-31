@@ -13,6 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -45,6 +46,8 @@ import TextWithCopy from '../controls/TextWithCopy';
 import {postMessage} from '../../net/PostMessage';
 import {Api} from "chessground/api";
 import Chessground from "./Chessground";
+import AlertContext from '../../context/AlertContext';
+
 
 type Selected = "pointer" | "trash" | [cg.Color, cg.Role];
 
@@ -120,7 +123,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
     const [square, setSquare] = useState(props.square);
     const [size, setSize] = useState(props.size);
     const [coordinates, setCoordinates] = useState(props.coordinates);
-    const [orientation, setOrientation] = useState(props.orientation);
+    const [flipped, setFlipped] = useState(props.orientation == 'black');
     const [showTurn, setShowTurn] = useState(props.showTurn);
 
     const pos = useMemo(() => {
@@ -138,15 +141,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
 
     const cgRef = useRef<Api>();
 
-    const { t } = useTranslation(['builder', 'core']);
-
-    const flipBoard = (orientation: cg.Color) => {
-        if (cgRef.current) {
-            if (cgRef.current.state.orientation != orientation) {
-                cgRef.current.toggleOrientation();
-            }
-        }
-    };
+    const { t } = useTranslation(['builder', 'chess', 'core']);
 
     const markersToShapes = (str?: string) => {
         const shapes: DrawShape[] = [];
@@ -279,10 +274,18 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [coordinates, whoMove, fen]);
 
+    useEffect(() => {
+        if (cgRef.current) {
+            const orientation = flipped ? 'black' : 'white';
+            if (cgRef.current.state.orientation != orientation) {
+                cgRef.current.toggleOrientation();
+            }
+        }
+    }, [flipped]);
+
     const onFlipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const orientation = e.target.checked ? 'black' : 'white';
-        setOrientation(orientation);
-        flipBoard(orientation);
+        setFlipped(orientation == 'black');
     };
 
     const onStartChange = (fen: string) => {
@@ -321,10 +324,8 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
         
         return (
             <Card>
-                <CardHeader>
-                    {t(Color.toName(color), { ns: "chess" })}
-                </CardHeader>
-                <CardContent>
+                <CardHeader title={t(Color.toName(color), { ns: "chess" })} sx={{ pb: 0 }} />
+                <CardContent sx={{ pt: 0 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={5}>
                             <FormControlLabel 
@@ -570,10 +571,6 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
         ];
     }, [coordinates, size, square]);
 
-    const flipped = useMemo(() => {
-        return orientation != 'white'
-    }, [orientation]);
-
     const fenParams = useCallback(() => {
         const shapes = markersToShapes(markers);
         const marks = shapesToMarkers(shapes);
@@ -639,59 +636,70 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                         </div>
 
                         {renderDialogButton(!!props.dialog, makeCode())}
-                        <div>
-                            <div className="code-row">
-                                <Box>
-                                    <FormControl>
-                                        <InputLabel>{t("fen", { ns: "chess" }).toString()}</InputLabel>
-                                        <TextWithCopy value={fullFen} size="small" placeholder={t("fen", { ns: "chess" })} />
-                                    </FormControl>
-                                </Box>
-                                <Box>
-                                    <FormControl>
-                                        <InputLabel>{t("image_link", { ns: "builder" }).toString()}</InputLabel>
-                                        <TextWithCopy value={makeLink()} size="small" placeholder={t("image_link", { ns: "builder" })} />
-                                    </FormControl>
-                                </Box>
-                                <Box>
-                                    <FormControl>
-                                        <InputLabel>{t("forum_code", { ns: "builder" }).toString()}</InputLabel>
-                                        <TextWithCopy value={makeCode()} size="small" placeholder={t("forum_code", { ns: "builder" })} />
-                                    </FormControl>
-                                </Box>
-                            </div>
-                        </div>
+                        <Stack spacing={2} sx={{my: 2}}>
+                            <TextWithCopy 
+                                label={t("fen", { ns: "chess" }).toString()}
+                                value={fullFen} 
+                                size="small" 
+                                fullWidth 
+                                variant="outlined" 
+                                placeholder={t("fen", { ns: "chess" })} />
+                            <TextWithCopy 
+                                label={t("image_link", { ns: "builder" }).toString()}
+                                value={makeLink()} 
+                                size="small" 
+                                fullWidth 
+                                variant="outlined"
+                                placeholder={t("image_link", { ns: "builder" })} />
+                            <TextWithCopy 
+                                label={t("forum_code", { ns: "builder" }).toString()}
+                                value={makeCode()} 
+                                size="small" 
+                                fullWidth 
+                                variant="outlined"
+                                placeholder={t("forum_code", { ns: "builder" })} />
+                        </Stack>
                     </div>
-                    <div className="controls flex-grow-1 ps-lg-4">
-                        <div className="pos-sets">
+                    <div className="controls flex-grow-1 ps-lg-4 py-4">
+                        <div className="pos-sets mb-4">
                             <Grid container spacing={2}>
                                 <Grid item md={4}>
-                                    <FormControl>
+                                    <FormControl fullWidth>
                                         <InputLabel>{t("board_size", { ns: "builder" }).toString()}</InputLabel>
-                                        <SizeSelector value={size} onChangeSize={(e) => setSize(e)} />
+                                        <SizeSelector 
+                                            label={t("board_size", { ns: "builder" }).toString()} 
+                                            value={size} 
+                                            onChangeSize={(e) => setSize(e)} />
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={4}>
-                                    <FormControl>
+                                    <FormControl fullWidth>
                                         <InputLabel>{t("pieces", { ns: "chess" }).toString()}</InputLabel>
-                                        <PieceSelector value={piece} onChangePiece={(e) => setPiece(e)} />
+                                        <PieceSelector 
+                                            label={t("pieces", { ns: "chess" }).toString()} 
+                                            value={piece} 
+                                            onChangePiece={(e) => setPiece(e)} />
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={4}>
-                                    <FormControl>
+                                    <FormControl fullWidth>
                                         <InputLabel>{t("squares", { ns: "chess" }).toString()}</InputLabel>
-                                        <SquareSelector value={square} onChangeSquare={(e) => setSquare(e)} />
+                                        <SquareSelector 
+                                            label={t("squares", { ns: "chess" }).toString()} 
+                                            value={square} 
+                                            onChangeSquare={(e) => setSquare(e)} />
                                     </FormControl>
                                 </Grid>
                             </Grid>
                         </div>
 
-                        <div className="pos-start">
+                        <div className="pos-start mb-4">
                             <Grid container spacing={2}>
                                 <Grid item md={8} sm={12}>
-                                    <FormControl>
-                                        <InputLabel className="sr-only">{t("position_label", { ns: "builder" }).toString()}</InputLabel>
+                                    <FormControl fullWidth>
+                                        <InputLabel>{t("position_label", { ns: "builder" }).toString()}</InputLabel>
                                         <StartPosSelector
+                                            label={t("position_label", { ns: "builder" }).toString()}
                                             fen={fullFen}
                                             openingsPos={props.openings}
                                             onChangeFen={onStartChange}
@@ -699,17 +707,20 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={4} sm={12}>
-                                    <FormControl>
-                                        <InputLabel className="sr-only">{t("who_move", { ns: "chess" }).toString()}</InputLabel>
-                                        <WhoMoveSelector value={whoMove} onChangeTurn={(color) => {
-                                            setWhoMove(color);
-                                        }} />
+                                    <FormControl fullWidth>
+                                        <InputLabel>{t("who_move", { ns: "chess" }).toString()}</InputLabel>
+                                        <WhoMoveSelector 
+                                            label={t("who_move", { ns: "chess" }).toString()}
+                                            value={whoMove} 
+                                            onChangeTurn={(color) => {
+                                                setWhoMove(color);
+                                            }} />
                                     </FormControl>
                                 </Grid>
                             </Grid>
                         </div>
 
-                        <div className="pos-params">
+                        <div className="pos-params mb-4">
                             <div><strong>{t("pos_param", { ns: "builder" }).toString()}</strong></div>
                             <Grid container spacing={2}>
                                 <Grid item md={3} sm={6}>
@@ -764,7 +775,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                 <Grid item md={3} sm={6}>
                                     <FormControlLabel
                                         control={
-                                            <Switch defaultChecked onChange={onFlipChange} />
+                                            <Switch checked={flipped} onChange={onFlipChange} />
                                         }
                                         label={t("display_flip", { ns: "builder" }).toString()}
                                     />
@@ -772,7 +783,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                 <Grid item md={3} sm={6}>
                                     <FormControlLabel
                                         control={
-                                            <Switch defaultChecked onChange={(e) => {
+                                            <Switch checked={coordinates} onChange={(e) => {
                                                 setCoordinates(e.target.checked);
                                             }} />
                                         }
@@ -782,7 +793,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                 <Grid item md={3} sm={6}>
                                     <FormControlLabel
                                         control={
-                                            <Switch defaultChecked onChange={(e) => {
+                                            <Switch checked={showTurn} onChange={(e) => {
                                                 setShowTurn(e.target.checked);
                                             }} />
                                         }
@@ -798,7 +809,15 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
     );
 }
 
+const PosBuilderComponent: React.FC<Props> = (props) => {
+    return (
+        <AlertContext>
+            <PosBuilder {...props} />
+        </AlertContext>
+    );
+};
+
 export const setupPosition = (props: Props, container: HTMLElement) => {
     const root = createRoot(container);
-    root.render(React.createElement(PosBuilder, props));
+    root.render(React.createElement(PosBuilderComponent, props));
 };

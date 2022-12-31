@@ -14,7 +14,7 @@ type IChessOpeningWithKey = IChessOpening & {
 
 type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false, false, false>,
         'renderInput' | 'options' | 'loading' | 'getOptionLabel' | 'isOptionEqualToValue' | 'groupBy' | 'onClose' | 'onOpen'>  & {
-    label?: React.ReactElement,
+    label?: React.ReactNode,
     fen?: string,
     openingsPos?: IChessOpening[],
     onChangeFen?: (fen: string) => void,

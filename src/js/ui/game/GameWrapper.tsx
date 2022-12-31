@@ -1,14 +1,12 @@
 import React, {Suspense} from 'react';
 import { Provider } from 'react-redux';
-import { SnackbarProvider } from 'notistack';
 
 import CircularProgress from "@mui/material/CircularProgress";
-import { ThemeProvider } from '@mui/material/styles';
-
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
 import {createCombinedGameState} from "../../actions/CombinedGameState";
 import {createCombinedGameStore} from "../../actions/CombinedGameStore";
-import {ChessTheme} from "../ChessTheme";
+import ThemeContext from "../../context/ThemeContext";
+import AlertContext from '../../context/AlertContext';
 
 type GamePropsVsComponent = GameProps & {
     GameComponent: React.FC<GameProps>;
@@ -22,13 +20,13 @@ const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {
 
     return (
         <Suspense fallback={<CircularProgress />}>
-            <SnackbarProvider maxSnack={4} anchorOrigin={{horizontal: "right", vertical: "bottom"}}>
+            <AlertContext>
                 <Provider store={store}>
-                    <ThemeProvider theme={ChessTheme}>
+                    <ThemeContext>
                         <GameComponent {...other}/>
-                    </ThemeProvider>
+                    </ThemeContext>
                 </Provider>
-            </SnackbarProvider>
+            </AlertContext>
         </Suspense>
     );
 };
