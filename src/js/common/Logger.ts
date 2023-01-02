@@ -44,6 +44,7 @@ function exec_callback(args: any) {
     }
 }
 
+// noinspection JSUnusedLocalSymbols
 export class LoggerClass {
     constructor() {
         let idx = pass_methods.length;
@@ -57,18 +58,23 @@ export class LoggerClass {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     public error = (message?: any, ...args: any[]) => {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     public warn = (message?: any, ...args: any[]) => {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     public info = (message?: any, ...args: any[]) => {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     public debug = (message?: any, ...args: any[]) => {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
     public log = (message?: any, ...args: any[]) => {
     }
 
@@ -77,6 +83,7 @@ export class LoggerClass {
         // exist, as long as the logging level is non-zero.
         (this as { [key: string]: any })[method] = function () {
             if (log_level !== 0 && con && (con as { [key: string]: any })[method]) {
+                // eslint-disable-next-line prefer-rest-params
                 (con as { [key: string]: any })[method].apply(con, arguments);
             }
         };
@@ -84,6 +91,7 @@ export class LoggerClass {
 
     private setLevelFunctions(idx: number, level: string) {
         (this as { [key: string]: any })[level] = function () {
+            // eslint-disable-next-line prefer-rest-params
             const args = aps.call(arguments);
             const log_arr = [level].concat(args);
 
@@ -101,9 +109,10 @@ export class LoggerClass {
     }
 
     public setCallback() {
-        var args = aps.call(arguments),
-            max = logs.length,
-            i = max;
+        // eslint-disable-next-line prefer-rest-params
+        const args = aps.call(arguments);
+        const max = logs.length;
+        let i = max;
 
         callback_func = args.shift() || null;
         callback_force = typeof args[0] === "boolean" ? args.shift() : FALSE;
@@ -113,7 +122,7 @@ export class LoggerClass {
         while (i < max) {
             exec_callback(logs[i++]);
         }
-    };
+    }
 
     // priority levels:
     // log (1) < debug (2) < info (3) < warn (4) < error (5)
@@ -122,7 +131,7 @@ export class LoggerClass {
     }
 }
 
-export var Logger: LoggerClass = new LoggerClass();
+export const Logger: LoggerClass = new LoggerClass();
 if (process.env.NODE_ENV === 'production') {
     Logger.setLevel(1);
 }
