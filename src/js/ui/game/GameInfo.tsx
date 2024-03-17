@@ -10,7 +10,7 @@ import Tooltip from '@mui/material/Tooltip';
 import sprintf from '../../fn/string/Sprintf';
 import { Chess as ChessEngine } from '../../chess/Chess';
 import { IChessPlayer, isAdvanceClock } from '../../chess/types/Interfaces';
-import { GameResult } from '../../chess/GameResult';
+import * as GameResult from '../../chess/GameResult';
 import {CombinedGameState} from "../../actions/CombinedGameState";
 import {GameState} from "../../actions/GameState";
 import {useTranslation} from "react-i18next";

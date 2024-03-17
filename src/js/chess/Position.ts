@@ -1,11 +1,14 @@
 import cloneDeep from 'lodash/cloneDeep';
 import indexOf from 'lodash/indexOf';
-import { Colors, Pieces, Squares, Directions } from './types/Types';
-import { Color } from './Color';
+import * as Colors from './types/Colors';
+import * as Pieces from './types/Pieces';
+import * as Squares from './types/Squares';
+import * as Directions from './types/Directions';
+import * as Color from './Color';
 import { Castling, CastlingSide } from './Castling';
-import { Direction } from './Direction';
-import { Piece } from './Piece';
-import { Square } from './Square';
+import * as Direction from './Direction';
+import * as Piece from './Piece';
+import * as Square from './Square';
 import { SimpleMove } from './SimpleMove';
 import { FenString } from './FenString';
 
@@ -1187,11 +1190,17 @@ export class Position {
         capturesOnly = !!capturesOnly;
         const destArr = Square.knightAttacks(fromSq);
         let i = 0;
-        while (true) {
+        while (i >= 0) {
             const dest = destArr[i++];
-            if (dest === ns) { break; }
+            if (dest === ns) {
+                break;
+            }
+
             const p = this.brd[dest];
-            if (capturesOnly && (p === noPiece)) { continue; }
+            if (capturesOnly && (p === noPiece)) {
+                continue;
+            }
+
             if ((p === noPiece) || (Piece.color(p) !== color)) {
                 if (is_valid_dest(dest, sqset)) {
                     this.addLegalMove(mlist, fromSq, dest, noPiece);

@@ -1,50 +1,76 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import clsx from "clsx";
-import Box from "@mui/material/Box";
-
 import { Chessground as ChessgroundNative } from 'chessground';
-
 import {Api as CgApi} from 'chessground/api';
 import {Config as CgConfig} from "chessground/config";
 
+import Box from "@mui/material/Box";
 import {SxProps} from "@mui/system";
 import {Theme} from "@mui/material";
 
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
+
+
 type Props = {
-    piece?: string;
-    square?: string;
-
     inPromotion?: boolean;
-
-    config?: CgConfig;
-
     cgRef?: React.RefCallback<CgApi>;
-
     contentTop?: React.ReactNode;
-
     contentBottom?: React.ReactNode;
-
     sx?: SxProps<Theme>;
+    onGenerateConfig?: () => CgConfig;
 };
 
 const defaultProps = {
-    piece: "alpha",
-    square: "color-blue",
     inPromotion: false,
-    config: {},
 };
 
 const Chessground: React.FC<Props> = (propsIn) => {
     const props = {...defaultProps, ...propsIn};
+    const {
+        cgRef: cgRefCallback,
+        contentTop,
+        contentBottom,
+        sx,
+        onGenerateConfig
+    } = props;
 
-    const { cgRef: cgRefCallback, config, square, piece, contentTop, contentBottom, sx } = props;
+    const {
+        piece,
+        orientation,
+        coordinates
+    } = useContext(BoardContext);
+
+    const {
+        fen,
+        turnColor,
+        lastMove,
+        isCheck
+    } = useContext(GameContext);
+
     const cg = useRef<CgApi|null>(null);
-    const [inPromotion, setInPromotion] = useState(props.inPromotion);
+    const [inPromotion,] = useState(props.inPromotion);
+
+    const generateConfig = useCallback(() => {
+        return onGenerateConfig ? onGenerateConfig() : {
+            fen: fen,
+            lastMove: lastMove,
+            check: isCheck,
+            orientation: orientation,
+            coordinates: coordinates,
+            turnColor: turnColor,
+            viewOnly: true,
+            highlight: {
+                lastMove: true,
+                check: true
+            },
+        };
+    }, [coordinates, fen, isCheck, lastMove, onGenerateConfig, orientation, turnColor]);
 
     const handleRef = useCallback((node: HTMLDivElement) => {
-        cg.current = node ? ChessgroundNative(node, config) : null;
+        cg.current = node ? ChessgroundNative(node, generateConfig()) : null;
         cgRefCallback && cgRefCallback(cg.current);
-    }, [cgRefCallback, config]);
+    }, [cgRefCallback, generateConfig]);
 
     const redrawBoard = useCallback(() => {
         cg.current && cg.current.redrawAll();
@@ -60,9 +86,11 @@ const Chessground: React.FC<Props> = (propsIn) => {
     }, [cg, redrawBoard]);
 
     const renderPromotion = () => {
+        /*
         const pieces = ["queen", "rook", "bishop", "knight"].map((role) => {
             return 1; //[color, role as cg.Role];
         });
+         */
 
         if (inPromotion) {
             return (

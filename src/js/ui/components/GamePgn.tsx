@@ -22,7 +22,7 @@ const GamePgn: React.FC<GamePgnProps> = (props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const copyPgn = (e: React.MouseEvent<HTMLPreElement>) => {
+    const copyPgn = () => {
         if (copy(pgn)) {
             enqueueSnackbar(t("copied"), {autoHideDuration: 1000});
         }

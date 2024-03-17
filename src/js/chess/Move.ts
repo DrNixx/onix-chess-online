@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
-import { Color } from './Color';
+import * as Colors from './types/Colors';
+import * as Color from './Color';
 import { SimpleMove } from './SimpleMove';
-import { Colors } from './types/Types';
 import { Position } from './Position';
 
 /**

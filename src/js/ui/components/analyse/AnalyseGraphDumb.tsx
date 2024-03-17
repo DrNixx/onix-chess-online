@@ -1,74 +1,68 @@
 import { toInteger } from 'lodash';
-import React, {PropsWithChildren, Suspense, useEffect, useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-
+import React, {PropsWithChildren, Suspense, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import i18next from 'i18next';
-import {useTranslation} from "react-i18next";
+// import {useTranslation} from "react-i18next";
 
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
 import Grid from '@mui/material/Grid';
 
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ReferenceLine } from 'recharts';
 import { Chess as ChessEngine } from '../../../chess/Chess';
-import { Logger } from '../../../common/Logger';
-import { Colors } from '../../../chess/types/Types';
-import {IGameAnalysis, IGameData} from '../../../chess/types/Interfaces';
-import { GameActions } from '../../../actions/GameActions';
-import { Color } from '../../../chess/Color';
-import sprintf from '../../../fn/string/Sprintf';
-
-import {CombinedGameState} from "../../../actions/CombinedGameState";
+import { IGameData } from '../../../chess/types/Interfaces';
 import {IEvalItem} from "../../../chess/EvalItem";
 import TotalItem from "./TotalItem";
+import { BW } from '../../../chess/types/Colors';
+import { White, Black } from '../../../chess/Color';
+import Loader from "../../Loader";
+import {GameContext} from "../../../providers/GameProvider";
 
 type Props = {
     height?: number;
 };
 
 interface IGraphEvals extends IEvalItem {
-    color: Colors.BW;
+    color: BW;
     ply: number;
     name: string;
 }
 
 interface IGraphInfo {
-    GameId: number | string;
+    gameId: number | string;
     startPly: number;
     currentPly: number;
 }
 
 const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
-    const { t, ready } = useTranslation(['analyse']);
+    // const { t } = useTranslation(['analyse']);
 
-    const analysis = useSelector<CombinedGameState, IGameAnalysis>(
-        (state) => state.game.engine.Analysis
-    );
+    const {
+        gameId,
+        startPly,
+        currentPly,
+        analysis,
+        navigateToPly,
+        loadPartial
+    } = useContext(GameContext);
 
-    const graphInfo = useSelector<CombinedGameState, IGraphInfo>((state) => {
-        const game = state.game;
-        const {engine} = game;
+    const graphInfo = useMemo<IGraphInfo>(() =>{
+            return {
+                gameId: gameId ?? 0,
+                startPly: startPly,
+                currentPly: currentPly
+            }
+    }, []);
 
-        return {
-            GameId: engine.GameId ?? 0,
-            startPly: engine.StartPlyCount,
-            currentPly: engine.CurrentPlyCount
-        }
-    });
-
-    const evals = useSelector<CombinedGameState, IGraphEvals[]>((state) => {
-        const game = state.game;
-        const {engine} = game;
+    const evals = useCallback(() => {
         const evals: IGraphEvals[] = [];
         let move = engine.CurrentMove.Begin;
         while (!move.END_MARKER) {
             const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
-            const name = turn ? "" + turn + (move.sm.color === Color.White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
+            const name = turn ? "" + turn + (move.sm.color === White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
 
             if (move.sm.eval) {
                 evals.push({
                     ...move.sm.eval,
-                    color: move.sm.color ?? Color.White,
+                    color: move.sm.color ?? White,
                     ply: move.PlyCount,
                     name: name
                 });
@@ -78,9 +72,7 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
         }
 
         return evals;
-    });
-
-    const dispatch = useDispatch();
+    }, []);
 
     const [status, setStatus] = useState(analysis.state);
     const [completed, setCompleted] = useState(0);
@@ -97,13 +89,13 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
     }, []);
 
     const requestAnalysis = () => {
-        if (!graphInfo.GameId) return;
+        if (!graphInfo.gameId) return;
 
         if (abortController.signal.aborted) {
             setAbortController(new AbortController());
         }
 
-        fetch('https://www.chess-online.com/fishnet/create/' + graphInfo.GameId.toString(), { mode: "cors", signal: abortController.signal })
+        fetch('https://www.chess-online.com/fishnet/create/' + graphInfo.gameId.toString(), { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -115,18 +107,18 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 setStatus("inprogress");
             })
             .catch(function(error) {
-                Logger.error('Looks like there was a problem when request analysis: \n', error);
+                console.error('Looks like there was a problem when request analysis: \n', error);
             });
     }
 
     const loadAnalysis = () => {
-        if (!graphInfo.GameId) return;
+        if (!graphInfo.gameId) return;
 
         if (abortController.signal.aborted) {
             setAbortController(new AbortController());
         }
 
-        fetch('https://www.chess-online.com/api/analyse/game/' + graphInfo.GameId.toString() + "?v=2", { mode: "cors", signal: abortController.signal })
+        fetch('https://www.chess-online.com/api/analyse/game/' + graphInfo.gameId.toString() + "?v=2", { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -138,7 +130,7 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 if (responseAsJson) {
                     const data = responseAsJson as IGameData;
                     if (data.analysis?.state == "ready") {
-                        dispatch({type: GameActions.GAME_LOAD_PARTIAL, game: responseAsJson} as GameActions.GameAction);
+                        loadPartial(responseAsJson);
                     } else {
                         if (data.analysis?.state) {
                             setStatus(data.analysis?.state);
@@ -149,7 +141,7 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 }
             })
             .catch(function(error) {
-                Logger.error('Looks like there was a problem when load analysis: \n', error);
+                console.error('Looks like there was a problem when load analysis: \n', error);
             });
     }
 
@@ -163,13 +155,13 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
         );
     }
 
-    const anTooltipLblFmt = (...params: any[]) => {
+    const anTooltipLblFmt = () => {
         return "";
     }
 
     const moveToPly = (ply?: number) => {
         if (ply !== undefined) {
-            dispatch({ type: GameActions.NAVIGATE_TO_PLY, ply: ply } as GameActions.GameAction);
+            navigateToPly(ply);
         }
     };
 
@@ -184,8 +176,6 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
     }
 
     const renderProgress = (progress?: number) => {
-        const fmt = i18next.t("completed", { ns: "analyse" });
-        const progressStr = sprintf(fmt, progress ?? 0);
         const progressInt = toInteger(progress);
         return (
             <div className="analysis-inprogress">
@@ -211,7 +201,7 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
         );
     };
 
-    if (graphInfo.GameId && (status != "empty")) {
+    if (graphInfo.gameId && (status != "empty")) {
         if (status == "unanalysed") {
             return renderRequestBtn();
         } else if (status == "inprogress") {
@@ -225,11 +215,11 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
             return renderProgress(completed);
         } else if (status == "ready") {
             return (
-                <Suspense fallback={<CircularProgress />} >
+                <Suspense fallback={<Loader />} >
                     <div className="analyse d-block d-lg-flex">
                         <div className="graph-container flex-grow-1">
                             <ResponsiveContainer width="100%" height={props.height}>
-                                <AreaChart data={evals} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
+                                <AreaChart data={evals()} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
                                     <XAxis dataKey="ply" hide={true} />
                                     <YAxis />
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -242,10 +232,10 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                         <div className="graph-totals align-self-stretch">
                             <Grid container className="h-100">
                                 <Grid item xs={6} lg={12} className="white">
-                                    <TotalItem color={Color.White} item={analysis.white} />
+                                    <TotalItem color={White} item={analysis.white} />
                                 </Grid>
                                 <Grid item xs={6} lg={12} className="black">
-                                    <TotalItem color={Color.Black} item={analysis.black} />
+                                    <TotalItem color={Black} item={analysis.black} />
                                 </Grid>
                             </Grid>
                         </div>

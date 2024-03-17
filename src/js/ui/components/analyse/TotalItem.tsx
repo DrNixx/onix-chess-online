@@ -1,30 +1,24 @@
-import React from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import React, {useContext} from 'react';
 import i18next from "i18next";
 
 import Button from "@mui/material/Button";
 
-import {Colors} from "../../../chess/types/Types";
-import {IUserAnalysis} from "../../../chess/types/Interfaces";
-import {GameActions} from "../../../actions/GameActions";
-import {CombinedGameState} from "../../../actions/CombinedGameState";
-import {Chess as ChessEngine} from "../../../chess/Chess";
-
+import { IUserAnalysis } from "../../../chess/types/Interfaces";
+import { BW } from '../../../chess/types/Colors';
+import {GameContext} from "../../../providers/GameProvider";
 
 type Props = {
-    color: Colors.BW;
+    color: BW;
     item?: IUserAnalysis
 };
 
 const TotalItem: React.FC<Props> = (props) => {
     const { color, item } = props;
 
-    const engine = useSelector<CombinedGameState, ChessEngine>((state) => state.game.engine );
-    const dispatch = useDispatch();
-
+    const { navigateToPly } = useContext(GameContext);
     const moveToPly = (ply?: number) => {
         if (ply !== undefined) {
-            dispatch({ type: GameActions.NAVIGATE_TO_PLY, ply: ply } as GameActions.GameAction);
+            navigateToPly(ply);
         }
     };
 

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
 import {IChessPerfs, PerfNameType} from '../../chess/types/Interfaces';
-import {Logger} from '../../common/Logger';
 import prefsCache from '../../app/prefsCache';
 import {IUser} from "../../models/user/IUser";
 import {apiGet} from "../../api/Api";
@@ -48,7 +47,7 @@ const UserRatings: React.FC<Props> = (props) => {
                         }
                     })
                     .catch(function(error) {
-                        Logger.error('Looks like there was a problem when reading user data: \n', error);
+                        console.error('Looks like there was a problem when reading user data: \n', error);
                     });
             }
         }

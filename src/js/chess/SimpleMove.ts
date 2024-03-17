@@ -1,9 +1,11 @@
-import { IEval, IGlyph, IJudgment } from './types/Interfaces';
-import { Colors, Pieces, Squares } from './types/Types';
+import { IGlyph, IJudgment } from './types/Interfaces';
+import * as Colors from './types/Colors';
+import * as Pieces from './types/Pieces';
+import * as Squares from './types/Squares';
 import { EvalItem } from './EvalItem'
-import { Color } from './Color';
-import { Piece } from './Piece';
-import { Square } from './Square';
+import * as Color from './Color';
+import * as Piece from './Piece';
+import * as Square from './Square';
 
 const ns = Square.NullSquare;
 const np = Piece.None;

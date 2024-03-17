@@ -2,35 +2,38 @@ import React, {PropsWithChildren} from 'react';
 
 import Grid from "@mui/material/Grid";
 
-import {Chess as ChessEngine} from "../../chess/Chess";
 import Chessground from "../chess/Chessground";
 import {Api} from "chessground/api";
-import {Config as CgConfig} from "chessground/config";
 import BoardPlayer from "./BoardPlayer";
+import {Config as CgConfig} from "chessground/config";
 
 type Props = {
-    piece: string;
-    engine: ChessEngine;
-    config: CgConfig;
     controlsTop?: React.ReactNode;
     controlsBottom?: React.ReactNode;
     cgRef: React.RefCallback<Api>;
+    onGenerateConfig?: () => CgConfig;
 }
 
 const BoardWithPlayer: React.FC<PropsWithChildren<Props>> = (props) => {
-    const {piece, engine, config, controlsTop, controlsBottom, cgRef, children} = props;
+    const {
+        controlsTop,
+        controlsBottom,
+        cgRef,
+        onGenerateConfig,
+        children
+    } = props;
     return (
+
         <div className="d-block d-md-flex flex-wrap mb-2">
             <div>
                 <Chessground
                     sx={{paddingY: 1}}
-                    piece={piece}
-                    config={config}
                     cgRef={cgRef}
+                    onGenerateConfig={onGenerateConfig}
                     contentTop={
                         <Grid container spacing={2}>
                             <Grid item xs={7}>
-                                <BoardPlayer players={engine.getPlayers()} orientation={config.orientation} position="top" />
+                                <BoardPlayer position="top" />
                             </Grid>
                             <Grid item xs={5}>
                                 <div className="text-right position-relative">
@@ -42,7 +45,7 @@ const BoardWithPlayer: React.FC<PropsWithChildren<Props>> = (props) => {
                     contentBottom={
                         <Grid container spacing={2}>
                             <Grid item xs={7}>
-                                <BoardPlayer players={engine.getPlayers()} orientation={config.orientation} position="bottom" />
+                                <BoardPlayer position="bottom" />
                             </Grid>
                             <Grid item xs={5}>
                                 <div className="text-right position-relative">

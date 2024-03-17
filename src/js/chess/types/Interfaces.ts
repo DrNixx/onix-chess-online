@@ -1,4 +1,4 @@
-import { Colors } from './Types';
+import * as Colors from './Colors';
 import {IUser} from "../../models/user/IUser";
 
 export interface IChessPref {
@@ -223,6 +223,7 @@ export interface IGameData {
     clock?: IBlitzClock;
     correspondence?: ICorrespondenceClock | IAdvanceClock;
     observer?: number;
+    display?: number;
     owner?: number;
     player?: IChessPlayer;
     opponent?: IChessPlayer; 

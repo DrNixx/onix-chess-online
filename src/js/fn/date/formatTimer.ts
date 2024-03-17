@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import padStart from 'lodash/padStart';
 import { timestampToInterval  } from './timestampToInterval';
 
-export const formatTimer = (timestamp: number, short = true, isend?: string): string => {
+export const formatTimer = (timestamp: number, isend?: string): string => {
     if (isNaN(timestamp)) {
         return i18next.t("empty", {ns: "timer"});
     }

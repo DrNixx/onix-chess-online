@@ -1,6 +1,6 @@
 import toSafeInteger from "lodash/toSafeInteger";
-import { Colors } from "./types/Types";
-import { Color } from './Color';
+import * as Colors from "./types/Colors";
+import * as Color from './Color';
 
 export const plyToTurn = (ply: number) => {
     return toSafeInteger(1 + (ply - 1) / 2);

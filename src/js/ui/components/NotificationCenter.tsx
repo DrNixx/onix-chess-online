@@ -7,8 +7,6 @@ import Tooltip from '@mui/material/Tooltip';
 import { notify } from 'pages-ts';
 import Avatar from '../user/Avatar';
 import { CSSTransition } from 'react-transition-group';
-import { Logger } from '../../common/Logger';
-import { Scrollbar } from 'react-scrollbars-custom';
 import { IChallengeAcceptContent, IChallengeCancelContent, IChallengeDeclineContent, IChallengeNewContent, IJoinAcceptContent, INotify, INotifyPmContent } from '../../notifications/Interfaces';
 import {useCentrifuge} from "../../hooks/useCentrifuge";
 import {NOTIFY} from "../../models/stream/IStreamMessage";
@@ -71,7 +69,7 @@ const NotificationCenter: React.FC<Props> = (propsIn) => {
                 setHasEvents(data.countEvents > 0);
             })
             .catch(function(error) {
-                Logger.error('Looks like there was a problem when reading notifications: \n', error);
+                console.error('Looks like there was a problem when reading notifications: \n', error);
             });
     };
 

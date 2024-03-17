@@ -7,9 +7,8 @@ import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Noti
 import { Content } from './Content';
 import { equalHeight } from './Functions';
 import { IModule } from '../app';
-import { Logger } from '../common/Logger';
 import { focusVisible } from './FocusVisible';
-import { simpleChat } from '../chat/Chat';
+import { simpleChat } from '../chat/SimpleChat';
 import { Popover } from 'bootstrap';
 import React from "react";
 import UserBadge from "./user/UserBadge";
@@ -25,24 +24,24 @@ declare global {
 }
 
 export class Frontend implements IModule {
-    private height?: number = 0;
+    //private height?: number = 0;
 
     private window: JQuery<Window>;
-    private body: JQuery;
+    //private body: JQuery;
     private scrollup: JQuery;
 
     public content: Content;
 
     constructor(private uid?: number | string) {
         this.window = jQuery(window);
-        this.body = jQuery("body");
+        //this.body = jQuery("body");
         this.scrollup = jQuery(".scrollup");
-
+        
         this.content = new Content(".page-content");
     }
 
     public init() {
-        this.height = this.content.calculateHeight();
+        //this.height = this.content.calculateHeight();
         this.adjustSizes();
         this.wire();
         this.initPages();
@@ -50,7 +49,7 @@ export class Frontend implements IModule {
     }
 
     private initPages() {
-        const parallax = null;
+        // const parallax = null;
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
 
@@ -125,7 +124,7 @@ export class Frontend implements IModule {
                     jQuery('#' + divId).html(responseAsText);
                 })
                 .catch(function(error) {
-                    Logger.error('Looks like there was a problem when reading data: \n', error);
+                    console.error('Looks like there was a problem when reading data: \n', error);
                 });
 
             return '<div id="'+ divId +'"><div class="text-center"><div class="progress-circle-indeterminate m-t-45" /></div></div>';
@@ -201,7 +200,7 @@ export class Frontend implements IModule {
     /**
      * Позиционирует скроллинг к указанному элементу
      */
-    public scrollTo(el: string | JQuery, top?: boolean): void {
+    public scrollTo(el: string | JQuery): void {
         const offset = (S(el).offset()?.top ?? 0) - toSafeInteger(this.content.container.css("padding-top"));
         jQuery("html, body").animate({ scrollTop: offset }, 700);
     }

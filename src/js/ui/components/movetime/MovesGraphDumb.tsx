@@ -1,22 +1,16 @@
 import toSafeInteger from 'lodash/toSafeInteger';
 
 import React, {Suspense, useCallback} from 'react';
-import {useDispatch, useSelector} from "react-redux";
 import i18next from 'i18next';
 import {useTranslation} from "react-i18next";
 
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 
 import { ResponsiveContainer, BarChart, Bar, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { Chess as ChessEngine } from '../../../chess/Chess';
 import { MovesGraphProps } from './MovesGraphProps';
 import { formatTimer } from '../../../fn/date';
-import { GameActions } from '../../../actions/GameActions';
-
-import {CombinedGameState} from "../../../actions/CombinedGameState";
-
+import Loader from "../../Loader";
 
 interface IGraphData {
     turn: string|number;
@@ -34,9 +28,7 @@ interface IGraphInfo {
 const MovesGraphDumb: React.FC<MovesGraphProps> = (props) => {
     const {height} = props;
 
-    const { t, ready } = useTranslation(['timer']);
-
-    const dispatch = useDispatch();
+    const { } = useTranslation(['timer']);
 
     const graphInfo = useSelector<CombinedGameState, IGraphInfo>((state) => {
         const game = state.game;
@@ -109,7 +101,7 @@ const MovesGraphDumb: React.FC<MovesGraphProps> = (props) => {
 
     const formatTooltipValue = (...params: any[]) => {
         return (
-            <span>{formatTimer(Math.abs(params[0]), true, "0")}</span>
+            <span>{formatTimer(Math.abs(params[0]), "0")}</span>
         );
     }
 
@@ -119,7 +111,7 @@ const MovesGraphDumb: React.FC<MovesGraphProps> = (props) => {
     }
 
     const formatYTick = (value: number) => {
-        return formatTimer(Math.abs(value), true, "0");
+        return formatTimer(Math.abs(value), "0");
     }
 
     const handleClick = (data: any) => {
@@ -133,7 +125,7 @@ const MovesGraphDumb: React.FC<MovesGraphProps> = (props) => {
     }
 
     return (
-        <Suspense fallback={<CircularProgress />}>
+        <Suspense fallback={<Loader />}>
             <div className="movetimes d-block d-lg-flex">
                 <div className="graph-container flex-grow-1">
                     <ResponsiveContainer width="100%" height={height}>

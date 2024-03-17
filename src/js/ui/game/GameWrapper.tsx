@@ -1,12 +1,12 @@
 import React, {Suspense} from 'react';
-import { Provider } from 'react-redux';
 
-import CircularProgress from "@mui/material/CircularProgress";
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
-import {createCombinedGameState} from "../../actions/CombinedGameState";
-import {createCombinedGameStore} from "../../actions/CombinedGameStore";
 import ThemeContext from "../../context/ThemeContext";
 import AlertContext from '../../context/AlertContext';
+import {AuthProvider} from "../../providers/AuthProvider";
+import {GameProvider} from "../../providers/GameProvider";
+import {BoardProvider} from "../../providers/BoardProvider";
+import Loader from "../Loader";
 
 type GamePropsVsComponent = GameProps & {
     GameComponent: React.FC<GameProps>;
@@ -15,18 +15,19 @@ type GamePropsVsComponent = GameProps & {
 const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {
     const {GameComponent, ...other} = props;
 
-    const state = createCombinedGameState(other);
-    const store = createCombinedGameStore(state);
-
     return (
-        <Suspense fallback={<CircularProgress />}>
-            <AlertContext>
-                <Provider store={store}>
+        <Suspense fallback={<Loader />}>
+            <AuthProvider>
+                <AlertContext>
                     <ThemeContext>
-                        <GameComponent {...other}/>
+                        <GameProvider settings={props.game}>
+                            <BoardProvider>
+                                <GameComponent {...other}/>
+                            </BoardProvider>
+                        </GameProvider>
                     </ThemeContext>
-                </Provider>
-            </AlertContext>
+                </AlertContext>
+            </AuthProvider>
         </Suspense>
     );
 };

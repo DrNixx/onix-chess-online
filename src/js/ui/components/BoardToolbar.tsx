@@ -1,15 +1,10 @@
-import React, {PropsWithChildren} from "react";
-import {useDispatch} from "react-redux";
+import React, {PropsWithChildren, useContext} from "react";
 import { useTranslation } from 'react-i18next';
-import clsx from "clsx";
-import * as BoardActions from "../../actions/BoardActions";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Icon from "@mui/material/Icon";
-import {useSelector} from "react-redux";
-import {CombinedGameState} from "../../actions/CombinedGameState";
-import {BoardState} from "../../actions/BoardState";
+import {BoardContext} from "../../providers/BoardProvider";
 
 type BoardToolbarProps = {
     configUrl?: string
@@ -17,23 +12,18 @@ type BoardToolbarProps = {
 
 const BoardToolbar: React.FC<PropsWithChildren<BoardToolbarProps>> = (props) => {
     const { configUrl, children } = props;
-
     const { t } = useTranslation(['game']);
+    const {
+        // moveTable,
+        toggleMoves,
+        flipBoard
+    } = useContext(BoardContext);
 
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board );
-    const dispatch = useDispatch();
-
-    const flipBoard = () => {
-        dispatch({ type: BoardActions.FLIP_BOARD } as BoardActions.BoardAction)
-    };
-
-    const toggleMoves = () => {
-        dispatch({ type: BoardActions.MOVE_TABLE } as BoardActions.BoardAction)
-    };
-
+    /*
     const movesClass = clsx("btn btn-default", {
-        'active': board.moveTable
+        'active': moveTable
     });
+     */
 
     return (
         <div className="mini-controls mt-3 mt-md-0 bg-contrast-low">
@@ -61,7 +51,7 @@ const BoardToolbar: React.FC<PropsWithChildren<BoardToolbarProps>> = (props) => 
                         size="small"
                         aria-label={t("flip")}
                         title={t("flip")}
-                        onClick={flipBoard}>
+                        onClick={() => flipBoard() }>
                         <Icon baseClassName="" className="xi-refresh" fontSize="inherit" />
                     </IconButton>
                 </Stack>

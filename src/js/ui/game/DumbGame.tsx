@@ -1,17 +1,10 @@
-import React, {PropsWithChildren, useCallback} from 'react';
-import {shallowEqual, useSelector} from "react-redux";
-import clsx from "clsx";
+import React, {PropsWithChildren, useCallback, useContext} from 'react';
 
-import Container from "@mui/material/Container";
-
-import {CombinedGameState} from "../../actions/CombinedGameState";
 import {Api} from "chessground/api";
-import {GameState} from "../../actions/GameState";
-import {BoardState} from "../../actions/BoardState";
 import {Config as CgConfig} from "chessground/config";
 import BoardWithPlayer from "../components/BoardWithPlayer";
-import {BoardSizeClasses} from "onix-board-assets";
-import {Color} from "../../chess/Color";
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
 
 type DumbGameProps = {
     cgRef: React.RefCallback<Api>;
@@ -22,50 +15,52 @@ type DumbGameProps = {
 };
 
 const DumbGame: React.FC<PropsWithChildren<DumbGameProps>> = (props) => {
-    const {cgRef, onGenerateConfig, controlsTop, controlsBottom, controlsLeft, children} = props;
+    const {
+        cgRef,
+        onGenerateConfig,
+        controlsTop,
+        controlsBottom,
+        controlsLeft,
+        children
+    } = props;
 
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
+    const {
+        orientation,
+        coordinates,
+    } = useContext(BoardContext);
+
+    const {
+        fen,
+        lastMove,
+        isCheck,
+        turnColor
+    } = useContext(GameContext);
 
     const generateConfig = useCallback(() => {
         return onGenerateConfig ? onGenerateConfig() : {
-            fen: game.fen,
-            lastMove: game.lastMove,
-            check: game.isCheck,
-            orientation: board.orientation,
-            coordinates: board.coordinates,
-            turnColor: Color.toName(game.engine.ToMove),
+            fen: fen,
+            lastMove: lastMove,
+            check: isCheck,
+            orientation: orientation,
+            coordinates: coordinates,
+            turnColor: turnColor,
             viewOnly: true,
             highlight: {
                 lastMove: true,
                 check: true
             },
         };
-    }, [board.coordinates, board.orientation, game.engine.ToMove, game.fen, game.isCheck, game.lastMove, onGenerateConfig]);
-
-    const { square, piece, size, coordinates, is3d } = board;
-
-    const containerClass = [
-        square,
-        BoardSizeClasses[size],
-        {
-            "coords-no": !coordinates,
-            "is2d": !is3d,
-            "is3d": is3d
-        }
-    ];
+    }, [onGenerateConfig, fen, lastMove, isCheck, orientation, coordinates, turnColor]);
 
     return (
-        <Container maxWidth={false} className={clsx(containerClass)}>
+        <>
             <BoardWithPlayer
-                piece={piece}
-                engine={game.engine}
-                config={generateConfig()}
+                onGenerateConfig={generateConfig}
                 controlsTop={controlsTop}
                 controlsBottom={controlsBottom}
                 cgRef={cgRef}>{controlsLeft}</BoardWithPlayer>
             {children}
-        </Container>
+        </>
     );
 };
 

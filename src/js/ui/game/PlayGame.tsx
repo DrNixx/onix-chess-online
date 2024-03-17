@@ -1,5 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import { createRoot } from 'react-dom/client';
 
 import Box from '@mui/material/Box';
@@ -27,12 +26,13 @@ import {Api} from 'chessground/api';
 import {Config as CgConfig} from 'chessground/config';
 import * as cg from 'chessground/types';
 
-import {Color} from '../../chess/Color';
+import * as Squares from '../../chess/types/Squares';
+
+import { toName as colorToName } from '../../chess/Color';
+import { name as squareName, parse as squareParse } from '../../chess/Square';
+import { isPiece, color as pieceColor } from '../../chess/Piece';
 
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
-
-import {GameActions as ga} from '../../actions/GameActions';
-import {CombinedGameState} from '../../actions/CombinedGameState';
 
 import BoardToolbar from '../components/BoardToolbar';
 import Captures from '../components/Captures';
@@ -42,22 +42,18 @@ import GameInfo from './GameInfo';
 import {MovesMode, NavigatorMode} from '../components/Constants';
 import {renderTimer} from './GameUtils';
 
-import {Squares} from '../../chess/types/Types';
-import {Square} from '../../chess/Square';
-import {Piece} from '../../chess/Piece';
 
 import GamePgn from '../components/GamePgn';
 import {FenString} from '../../chess/FenString';
 import Chat from '../../chat/Chat';
-import {Logger} from '../../common/Logger';
-import {GameState} from "../../actions/GameState";
-import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
 import {getLegalMovesMap} from "../../utils/chess";
 import {useTranslation} from "react-i18next";
 import {useRoom} from "../../hooks/useRoom";
 import {GAME} from "../../models/stream/IStreamMessage";
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
 
 enum BoardMode {
     Play = 0,
@@ -76,70 +72,84 @@ type PlayGameProps = GameProps;
 
 const PlayGame: React.FC<PlayGameProps> = (props) => {
     const { board: boardCfg } = props;
-
     const { t } = useTranslation(['game', 'core']);
+    const {
+        piece,
+        orientation,
+        coordinates,
+        learnMode,
+        confirmMove: isConfirmMove,
+        moveTable
+    } = useContext(BoardContext);
+
+    const {
+        gameId,
+        isStarted,
+        fen,
+        pgn,
+        lastMove,
+        isCheck,
+        turnColor
+
+    } = useContext(GameContext);
 
     const cgRef = useRef<Api>();
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
-    const dispatch = useDispatch();
 
-    const [tabToolbar, setTabToolbar] = useState(game.engine.isStarted ? "moves" : "info");
+    const [tabToolbar, setTabToolbar] = useState(isStarted ? "moves" : "info");
 
     const [mode, setMode] = useState<BoardMode>(BoardMode.Play);
     const [provisionalMove, setProvisionalMove] = useState<ProvisionalMove>({});
     const [drawChecked, setDrawChecked] = useState(false);
-    const [confirmMove, setConfirmMove] = useState(board.confirmMove);
+    const [confirmMove, setConfirmMove] = useState(isConfirmMove);
     const [confirmResign, setConfirmResign] = useState(false);
     const [manualFrom, setManualFrom] = useState<string|undefined>();
     const [manualTo, setManualTo] = useState<string|undefined>();
 
-    const [lastMessage, onlineUsers] = useRoom(`game:${game.engine.GameId}`);
+    const [lastMessage] = useRoom(`game:${gameId}`);
 
     const isPlay = useCallback(() => {
         return mode === BoardMode.Play;
     }, [mode]);
 
+    /*
     const isAnalyse = useCallback(() => {
         return mode === BoardMode.Analyse;
     }, [mode]);
+    */
 
+    /*
     const isConditional = useCallback(() => {
         return mode === BoardMode.Conditional;
     }, [mode]);
+    */
 
     const baseConfig = (): CgConfig => {
-        const { engine } = game;
-
-        const wm = engine.ToMove;
-        const turnColor = Color.toName(wm);
-
         if (engine.CurrentMove.isLast()) {
             const dests = getLegalMovesMap(engine);
             return {
-                fen: game.fen,
-                orientation: board.orientation,
-                coordinates: board.coordinates,
-                lastMove: game.lastMove,
-                check: game.isCheck,
+                fen: fen,
+                orientation: orientation,
+                coordinates: coordinates,
+                lastMove: lastMove,
+                check: isCheck,
                 turnColor: turnColor,
-                viewOnly: isPlay() ? (!engine.isStarted || (wm !== engine.Player)) : false,
+                viewOnly: isPlay() ? (!isStarted || (wm !== engine.Player)) : false,
                 movable: {
                     free: false,
-                    color: isPlay() ? Color.toName(engine.Player) : 'both',
+                    color: isPlay() ? colorToName(engine.Player) : 'both',
                     dests: dests,
-                    showDests: isPlay() ? board.learnMode : true
+                    showDests: isPlay() ? learnMode : true
                 }
             };
         } else {
             return {
-                fen: game.fen,
-                lastMove: game.lastMove,
-                check: game.isCheck,
+                fen: fen,
+                lastMove: lastMove,
+                check: isCheck,
                 turnColor: turnColor,
                 viewOnly: true,
-                orientation: board.orientation,
-                coordinates: board.coordinates,
+                orientation: orientation,
+                coordinates: coordinates,
             };
         }
     };
@@ -171,43 +181,37 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     }, [lastMessage]);
 
     const validFrom = (sq: Squares.Square) => {
-        const { engine } = game;
-
-        if (engine.isStarted) {
+        if (isStarted) {
             const pos = engine.CurrentPos;
 
             const movingPiece = pos.getPiece(sq);
-            if (!Piece.isPiece(movingPiece)) {
+            if (!isPiece(movingPiece)) {
                 return false;
             }
 
-            return Piece.color(movingPiece) == pos.WhoMove;
+            return pieceColor(movingPiece) == pos.WhoMove;
         }
 
         return false;
     };
 
     const canMove = (from?: Squares.Square, to?: Squares.Square) => {
-        const { engine } = game;
-
         if (to !== undefined) {
             return from !== undefined;
         } else if (from !== undefined) {
             return validFrom(from);
         } else {
-            return !isPlay() || engine.CurrentMove.provisional || (engine.isStarted && !engine.isFinished && engine.isMyMove);
+            return !isPlay() || engine.CurrentMove.provisional || (isStarted && !engine.isFinished && engine.isMyMove);
         }
     };
 
     const sendMove = () => {
         const { csrfTokenName, csrfTokenValue } = boardCfg;
-        const { engine } = game;
-
         const apiUrl = engine.RawData.url?.api;
         if (isPlay() && provisionalMove.from && provisionalMove.to && apiUrl) {
             const data: any = {
-                from: Square.name(provisionalMove.from),
-                to: Square.name(provisionalMove.to),
+                from: squareName(provisionalMove.from),
+                to: squareName(provisionalMove.to),
                 promotion: provisionalMove.promotion,
                 draw: drawChecked
             };
@@ -231,20 +235,18 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                     }
                 })
                 .catch(function(error) {
-                    Logger.error('Looks like there was a problem when posting move: \n', error);
+                    console.error('Looks like there was a problem when posting move: \n', error);
                 });
         }
     };
 
-    const doMove = (from?: Squares.Square, to?: Squares.Square, promote?: string) => {
+    const doMove = (from?: Squares.Square, to?: Squares.Square /*, _promote?: string*/) => {
         if (from && to) {
-            const { engine } = game;
-
             const sm = engine.makeMove(from, to);
             if (sm) {
                 if (engine.CurrentPos.isLegalMove(sm)) {
                     if (engine.InPromotion) {
-
+                        //TODO: Realise promotion
                     } else {
                         if (confirmMove || !isPlay) {
                             provisionalMove.from = from;
@@ -271,15 +273,15 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
         }
     };
 
-    const onMove = (orig: cg.Key, dest: cg.Key, capturedPiece?: cg.Piece) => {
-        const from = Square.parse(orig);
-        const to = Square.parse(dest);
+    const onMove = (orig: cg.Key, dest: cg.Key /*, _capturedPiece?: cg.Piece*/) => {
+        const from = squareParse(orig);
+        const to = squareParse(dest);
 
         doMove(from, to);
     };
 
     const onSelect = (key: cg.Key) => {
-        const from = Square.parse(key);
+        const from = squareParse(key);
         if (canMove(from)) {
             provisionalMove.from = from;
             provisionalMove.to = undefined;
@@ -336,11 +338,11 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
         if (canMove()) {
             val = (e.target as HTMLInputElement).value;
             if (val && val.length == 2) {
-                const from = Square.parse(val);
+                const from = squareParse(val);
                 if (from && validFrom(from)) {
                     provisionalMove.from = from;
                     if (provisionalMove.from) {
-                        cgRef.current?.selectSquare(Square.name(provisionalMove.from) as cg.Key);
+                        cgRef.current?.selectSquare(squareName(provisionalMove.from) as cg.Key);
                     }
                 }
 
@@ -355,7 +357,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     const changeTo = (e: React.ChangeEvent) => {
         let val: string | undefined = (e.target as HTMLInputElement).value;
         if (val && (val.length == 2) && provisionalMove.from) {
-            provisionalMove.to = Square.parse(val);
+            provisionalMove.to = squareParse(val);
             doMove(provisionalMove.from, provisionalMove.to);
             val = undefined;
         }
@@ -367,8 +369,8 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region Toolbar + forms
     const moveForm = () => {
-        const fromVal = manualFrom ?? (provisionalMove?.from ? Square.name(provisionalMove.from) : "");
-        const toVal = manualTo ?? (provisionalMove?.to ? Square.name(provisionalMove.to) : "");
+        const fromVal = manualFrom ?? (provisionalMove?.from ? squareName(provisionalMove.from) : "");
+        const toVal = manualTo ?? (provisionalMove?.to ? squareName(provisionalMove.to) : "");
         const disableForm = !canMove();
 
         return (
@@ -417,8 +419,6 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     };
 
     const resignDialog = () => {
-        const {engine} = game;
-
         const hideResignDialog = () => {
             setConfirmResign(false);
         };
@@ -451,7 +451,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                         }
                     })
                     .catch(function(error) {
-                        Logger.error('Looks like there was a problem when send resign command: \n', error);
+                        console.error('Looks like there was a problem when send resign command: \n', error);
                     });
             }
 
@@ -479,16 +479,15 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
 
     const renderToolbar = () => {
-        const {engine} = game;
         const fen = FenString.fromPosition(engine.CurrentPos);
 
-        let analink = `https://live.chess-online.com/analysis/${fen}?ccid=${engine.GameId}`;
+        let analink = `https://live.chess-online.com/analysis/${fen}?ccid=${gameId}`;
         if (!game.engine.RawData.game?.advance) {
-            analink += `&ha=${engine.GameId}`;
+            analink += `&ha=${gameId}`;
         }
 
         const items: JSX.Element[] = [];
-        if (game.engine.isStarted) {
+        if (isStarted) {
             items.push(
                 <Stack direction="row" spacing={1} key="tbg_resign">
                     <IconButton
@@ -551,13 +550,13 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region Moves
     const renderMovesTab = () => {
-        return (game.engine.isStarted) ? (
+        return (isStarted) ? (
             <Tab label={t("movesTab")} value="moves" />
         ) : null;
     };
 
     const renderMovesPane  = () => {
-        if (game.engine.isStarted) {
+        if (isStarted) {
 
             let toolbar: JSX.Element | null;
             switch (mode) {
@@ -575,12 +574,12 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                 <TabPanel sx={{p: 0}} value="moves">
                     <div className="d-flex flex-column h-100">
                         <div className="board-height auto-overflow">
-                            <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} toolbars={toolbar} >
+                            <ChessMoves mode={moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} toolbars={toolbar} >
                                 { isPlay() ? confirmToggler() : "" }
                             </ChessMoves>
                         </div>
                         <div className="mt-2 pt-2 border-top">
-                            <Captures piece={board.piece} />
+                            <Captures piece={piece} />
                         </div>
                     </div>
                 </TabPanel>
@@ -593,17 +592,13 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region PGN
     const renderPgnTab = () => {
-        const {engine} = game;
-        return (engine.isStarted && engine.RawData.game?.advance) ? (
+        return (isStarted && engine.RawData.game?.advance) ? (
             <Tab label="FEN &amp; PGN" value="fenpgn" />
         ) : null;
     };
 
     const renderPgnPane = () => {
-        const {engine} = game;
-        if (engine.isStarted && engine.RawData.game?.advance) {
-            const fen = FenString.fromPosition(engine.CurrentPos);
-            const pgn = engine.RawData.pgn;
+        if (isStarted && engine.RawData.game?.advance) {
             return (
                 <TabPanel sx={{p: 0}} value="fenpgn">
                     <GamePgn fen={fen} pgn={pgn} />
@@ -617,15 +612,14 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region Chat
     const renderChatTab = () => {
-        return (game.engine.isStarted) ? (
+        return (isStarted) ? (
             <Tab label={t("chatTab")} value="chat" />
         ) : null;
     };
 
     const renderChatPane  = () => {
-        const {engine} = game;
-        if (engine.isStarted) {
-            let chatChannel = `gamechat:${engine.GameId}`;
+        if (isStarted) {
+            let chatChannel = `gamechat:${gameId}`;
             if (engine.isMyGame) {
                 chatChannel = "$" + chatChannel;
             }
@@ -643,7 +637,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region Notes
     const renderNotesTab = () => {
-        return (game.engine.isStarted) ? (
+        return (isStarted) ? (
             <Tab label={t("notesTab")} value="notes" />
         ) : null;
     };
@@ -655,7 +649,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     };
 
     const renderNotesPane = () => {
-        return (game.engine.isStarted) ? (
+        return (isStarted) ? (
             <TabPanel sx={{p: 0}} value="notes">
                 {renderNotes()}
             </TabPanel>
@@ -665,7 +659,6 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
 
     //#region Accept-reject form
     const acceptGame = () => {
-        const {engine} = game;
         const { csrfTokenName, csrfTokenValue } = boardCfg;
         const apiUrl = engine.RawData.url?.api;
 
@@ -691,13 +684,12 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                     }
                 })
                 .catch(function(error) {
-                    Logger.error('Looks like there was a problem when accept game: \n', error);
+                    console.error('Looks like there was a problem when accept game: \n', error);
                 });
         }
     };
 
     const rejectGame = () => {
-        const {engine} = game;
         const { csrfTokenName, csrfTokenValue } = boardCfg;
         const apiUrl = engine.RawData.url?.api;
 
@@ -723,13 +715,12 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
                     }
                 })
                 .catch(function(error) {
-                    Logger.error('Looks like there was a problem when reject game: \n', error);
+                    console.error('Looks like there was a problem when reject game: \n', error);
                 });
         }
     };
 
     const infoAddForm = () => {
-        const {engine} = game;
         const form: JSX.Element | null = null;
 
         if (!engine.isStarted) {
@@ -807,7 +798,7 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
     }
     //#endregion Accept-reject form
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
         setTabToolbar(newValue);
     };
 
@@ -846,8 +837,8 @@ const PlayGame: React.FC<PlayGameProps> = (props) => {
             cgRef={(api) => cgRef.current = (api ?? undefined)}
             onGenerateConfig={generateConfig}
             controlsLeft={renderControls()}
-            controlsTop={renderTimer(game.engine, board.orientation, "top")}
-            controlsBottom={renderTimer(game.engine, board.orientation, "bottom")} />
+            controlsTop={renderTimer(game.engine, orientation, "top")}
+            controlsBottom={renderTimer(game.engine, orientation, "bottom")} />
     );
 };
 

@@ -1,13 +1,9 @@
-import React, {PropsWithChildren} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-
+import React, {PropsWithChildren, useContext} from 'react';
 import { Move } from '../../chess/Move';
 import { MovesMode, NavigatorMode } from './Constants';
 import { DumbMoveList } from './DumbMoveList';
 import { DumbMoveTable } from './DumbMoveTable';
-import { GameActions } from '../../actions/GameActions';
-import {CombinedGameState} from "../../actions/CombinedGameState";
-import {GameState} from "../../actions/GameState";
+import {GameContext} from "../../providers/GameProvider";
 
 type ChessMovesProps = {
     mode: MovesMode,
@@ -17,21 +13,23 @@ type ChessMovesProps = {
 }
 
 const ChessMoves: React.FC<PropsWithChildren<ChessMovesProps>> = (props) => {
-    const { mode, nav, hasEvals, children, toolbars } = props;
+    const {
+        mode,
+        nav,
+        hasEvals,
+        children,
+        toolbars
+    } = props;
 
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game );
-    const dispatch = useDispatch();
+    const { navigateToKey, navigateToMove } = useContext(GameContext);
 
     const onChangeKey = (key: string) => {
-        dispatch({ type: GameActions.NAVIGATE_TO_KEY, move: key } as GameActions.GameAction);
+        navigateToKey(key);
     }
 
     const onChangePos = (move: Move) => {
-        dispatch({ type: GameActions.NAVIGATE_TO_MOVE, move: move } as GameActions.GameAction);
+        navigateToMove(move);
     }
-
-    const {engine} = game;
-    const currMove = engine.CurrentMove;
 
     return (mode === MovesMode.Table) ? (
         <DumbMoveTable

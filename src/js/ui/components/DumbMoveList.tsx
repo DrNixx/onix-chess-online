@@ -3,8 +3,8 @@ import Scrollbar from "react-scrollbars-custom";
 import clsx from "clsx";
 import { NavigatorMode } from './Constants';
 import { Move } from '../../chess/Move';
-import { Colors } from '../../chess/types/Types';
-import { Color } from '../../chess/Color';
+import * as Colors from '../../chess/types/Colors';
+import { White, Black } from '../../chess/Color';
 import { DumbMoveElement, DumbMoveProps } from './DumbMoveElement';
 
 
@@ -17,7 +17,7 @@ export class DumbMoveList extends DumbMoveElement {
     }
 
     private renderMoveNo = (color: Colors.BW, ply: number) => {
-        if (color === Color.White) {
+        if (color === White) {
             const moveNo = ((ply + 1) >> 1);
             return (
                 <span className="moveno" data-moveno={moveNo} key={"mn" + moveNo.toString() }>{moveNo}.</span>
@@ -30,13 +30,13 @@ export class DumbMoveList extends DumbMoveElement {
     private renderMove = (x: Move, uid: string|undefined, i: number, p: string, c: Colors.BW, s: string, n?: string[], m?: string, classes?: any) => {
         const { state } = this;
         const result = [];
-        if (c === Color.White) {
+        if (c === White) {
             result.push(this.renderMoveNo(c, i));
         }
 
         const myclass = {
-            ['white']: (c === Color.White),
-            ['black']: (c === Color.Black),
+            ['white']: (c === White),
+            ['black']: (c === Black),
             ['active']: (x.moveKey === p)
         };
 
@@ -95,13 +95,13 @@ export class DumbMoveList extends DumbMoveElement {
         }
 
         if ((move) && !move.isEnd()) {
-            if (move.sm?.color === Color.Black) {
+            if (move.sm?.color === Black) {
                 moves = moves.concat(
-                    this.renderMove(currentMove, undefined, game.StartPlyCount, "mn0_" + game.StartPlyCount.toString(), Color.White, "...")
+                    this.renderMove(currentMove, undefined, game.StartPlyCount, "mn0_" + game.StartPlyCount.toString(), White, "...")
                 );
             }
 
-            let i = 1;
+            //let i = 1;
             do {
                 const { sm, moveKey } = move;
                 
@@ -163,11 +163,11 @@ export class DumbMoveList extends DumbMoveElement {
                 const comment = (comments.length > 0) ? comments.join(" ") : undefined;
 
                 moves = moves.concat(
-                    this.renderMove(currentMove, move.uid, sm.ply, moveKey, sm.color ?? Color.White, sm.san ?? '', nags, comment, classes)
+                    this.renderMove(currentMove, move.uid, sm.ply, moveKey, sm.color ?? White, sm.san ?? '', nags, comment, classes)
                 );
 
                 move = move.Next;
-                i++;
+                // i++;
             } while (move && !move.isEnd());
         }
         

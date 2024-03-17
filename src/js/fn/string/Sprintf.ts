@@ -56,7 +56,7 @@ const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 		}
 
 		// Note: undocumented perl feature:
-		if (minWidth < 0) {
+		if (toSafeInteger(minWidth) < 0) {
 			minWidth = -minWidth;
 			leftJustify = true;
 		}

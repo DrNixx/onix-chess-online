@@ -1,17 +1,29 @@
 import React, {useState} from 'react';
 import MenuItem from '@mui/material/MenuItem';
-import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
+import Select, {BaseSelectProps, SelectChangeEvent} from '@mui/material/Select';
 import {PiecesConfig} from 'onix-board-assets';
+import {applyDefaults, defaultOf} from "../../utils/propsUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const piecesData: PiecesConfig = require('onix-board-assets/dist/js/pieces.json');
 
-type PieceSelectorProps =  SelectProps<string> & {
+type PieceSelectorProps =  BaseSelectProps<string> & {
     onChangePiece?: (piece: string) => void;
 }
 
-const PieceSelector: React.FC<PieceSelectorProps> = (props) => {
-    const {onChange, onChangePiece, value, ...other} = props;
+type propsWithDefaults = 'defaultValue' | 'value' | 'variant';
+const defaultProps: defaultOf<PieceSelectorProps, propsWithDefaults> = {
+    defaultValue: 'merida',
+    value: 'merida',
+    variant: 'outlined',
+};
+
+const PieceSelector: React.FC<PieceSelectorProps> = (propsIn) => {
+    const {
+        onChangePiece,
+        value,
+        ...other
+    } = applyDefaults(propsIn, defaultProps);
 
     const [piece, setPiece] = useState(value);
 
@@ -31,11 +43,6 @@ const PieceSelector: React.FC<PieceSelectorProps> = (props) => {
             })}
         </Select>
     );
-};
-
-PieceSelector.defaultProps = {
-    defaultValue: 'merida',
-    value: 'merida',
 };
 
 export default PieceSelector;

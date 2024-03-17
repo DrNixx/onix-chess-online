@@ -4,7 +4,7 @@ import * as cg from 'chessground/types';
 import { formatTimer } from '../../fn/date/formatTimer';
 import { Chess as ChessEngine } from "../../chess/Chess";
 import { isAdvanceClock, isBlitzClock, isCorrespondenceClock } from '../../chess/types/Interfaces';
-import { GameResult } from '../../chess/GameResult';
+import * as GameResult from '../../chess/GameResult';
 
 export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
     const rawData = engine.RawData;
@@ -59,9 +59,9 @@ export const renderTimer = (engine: ChessEngine, orientation: cg.Color, position
     return null;
 };
 
-export const renderResult = (engine: ChessEngine, orientation: cg.Color, position: "top" | "bottom") => {
-    if (engine.Result) {
-        const whiteResult = engine.Result;
+export const renderResult = (result: GameResult.Color, orientation: cg.Color, position: "top" | "bottom") => {
+    if (result) {
+        const whiteResult = result;
         const blackResult = GameResult.OppositeColor[whiteResult];
 
         const className = `game-result _${position}`;

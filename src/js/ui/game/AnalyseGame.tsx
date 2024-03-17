@@ -1,6 +1,5 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useCallback, useContext, useMemo, useRef, useState} from 'react';
 import { createRoot } from 'react-dom/client';
-import {shallowEqual, useSelector, useStore} from "react-redux";
 import {useTranslation} from "react-i18next";
 
 import Box from '@mui/material/Box';
@@ -8,12 +7,9 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { createTheme } from '@mui/material/styles';
 
 import { Api } from 'chessground/api';
-import { FenString } from '../../chess/FenString';
 import { GameProps, defaultProps } from '../../chess/settings/GameProps';
-import {CombinedGameState} from '../../actions/CombinedGameState';
 
 import {renderResult} from './GameUtils';
 import { MovesMode, NavigatorMode } from '../components/Constants';
@@ -28,30 +24,38 @@ import GamePgn from '../components/GamePgn';
 import Chat from '../../chat/Chat';
 
 import GameWrapper from "./GameWrapper";
-import {BoardState} from "../../actions/BoardState";
-import {GameState} from "../../actions/GameState";
 import DumbGame from "./DumbGame";
-
-
-const theme = createTheme();
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
+import {AuthContext} from "../../providers/AuthProvider";
+import {useTheme} from "@mui/material";
 
 const AnalyseGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
+    const { t } = useTranslation(['game', 'analyse']);
+    const theme = useTheme();
 
-    const { t, ready } = useTranslation(['game', 'analyse']);
+    const { getUserId } = useContext(AuthContext);
+    const { orientation, moveTable } = useContext(BoardContext);
+    const {
+        engine,
+        fen,
+        pgn ,
+        gameResult
+    } = useContext(GameContext);
+
+    const observerId = useMemo(() => getUserId(), [getUserId]);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
     const [tabAnalysis, setTabAnalysis] = useState("fenpgn");
 
-    const store = useStore<CombinedGameState>();
+    //const store = useStore<CombinedGameState>();
     const cgRef = useRef<Api>();
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
 
     // const [mounted, setMounted] = useState(false);;
 
     const renderChatTab = () => {
-        if (game.engine.ObserverId) {
+        if (observerId) {
             return (
                 <Tab label={t("chatTab")} value="chat" />
             );
@@ -61,9 +65,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
     };
 
     const renderChatContent = () => {
-        const { engine } = game;
-
-        if (engine.ObserverId) {
+        if (observerId) {
             let chatChannel = `gamechat:${engine.GameId}`;
             if (engine.isMyGame) {
                 chatChannel = "$" + chatChannel;
@@ -71,7 +73,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
 
             return (
                 <TabPanel sx={{p: 0}} value="chat">
-                    <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={engine.ObserverId} />
+                    <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={observerId} />
                 </TabPanel>
             );
         }
@@ -79,7 +81,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
         return null;
     };
 
-    const handleTabToolbarChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabToolbarChange = (_event: React.SyntheticEvent, newValue: string) => {
         setTabToolbar(newValue);
     };
 
@@ -100,7 +102,7 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
                         <TabPanel sx={{p: 0}} value="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={true} />
+                                    <ChessMoves mode={moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={true} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures piece={boardCfg.piece} />
@@ -155,17 +157,13 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
         );
     };
 
-    const renderFenPgn = () => {
-        const {engine} = game;
-        const fen = FenString.fromPosition(engine.CurrentPos);
-        const pgn = engine.RawData.pgn;
-
+    const renderFenPgn = useCallback(() => {
         return (
             <TabPanel value="fenpgn">
                 <GamePgn fen={fen} pgn={pgn} />
             </TabPanel>
         );
-    };
+    }, [fen, pgn]);
 
     const renderCountersTab = () => {
         return null;
@@ -175,12 +173,11 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
         return null;
     }
 
-    const handleTabAnalysisChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabAnalysisChange = (_event: React.SyntheticEvent, newValue: string) => {
         setTabAnalysis(newValue);
     };
 
     const renderUnderboard = () => {
-        const {engine} = game;
         return (
             <Box>
                 <div className="underboard">
@@ -209,8 +206,8 @@ const AnalyseGame: React.FC<GameProps> = (props) => {
         <DumbGame
                 cgRef={(api) => cgRef.current = api ?? undefined}
                 controlsLeft={renderControls()}
-                controlsTop={renderResult(game.engine, board.orientation, "top")}
-                controlsBottom={renderResult(game.engine, board.orientation, "bottom")}
+                controlsTop={renderResult(gameResult, orientation, "top")}
+                controlsBottom={renderResult(gameResult, orientation, "bottom")}
             >{ renderUnderboard() }</DumbGame>
 
     );

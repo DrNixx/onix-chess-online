@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import { createRoot } from 'react-dom/client';
 
 import Box from "@mui/material/Box";
@@ -19,62 +19,64 @@ import { Api } from 'chessground/api';
 import { Config as CgConfig } from 'chessground/config';
 import * as cg from 'chessground/types';
 
-import {FenString} from '../../chess/FenString';
 import {BoardSettings} from '../../chess/settings/BoardSettings';
 import {GameProps, defaultProps as gameDefaults} from '../../chess/settings/GameProps';
-
-import * as BoardActions from '../../actions/BoardActions';
 
 import SizeSelector from '../controls/SizeSelector';
 import PieceSelector from '../controls/PieceSelector';
 import SquareSelector from '../controls/SquareSelector';
-import { Square } from '../../chess/Square';
+import { parse as squareParse } from '../../chess/Square';
 import DumbGame from "./DumbGame";
 import {renderTimer} from "./GameUtils";
-import {shallowEqual, useDispatch, useSelector} from "react-redux";
-import {CombinedGameState} from "../../actions/CombinedGameState";
-import {GameState} from "../../actions/GameState";
-import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
-import {GameActions as ga} from "../../actions/GameActions";
-import {getLegalMovesMap} from "../../utils/chess";
 import IOSSwitch from "../controls/IOSSwitch";
 import {useTranslation} from "react-i18next";
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
 
 const ConfigureGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
-
     const { t } = useTranslation(['game', 'chess']);
+    const {
+        size,
+        piece,
+        square,
+        orientation,
+        coordinates,
+        learnMode,
+        toggleConfirm,
+        toggleLearn,
+        toggleCoords,
+        toggleMoves,
+        setSize,
+        setSquare,
+        setPiece
+    } = useContext(BoardContext);
+
+    const {
+        fen,
+        makeProvisional
+    } = useContext(GameContext);
 
     const cgRef = useRef<Api>();
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
-    const dispatch = useDispatch();
 
     const onMove = (orig: cg.Key, dest: cg.Key) => {
-        const {engine} = game;
-        const sm = engine.makeMove(Square.parse(orig), Square.parse(dest));
-
-        if (sm) {
-            dispatch({ type: ga.GAME_ADD_PROVISIONAL, sm: sm } as ga.AddProvisional);
-        }
+        makeProvisional(squareParse(orig), squareParse(dest));
     };
 
     const generateConfig = (): CgConfig => {
-        const {engine} = game;
-
         const dests = getLegalMovesMap(engine);
 
         return {
-            fen: FenString.fromPosition(engine.CurrentPos),
-            orientation: board.orientation,
-            coordinates: board.coordinates,
+            fen: fen,
+            orientation: orientation,
+            coordinates: coordinates,
             viewOnly: false,
             movable: {
                 free: false,
                 color: 'both',
                 dests: dests,
-                showDests: board.learnMode
+                showDests: learnMode
             },
             highlight: {
                 lastMove: true,
@@ -87,31 +89,31 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
     };
 
     const onConfirmChange = () => {
-        dispatch({ type: BoardActions.CONFIRM_MOVE } as BoardActions.BoardAction)
+        toggleConfirm();
     };
 
     const onLearnChange = () => {
-        dispatch({ type: BoardActions.LEARN_BOARD } as BoardActions.BoardAction)
+        toggleLearn();
     };
 
     const onCoordsChange = () => {
-        dispatch({ type: BoardActions.SET_COORDS } as BoardActions.BoardAction)
+        toggleCoords();
     };
 
     const onSizeChange = (size: BoardSize) => {
-        dispatch({ type: BoardActions.CHANGE_SIZE, size: size } as BoardActions.BoardAction);
+        setSize(size);
     };
 
     const onPieceChange = (piece: string) => {
-        dispatch({ type: BoardActions.SET_PIECE, piece: piece } as BoardActions.BoardAction);
+        setPiece(piece);
     };
 
     const onSquareChange = (square: string) => {
-        dispatch({ type: BoardActions.SET_SQUARE, square: square } as BoardActions.BoardAction);
+        setSquare(square);
     };
 
     const onMoveTableChange = () => {
-        dispatch({ type: BoardActions.MOVE_TABLE } as BoardActions.BoardAction)
+        toggleMoves();
     };
 
     const renderControls = () => {
@@ -129,7 +131,7 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
                                     fullWidth
                                     label={t("board_size")}
                                     name="size"
-                                    value={board.size}
+                                    value={size}
                                     onChangeSize={onSizeChange} />
                             </FormControl>
                         </Box>
@@ -140,7 +142,7 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
                                     fullWidth
                                     label={t("pieces", { ns: 'chess'})}
                                     name="piece"
-                                    value={board.piece}
+                                    value={piece}
                                     onChangePiece={onPieceChange} />
                             </FormControl>
                         </Box>
@@ -150,7 +152,7 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
                                 <SquareSelector
                                     fullWidth
                                     label={t("squares", { ns: 'chess'})}
-                                    name="square" value={board.square}
+                                    name="square" value={square}
                                     onChangeSquare={onSquareChange} />
                             </FormControl>
                         </Box>
@@ -239,8 +241,8 @@ const ConfigureGame: React.FC<GameProps> = (props) => {
             cgRef={(api) => cgRef.current = api ?? undefined}
             onGenerateConfig={generateConfig}
             controlsLeft={renderControls()}
-            controlsTop={renderTimer(game.engine, board.orientation, "top")}
-            controlsBottom={renderTimer(game.engine, board.orientation, "bottom")} />
+            controlsTop={renderTimer(game.engine, orientation, "top")}
+            controlsBottom={renderTimer(game.engine, orientation, "bottom")} />
     );
 };
 

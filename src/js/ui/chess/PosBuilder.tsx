@@ -27,15 +27,14 @@ import {eventPosition, isRightButton as isRightButtonEvent} from 'chessground/ut
 
 import {BoardSize, BoardSizeClasses} from 'onix-board-assets';
 import {IChessOpening} from '../../chess/types/Interfaces';
-import {Colors} from '../../chess/types/Types';
 import {Castling, CastlingSide, CastlingStr} from '../../chess/Castling';
 import {FenFormat, FenString} from '../../chess/FenString';
 import {pushif} from '../../fn/array';
 import {Position} from '../../chess/Position';
 import {Chess} from '../../chess/Chess';
-import {Color} from '../../chess/Color';
-import {Square} from '../../chess/Square';
-import {Piece} from '../../chess/Piece';
+import { toName as colorToName, toChar as colorToChar, White, Black } from '../../chess/Color';
+import { isSquare, name as squareName, parse as squareParse } from '../../chess/Square';
+import { toChar as pieceToChar, create as pieceCreate, King, Queen } from '../../chess/Piece';
 import SizeSelector from '../controls/SizeSelector';
 import SquareSelector from '../controls/SquareSelector';
 import PieceSelector from '../controls/PieceSelector';
@@ -47,6 +46,7 @@ import {postMessage} from '../../net/PostMessage';
 import {Api} from "chessground/api";
 import Chessground from "./Chessground";
 import AlertContext from '../../context/AlertContext';
+import {BW} from "../../chess/types/Colors";
 
 
 type Selected = "pointer" | "trash" | [cg.Color, cg.Role];
@@ -64,6 +64,7 @@ function selectedToCursor(s: Selected): string {
     return "cursor-" + joinSelected(s, "-")
 }
 
+/*
 function classToSelected(c: string): Selected | undefined {
     if ((c === "pointer" || c === "trash")) {
         return c;
@@ -76,6 +77,7 @@ function classToSelected(c: string): Selected | undefined {
     
     return undefined;
 }
+*/
 
 let lastTouchMovePos: cg.NumberPair | undefined;
 
@@ -221,7 +223,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
         return {
             fen: FenString.fromPosition(p, FenFormat.board),
             orientation: props.orientation,
-            turnColor: Color.toName(p.WhoMove),
+            turnColor: colorToName(p.WhoMove),
             coordinates: !!props.coordinates,
             autoCastle: false,
             movable: {
@@ -265,7 +267,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
 
         cgRef.current && cgRef.current?.set({
             coordinates: coordinates,
-            turnColor: Color.toName(whoMove),
+            turnColor: colorToName(whoMove),
             fen: fen
         });
 
@@ -319,19 +321,19 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
         assignShapes(e.target.value);
     }
 
-    const renderCastlingGroup = (color: Colors.BW, castling?: CastlingStr) => {
+    const renderCastlingGroup = (color: BW, castling?: CastlingStr) => {
         const cast = new Castling(castling);
         
         return (
             <Card>
-                <CardHeader title={t(Color.toName(color), { ns: "chess" })} sx={{ pb: 0 }} />
+                <CardHeader title={t(colorToName(color), { ns: "chess" })} sx={{ pb: 0 }} />
                 <CardContent sx={{ pt: 0 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={5}>
                             <FormControlLabel 
                                 control={
                                     <Switch id ="wck" 
-                                        value={Piece.toChar(Piece.create(color, Piece.King))}
+                                        value={pieceToChar(pieceCreate(color, King))}
                                         onChange={onCastleChange}
                                         defaultChecked={cast.has(color, CastlingSide.King)} />
                                 } 
@@ -341,7 +343,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                             <FormControlLabel 
                                 control={
                                     <Switch id ="wcq" 
-                                        value={Piece.toChar(Piece.create(color, Piece.Queen))}
+                                        value={pieceToChar(pieceCreate(color, Queen))}
                                         onChange={onCastleChange}
                                         defaultChecked={cast.has(color, CastlingSide.Queen)} />
                                 } 
@@ -551,14 +553,14 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
 
 
         } else if (isRightClick(e.nativeEvent)) {
-
+            //TODO: Block
         }
     }
 
     const fullFen = useMemo((): string => {
         const cast = new Castling(castling);
-        const ep = Square.isSquare(ep_target) ? Square.name(ep_target) : "-";
-        return fen + " " + Color.toChar(whoMove ?? Color.White) + " " + cast.asFen() + " " + ep + " " + halfMove?.toString() + " " + moveNo?.toString();
+        const ep = isSquare(ep_target) ? squareName(ep_target) : "-";
+        return fen + " " + colorToChar(whoMove ?? White) + " " + cast.asFen() + " " + ep + " " + halfMove?.toString() + " " + moveNo?.toString();
     }, [castling, ep_target, fen, halfMove, moveNo, whoMove]);
 
     const containerClass = useMemo(() => {
@@ -629,7 +631,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                              onMouseDown={boardEvent}
                              onMouseMove={boardEvent}
                              onContextMenu={boardEvent}>
-                            <Chessground config={initialConfig()} cgRef={(api) => cgRef.current = (api ?? undefined)} />
+                            <Chessground onGenerateConfig={initialConfig} cgRef={(api) => cgRef.current = (api ?? undefined)} />
                         </div>
                         <div className="holder-container">
                             { renderSpare((flipped ? "black": "white"), "bottom") }
@@ -668,7 +670,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                         <InputLabel>{t("board_size", { ns: "builder" }).toString()}</InputLabel>
                                         <SizeSelector 
                                             label={t("board_size", { ns: "builder" }).toString()} 
-                                            value={size} 
+                                            value={size}
                                             onChangeSize={(e) => setSize(e)} />
                                     </FormControl>
                                 </Grid>
@@ -742,7 +744,7 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                                             defaultValue={ep_target}
                                             title={t("ep_target_hint", { ns: "builder" })}
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                setEpTarget(Square.parse(e.target.value));
+                                                setEpTarget(squareParse(e.target.value));
                                             }} />
                                     </FormControl>
                                 </Grid>
@@ -763,10 +765,10 @@ const PosBuilder: React.FC<Props> = (propsIn) => {
                             <div><strong>{t("castle", { ns: "chess" }).toString()}</strong></div>
                             <Grid container spacing={2}>
                                 <Grid item md={6}>
-                                    {renderCastlingGroup(Color.White, castling)}
+                                    {renderCastlingGroup(White, castling)}
                                 </Grid>
                                 <Grid item md={6}>
-                                    {renderCastlingGroup(Color.Black, castling)}
+                                    {renderCastlingGroup(Black, castling)}
                                 </Grid>
                             </Grid>
                         </div>

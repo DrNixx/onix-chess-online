@@ -1,17 +1,18 @@
-import React, {useCallback, useMemo} from 'react';
-import * as cg from 'chessground/types';
+import React, {useContext, useMemo} from 'react';
 
 import UserBadge from "../user/UserBadge";
 import {IChessPlayer} from "../../chess/types/Interfaces";
-import {GamePlayers} from "../../chess/Chess";
+import {GameContext} from "../../providers/GameProvider";
+import {BoardContext} from "../../providers/BoardProvider";
 
 type Props = {
-    players: GamePlayers;
-    orientation?: cg.Color;
-    
     position: 'top' | 'bottom';
 };
-const BoardPlayer: React.FC<Props> = ({players, orientation, position}) => {
+const BoardPlayer: React.FC<Props> = ({position}) => {
+    const { orientation  } = useContext(BoardContext);
+    const { getPlayers } = useContext(GameContext);
+    const players = useMemo(() => getPlayers(), [getPlayers]);
+
     const player = useMemo(() => {
         let result: IChessPlayer | undefined;
         if (orientation == "black") {

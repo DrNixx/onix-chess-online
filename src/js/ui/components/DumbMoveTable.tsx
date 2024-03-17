@@ -5,10 +5,10 @@ import clsx from "clsx";
 import { Move } from '../../chess/Move';
 
 import { NavigatorMode } from './Constants';
-import { Colors } from '../../chess/types/Types';
-import { Color } from '../../chess/Color';
+import * as Colors from '../../chess/types/Colors';
+import { White, Black } from '../../chess/Color';
 import { DumbMoveElement, DumbMoveProps } from './DumbMoveElement';
-import { GameResult } from '../../chess/GameResult';
+import * as GameResult from '../../chess/GameResult';
 
 
 export class DumbMoveTable extends DumbMoveElement {
@@ -20,7 +20,7 @@ export class DumbMoveTable extends DumbMoveElement {
     }
 
     private renderMoveNo = (color: Colors.BW, ply: number) => {
-        if (color === Color.White) {
+        if (color === White) {
             const moveNo = ((ply + 1) >> 1);
             return (
                 <div className="moveno" data-moveno={moveNo} key={"mn" + moveNo.toString() }>{moveNo}</div>
@@ -33,13 +33,13 @@ export class DumbMoveTable extends DumbMoveElement {
     public renderDummy = (color: Colors.BW, ply: number) => {
         const result: JSX.Element[] = [];
 
-        if (color === Color.White) {
+        if (color === White) {
             result.push(this.renderMoveNo(color, ply));
         }
 
         const myclass = {
-            ['white']: (color === Color.White),
-            ['black']: (color === Color.Black)
+            ['white']: (color === White),
+            ['black']: (color === Black)
         };
 
         result.push(
@@ -64,13 +64,13 @@ export class DumbMoveTable extends DumbMoveElement {
             this.activeMove = m.uid;
         }
 
-        if (sm.color === Color.White) {
+        if (sm.color === White) {
             result.push(this.renderMoveNo(sm.color, sm.ply));
         }
 
         const myclass = {
-            ['white']: (sm.color === Color.White),
-            ['black']: (sm.color === Color.Black),
+            ['white']: (sm.color === White),
+            ['black']: (sm.color === Black),
             ['active']: (cm.moveKey === moveKey)
         };
 
@@ -118,7 +118,7 @@ export class DumbMoveTable extends DumbMoveElement {
     }
 
     private renderMoves = () => {
-        const { currentMove, game, opeinig } = this.props;
+        const { currentMove, game/*, opeinig*/ } = this.props;
         let moves: JSX.Element[] = []; 
         let move = currentMove.Begin.Next;
 
@@ -127,18 +127,20 @@ export class DumbMoveTable extends DumbMoveElement {
         }
 
         if ((move) && !move.isEnd()) {
-            if (move.sm?.color === Color.Black) {
-                moves = moves.concat(this.renderDummy(Color.White, game.StartPlyCount));
+            if (move.sm?.color === Black) {
+                moves = moves.concat(this.renderDummy(White, game.StartPlyCount));
             }
 
-            let i = 1;
+            // let i = 1;
             do {
-                const { sm, moveKey } = move!;
-                
+                const { sm} = move!;
+
+                /*
                 let nags: string[] = [];
                 if (sm.glyphs) {
                     nags = sm.glyphs.map(g => g.symbol);
                 }
+                 */
 
                 const comments: string[] = [];
                 
@@ -190,7 +192,7 @@ export class DumbMoveTable extends DumbMoveElement {
                     }
                 }
 
-                const comment = (comments.length > 0) ? comments.join(" ") : undefined;
+                // const comment = (comments.length > 0) ? comments.join(" ") : undefined;
 
                 moves = moves.concat(
                     //this.renderMove(currentMove, move.uid, sm.ply, moveKey, sm.color!, sm.san!, nags, comment, classes)
@@ -198,7 +200,7 @@ export class DumbMoveTable extends DumbMoveElement {
                 );
 
                 move = move.Next;
-                i++;
+                // i++;
             } while (move && !move.isEnd());
         }
         

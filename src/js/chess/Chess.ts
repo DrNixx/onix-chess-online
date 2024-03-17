@@ -3,11 +3,12 @@ import { nanoid } from 'nanoid';
 import isNumber from 'lodash/isNumber';
 import indexOf from 'lodash/indexOf';
 
-import { Squares, Colors } from './types/Types';
-import { Color } from './Color';
-import { GameResult } from './GameResult';
-import { Piece } from './Piece';
-import { Square } from './Square';
+import * as Colors from './types/Colors';
+import * as Squares from './types/Squares';
+import * as Color from './Color';
+import * as GameResult from './GameResult';
+import * as Piece from './Piece';
+import * as Square from './Square';
 import { Position, ChessPositionStd, SanCheckLevel, GenerateMode } from './Position';
 import { Move } from './Move';
 import { SimpleMove } from './SimpleMove';
@@ -24,7 +25,7 @@ export enum ChessRatingType {
     Iccf = 4
 }
 
-const ChessRatingNames: string[] = ["Unknown", "Elo", "Rating", "Rapid", "ICCF"];
+// const ChessRatingNames: string[] = ["Unknown", "Elo", "Rating", "Rapid", "ICCF"];
 
 function chessRatingParseType(value: string | number): ChessRatingType {
     return (isNumber(value)) ? value : toSafeInteger(value);
@@ -120,11 +121,10 @@ export class ChessGameState {
     public Is50MovesRule = false;
 }
 
-type encodedMoves = [number, string, number, number, string, string];
+// type encodedMoves = [number, string, number, number, string, string];
 
 export type GamePlayers = {
     white?: IChessPlayer;
-
     black?: IChessPlayer;
 };
 
@@ -153,28 +153,31 @@ const defaultGameData: IGameData = {
 };
 
 export class Chess {
-    private data: IGameData;
+    private readonly data: IGameData;
     private observer?: number;
     private owner?: number;
     private status?: IGameStatus;
-    private savedMove: Move | null = null;
-    private savedPos: Position | null = null;
-    private savedPlyCount = 0;
-    private pgnLastMovePos: number;
-    private pgnNextMovePos: number;
-    private varDepth = 0;
+    //private savedMove: Move | null = null;
+    //private savedPos: Position | null = null;
+    //private savedPlyCount = 0;
+    //private pgnLastMovePos: number;
+    //private pgnNextMovePos: number;
+    //private varDepth = 0;
     private supressEvents = false;
     private moveList: Map<string, Move> = new Map<string, Move>();
     private currentMove!: Move;
     private curPos!: Position;
-    private startPos: Position;
+    private readonly startPos: Position;
     private startFen: string = FenString.standartStart;
 
     public Altered: boolean;
     public InPromotion = false;
 
     public Fen?: string;
-    
+    public savedMove: SimpleMove|null = null;
+    public savedPlyCount: number = 0;
+    public savedPos: Position|null = null;
+
     public get ObserverId() {
         return this.observer;
     }
@@ -253,6 +256,9 @@ export class Chess {
     }
 
     public Analysis: IGameAnalysis = {};
+
+    public pgnLastMovePos: number;
+    public pgnNextMovePos: number;
     
     /**
      * @constructor 
@@ -293,7 +299,7 @@ export class Chess {
     }
 
     /// <summary>
-    /// Clears all of the standard tags.
+    /// Clears all the standard tags.
     /// </summary>
     private clearStandardTags () {
         this.White = { 
@@ -617,10 +623,11 @@ export class Chess {
     }
 
     /**
-    * Add a move at current position and do it. The parameter 'san' can be NULL. If it is provided, it is stored with the move to speed up PGN printing.
-    * @param sm SimpleMove
-    * @param san String
-    */
+     * Add a move at current position and do it. The parameter 'san' can be NULL. If it is provided, it is stored with the move to speed up PGN printing.
+     * @param sm SimpleMove
+     * @param san String
+     * @param fen
+     */
     public addMove(sm: SimpleMove, san?: string, fen?: string) {
         const { curPos: currentPos } = this;
 
@@ -631,7 +638,7 @@ export class Chess {
         }
 
         if (!sm.san) {
-            if (!san || (san == undefined)) {
+            if (!san) {
                 sm.san = this.curPos.makeSanString(sm, SanCheckLevel.MateTest);
             } else {
                 sm.san = san;

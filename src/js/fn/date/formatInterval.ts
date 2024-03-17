@@ -1,10 +1,10 @@
-import i18next, {DefaultTFuncReturn} from 'i18next';
+import i18next from 'i18next';
 import { DateInterval, normalize } from './DateInterval';
 
 export const formatInterval = (interval: DateInterval, parts = 0): string => {
     interval = normalize(interval);
 
-    const format: (DefaultTFuncReturn|boolean)[] = [];
+    const format: any[] = [];
     if (interval.y !== 0) {
         format.push(
             i18next.t("years", { ns: "datetime", y: interval.y })

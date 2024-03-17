@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useContext} from 'react';
 import {shallowEqual, useSelector} from "react-redux";
 import { createRoot } from 'react-dom/client';
 import {useTranslation} from "react-i18next";
@@ -13,9 +13,6 @@ import {Api } from 'chessground/api';
 
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
 
-import {CombinedGameState} from '../../actions/CombinedGameState';
-import {GameState} from "../../actions/GameState";
-
 import BoardToolbar from '../components/BoardToolbar';
 import Captures from '../components/Captures';
 import ChessMoves from '../components/ChessMoves';
@@ -24,21 +21,24 @@ import GameWrapper from "./GameWrapper";
 
 import { NavigatorMode, MovesMode } from '../components/Constants';
 import { renderTimer } from './GameUtils';
-import {BoardState} from "../../actions/BoardState";
 import Chat from '../../chat/Chat';
 import DumbGame from "./DumbGame";
+import {BoardContext} from "../../providers/BoardProvider";
 
 
 const WatchGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
-
     const { t } = useTranslation(['game']);
+    const {
+        orientation,
+        moveTable
+    } = useContext(BoardContext);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
 
     const cgRef = useRef<Api>();
     const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
+
 
     const renderChatTab = () => {
         if (game.engine.ObserverId) {
@@ -69,7 +69,7 @@ const WatchGame: React.FC<GameProps> = (props) => {
         return null;
     };
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
         setTabToolbar(newValue);
     };
 
@@ -89,7 +89,7 @@ const WatchGame: React.FC<GameProps> = (props) => {
                         <TabPanel sx={{p: 0}} value="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
+                                    <ChessMoves mode={moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures piece={boardCfg.piece} />
@@ -110,8 +110,8 @@ const WatchGame: React.FC<GameProps> = (props) => {
         <DumbGame
             cgRef={(api) => cgRef.current = api ?? undefined}
             controlsLeft={renderControls()}
-            controlsTop={renderTimer(game.engine, board.orientation, "top")}
-            controlsBottom={renderTimer(game.engine, board.orientation, "bottom")} />
+            controlsTop={renderTimer(game.engine, orientation, "top")}
+            controlsBottom={renderTimer(game.engine, orientation, "bottom")} />
     );
 };
 

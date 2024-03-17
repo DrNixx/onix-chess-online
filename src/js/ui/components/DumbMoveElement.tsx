@@ -1,6 +1,4 @@
 import React, {PropsWithChildren} from 'react';
-import clsx from "clsx";
-
 import ToggleButton from '@mui/material/ToggleButton';
 import Icon from "@mui/material/Icon";
 
@@ -133,7 +131,7 @@ export class DumbMoveElement extends React.Component<PropsWithChildren<DumbMoveP
     protected renderToggleEval = () => {
         const { props, state, toggleEvals } = this;
 
-        if (!!props.hasEvals) {
+        if (props.hasEvals) {
             return (
                 <ToggleButton
                     sx={{p: 0.25}}

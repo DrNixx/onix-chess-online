@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
 import { FenFormat, FenString } from '../../chess/FenString';
 import { IChessOpening } from '../../chess/types/Interfaces';
-import { Logger } from '../../common/Logger';
 import {useTranslation} from 'react-i18next';
+import Loader from "../Loader";
 
 type IChessOpeningWithKey = IChessOpening & {
     key?: string;
@@ -73,7 +72,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
                 }
             })
             .catch(function(error) {
-                Logger.error('Looks like there was a problem when reading openings: \n', error);
+                console.error('Looks like there was a problem when reading openings: \n', error);
             });
 
         return () => {
@@ -127,6 +126,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
         }
     }, [open]);
 
+    /*
     const handleChange = (e: any) => {
         let fen: string = e.target.value; 
 
@@ -136,6 +136,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
 
         onChangeFen && onChangeFen(fen);
     };
+     */
 
     return (
         <Autocomplete
@@ -160,7 +161,7 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
                         ...params.InputProps,
                         endAdornment: (
                             <React.Fragment>
-                                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                {isLoading ? <Loader color="inherit" size={20} /> : null}
                                 {params.InputProps.endAdornment}
                             </React.Fragment>
                         ),

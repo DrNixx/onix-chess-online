@@ -1,5 +1,4 @@
-import React, {useRef, useState} from 'react';
-import {shallowEqual, useSelector} from "react-redux";
+import React, {useContext, useRef, useState} from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {useTranslation} from "react-i18next";
@@ -12,11 +11,7 @@ import TabPanel from "@mui/lab/TabPanel";
 
 import {Api } from 'chessground/api';
 
-import {FenString} from '../../chess/FenString';
-
 import {GameProps, defaultProps} from '../../chess/settings/GameProps';
-
-import {CombinedGameState} from '../../actions/CombinedGameState';
 import {renderResult} from './GameUtils';
 
 import Captures from '../components/Captures';
@@ -25,32 +20,30 @@ import GameInfo from './GameInfo';
 
 import {MovesMode, NavigatorMode} from '../components/Constants';
 import GamePgn from '../components/GamePgn';
-import {GameState} from "../../actions/GameState";
-import {BoardState} from "../../actions/BoardState";
 import GameWrapper from "./GameWrapper";
 import DumbGame from "./DumbGame";
+import {BoardContext} from "../../providers/BoardProvider";
+import {GameContext} from "../../providers/GameProvider";
 
 const PgnGame: React.FC<GameProps> = (props) => {
     const { board: boardCfg } = props;
-
     const { t } = useTranslation(['game']);
+    const { orientation, moveTable } = useContext(BoardContext);
+    const {
+        fen,
+        pgn,
+        gameResult
+    } = useContext(GameContext);
 
     const [tabToolbar, setTabToolbar] = useState("moves");
 
     const cgRef = useRef<Api>();
-    const game = useSelector<CombinedGameState, GameState>((state) => state.game, shallowEqual );
-    const board = useSelector<CombinedGameState, BoardState>((state) => state.board, shallowEqual );
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
         setTabToolbar(newValue);
     };
 
     const renderControls = () => {
-        const { engine } = game;
-
-        const fen = FenString.fromPosition(engine.CurrentPos);
-        const pgn = engine.RawData.pgn;
-
         return (
             <div className="controls flex-grow-1 d-flex flex-column ms-md-4">
                 <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -65,7 +58,7 @@ const PgnGame: React.FC<GameProps> = (props) => {
                         <TabPanel sx={{p: 0}} value="moves">
                             <div className="d-flex flex-column h-100">
                                 <div className="board-height auto-overflow">
-                                    <ChessMoves mode={board.moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
+                                    <ChessMoves mode={moveTable ? MovesMode.Table : MovesMode.List} nav={NavigatorMode.Top} hasEvals={false} />
                                 </div>
                                 <div className="mt-2 pt-2 border-top">
                                     <Captures piece={boardCfg.piece} />
@@ -88,8 +81,8 @@ const PgnGame: React.FC<GameProps> = (props) => {
         <DumbGame
             cgRef={(api) => cgRef.current = api ?? undefined}
             controlsLeft={renderControls()}
-            controlsTop={renderResult(game.engine, board.orientation, "top")}
-            controlsBottom={renderResult(game.engine, board.orientation, "bottom")} />
+            controlsTop={renderResult(gameResult, orientation, "top")}
+            controlsBottom={renderResult(gameResult, orientation, "bottom")} />
     );
 };
 

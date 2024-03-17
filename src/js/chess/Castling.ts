@@ -1,8 +1,7 @@
-import { Color } from './Color';
-import { Colors } from './types/Types';
+import * as Color from './Color';
+import * as Colors from './types/Colors';
 
 class CastlingStrBrand {
-    private _brand = 0;
 }
 
 export type CastlingStr = CastlingStrBrand & string;

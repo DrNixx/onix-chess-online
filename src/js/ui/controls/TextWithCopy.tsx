@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import clsx from "clsx";
 import { useSnackbar } from 'notistack';
 import IconButton from '@mui/material/IconButton';
-import Input, { InputProps } from '@mui/material/Input';
-import OutlinedInput, {OutlinedInputProps} from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField, { TextFieldProps} from '@mui/material/TextField';
 import CopyIcon from '@mui/icons-material/CopyAll';
@@ -26,7 +24,12 @@ const TextWithCopy: React.FC<TextWithCopyProps> = (propsIn) => {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation(['chess-ctrls', 'core']);
 
-    const {label, icon, className, contentEditable, ...other} = props;
+    const {
+        label,
+        icon,
+        className,
+        contentEditable,
+        ...other} = props;
 
     const [elementClass, setElementClass] = useState("");
 

@@ -1,18 +1,29 @@
 import React, {useState} from 'react';
 import MenuItem from '@mui/material/MenuItem';
-import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
+import Select, {BaseSelectProps, SelectChangeEvent} from '@mui/material/Select';
 import {BoardConfig} from 'onix-board-assets';
+import {applyDefaults, defaultOf} from "../../utils/propsUtils";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const boardsData: BoardConfig = require('onix-board-assets/dist/js/boards.json');
 
-type SquareSelectorProps = SelectProps<string> & {
+type SquareSelectorProps = BaseSelectProps<string> & {
     onChangeSquare?: (square: string) => void;
 }
 
-const SquareSelector: React.FC<SquareSelectorProps> = (props) => {
+type propsWithDefaults = 'defaultValue' | 'value' | 'variant';
+const defaultProps: defaultOf<SquareSelectorProps, propsWithDefaults> = {
+    defaultValue: 'color-blue',
+    value: 'color-blue',
+    variant: 'outlined',
+};
 
-    const {onChange, onChangeSquare, value, ...other} = props;
+const SquareSelector: React.FC<SquareSelectorProps> = (propsIn) => {
+    const {
+        onChangeSquare,
+        value,
+        ...other
+    } = applyDefaults(propsIn, defaultProps);
 
     const [square, setSquare] = useState(value);
 
@@ -32,11 +43,6 @@ const SquareSelector: React.FC<SquareSelectorProps> = (props) => {
             })}
         </Select>
     );
-};
-
-SquareSelector.defaultProps = {
-    defaultValue: 'color-blue',
-    value: 'color-blue',
 };
 
 export default SquareSelector;

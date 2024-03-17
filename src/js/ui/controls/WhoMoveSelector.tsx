@@ -1,24 +1,36 @@
 import React, {useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
 import MenuItem from '@mui/material/MenuItem';
-import Select, {SelectChangeEvent, SelectProps} from '@mui/material/Select';
-import { Color } from '../../chess/Color';
-import { Colors } from '../../chess/types/Types';
+import Select, {SelectChangeEvent, BaseSelectProps} from '@mui/material/Select';
+import { White, Black } from '../../chess/Color';
+import {BW} from '../../chess/types/Colors';
 import {useTranslation} from "react-i18next";
+import {applyDefaults, defaultOf} from "../../utils/propsUtils";
 
-type WhoMoveSelectorProps =  SelectProps<Colors.BW> & {
-    onChangeTurn?: (color: Colors.BW) => void;
+type WhoMoveSelectorProps =  Omit<BaseSelectProps<BW>, 'onChange'> & {
+    onChangeTurn?: (color: BW) => void;
 }
 
-const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (props) => {
-    const {onChange, onChangeTurn, value, ...other} = props;
+type propsWithDefaults = 'defaultValue' | 'value' | 'variant';
+const defaultProps: defaultOf<WhoMoveSelectorProps, propsWithDefaults> = {
+    defaultValue: White,
+    value: White,
+    variant: 'outlined',
+};
+
+const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (propsIn) => {
+    const {
+        onChangeTurn,
+        value,
+        ...other
+    } = applyDefaults(propsIn, defaultProps);
 
     const { t } = useTranslation(['chess-ctrls']);
 
     const [who, setWho] = useState(value);
 
-    const handleChange = (event: SelectChangeEvent<Colors.BW>) => {
-        const newWho = toSafeInteger(event.target.value) as Colors.BW;
+    const handleChange = (event: SelectChangeEvent<BW>) => {
+        const newWho = toSafeInteger(event.target.value) as BW;
         setWho(newWho);
         onChangeTurn && onChangeTurn(newWho);
     };
@@ -29,15 +41,10 @@ const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (props) => {
             value={who}
             onChange={handleChange}
         >
-            <MenuItem value={Color.White}>{t("white_move")}</MenuItem>
-            <MenuItem value={Color.Black}>{t("black_move")}</MenuItem>
+            <MenuItem value={White}>{t("white_move")}</MenuItem>
+            <MenuItem value={Black}>{t("black_move")}</MenuItem>
         </Select>
     );
-};
-
-WhoMoveSelector.defaultProps = {
-    defaultValue: Color.White,
-    value: Color.White,
 };
 
 export default WhoMoveSelector;

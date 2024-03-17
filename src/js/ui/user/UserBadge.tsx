@@ -14,7 +14,6 @@ import Stack from '@mui/material/Stack';
 import {AvatarSizeType, Icons, UserIconType} from "./Interfaces";
 import Avatar from "./Avatar";
 import userCache from "../../app/userCache";
-import {Logger} from "../../common/Logger";
 import UserRatings from "./UserRatings";
 import InfoBox from "./InfoBox";
 import UserTitle from "./UserTitle";
@@ -63,7 +62,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
                         }
                     })
                     .catch(function(error) {
-                        Logger.error('Looks like there was a problem when reading user data: \n', error);
+                        console.error('Looks like there was a problem when reading user data: \n', error);
                     });
             }
         }
@@ -77,7 +76,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
         return undefined;
     }, [user]);
 
-    const renderUserLinkSimple = () => {
+    const renderUserLinkSimple = useCallback(() => {
         if (user) {
             const unClass = ["username"];
             if (user?.status) {
@@ -91,7 +90,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
         }
 
         return null;
-    };
+    }, [getDisplay, language, user]);
 
     const renderUserLink = useCallback(() =>  {
         if (user) {
@@ -200,7 +199,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
         }
 
         return null;
-    }, [user, popover, anchorEl, language]);
+    }, [user, popover, anchorEl, getDisplay, popupId, renderUserLinkSimple, language, t]);
 
     const renderInfo = (user: IUser) => {
         return (

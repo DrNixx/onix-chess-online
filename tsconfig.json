@@ -1,43 +1,39 @@
 {
-    "ts-node": {
-        "compilerOptions": {
-            "module": "commonjs"
-        }
-    },
     "compilerOptions": {
-        "moduleResolution": "node",
-        "target": "ES2016",
-        "module": "commonjs",
-        "lib": ["DOM", "ES2016", "DOM.iterable", "ES2020.Intl" ],
-        "jsx": "react",
-        "esModuleInterop": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "lib": ["ES2020", "DOM", "DOM.iterable"],
         "skipLibCheck": true,
+
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react",
+	"allowSyntheticDefaultImports": true,
+
         "sourceMap": true,
-        "declaration": true,
+        "declaration": false,
+
+        /* Linting */
         "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        //"noUnusedParameters": true,
+
         "strictNullChecks": true,
         "importHelpers": true,
-        "resolveJsonModule": true,
         "preserveConstEnums": true,
         "removeComments": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "forceConsistentCasingInFileNames": true,
         "outDir": "./dist"
     },
-    "files": [
-        "src/js/index.ts",
-        "src/js/analyse.ts",
-        "src/js/configure.ts",
-        "src/js/play.ts",
-        "src/js/watch.ts",
-        "src/js/setup.ts"
-    ],
-    "include": [
-        "src/js/**/*.d.ts"
-    ]
+    "include": ["src/js"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }
