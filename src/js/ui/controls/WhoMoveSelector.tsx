@@ -5,7 +5,8 @@ import Select, {SelectChangeEvent, BaseSelectProps} from '@mui/material/Select';
 import { White, Black } from '../../chess/Color';
 import {BW} from '../../chess/types/Colors';
 import {useTranslation} from "react-i18next";
-import {applyDefaults, defaultOf} from "../../utils/propsUtils";
+import {defaultOf} from "../../utils/propsUtils";
+import {useDefaults} from "../../hooks/useDefaults";
 
 type WhoMoveSelectorProps =  Omit<BaseSelectProps<BW>, 'onChange'> & {
     onChangeTurn?: (color: BW) => void;
@@ -19,11 +20,12 @@ const defaultProps: defaultOf<WhoMoveSelectorProps, propsWithDefaults> = {
 };
 
 const WhoMoveSelector: React.FC<WhoMoveSelectorProps> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
     const {
         onChangeTurn,
         value,
         ...other
-    } = applyDefaults(propsIn, defaultProps);
+    } = props;
 
     const { t } = useTranslation(['chess-ctrls']);
 

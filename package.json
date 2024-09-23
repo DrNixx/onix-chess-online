@@ -64,6 +64,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^14.1.0",
+    "react-modal-promise": "^1.0.2",
     "react-redux": "^8.0.2",
     "react-scrollbars-custom": "^4.0.27",
     "react-singleton-hook": "^4.0.1",
@@ -71,6 +72,10 @@
     "recharts": "^2.8.0",
     "redux": "^4.0.5",
     "rollup-plugin-visualizer": "^5.12.0",
+    "slate": "^0.102.0",
+    "slate-history": "^0.100.0",
+    "slate-hyperscript": "^0.100.0",
+    "slate-react": "^0.102.0",
     "ts-md5": "^1.2.7",
     "warning": "^4.0.3"
   },

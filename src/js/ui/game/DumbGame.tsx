@@ -49,6 +49,10 @@ const DumbGame: React.FC<PropsWithChildren<DumbGameProps>> = (props) => {
                 lastMove: true,
                 check: true
             },
+            animation: {
+                enabled: true,
+                duration: 200
+            }
         };
     }, [onGenerateConfig, fen, lastMove, isCheck, orientation, coordinates, turnColor]);
 

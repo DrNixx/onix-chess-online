@@ -1,10 +1,10 @@
-import React, {createContext, PropsWithChildren, useCallback, useState} from "react";
+import React, {createContext, PropsWithChildren, useCallback, useEffect, useMemo, useState} from "react";
 import clsx from "clsx";
 import Container from "@mui/material/Container";
 import * as cg from "chessground/types";
 import * as Color from "../chess/Color";
 import {BoardSize, BoardSizeClasses} from "onix-board-assets";
-
+import {useApi} from "../hooks/useApi";
 
 export type BoardProps = {
     is3d: boolean;
@@ -55,10 +55,20 @@ export const BoardContext = createContext<BoardContextProps>({
     toggleMoves: () => {},
 });
 
-type Props = Partial<BoardProps>;
+type Props = Partial<BoardProps> & {
+    loaded?: boolean;
+};
 
 export const BoardProvider: React.FC<PropsWithChildren<Props>> = (propsIn) => {
-    const props = { ...INITIAL_STATE, ...propsIn };
+    const props = useMemo(() => {
+        return {
+            ...INITIAL_STATE,
+            ...propsIn,
+            loaded: !!propsIn.piece
+        }
+    }, [propsIn]);
+    
+    const [loaded, setLoaded] = useState(props.loaded);
     const [is3d, setIs3d] = useState(props.is3d);
     const [size, setSizeState] = useState(props.size);
     const [piece, setPieceState] = useState(props.piece);
@@ -68,6 +78,29 @@ export const BoardProvider: React.FC<PropsWithChildren<Props>> = (propsIn) => {
     const [learnMode, setLearnMode] = useState(props.learnMode);
     const [confirmMove, setConfirmMove] = useState(props.confirmMove);
     const [moveTable, setMoveTable] = useState(props.moveTable);
+
+    const { apiGet } = useApi();
+
+    useEffect(() => {
+        if (!loaded) {
+            apiGet<BoardProps>('/api/settings/board')
+                .then((data) => {
+                    if (data.model) {
+                        (propsIn.is3d === undefined) && setIs3d(data.model.is3d);
+                        (propsIn.size === undefined) && setSizeState(data.model.size);
+                        (propsIn.piece === undefined) && setPieceState(data.model.piece);
+                        (propsIn.square === undefined) && setSquareState(data.model.square);
+                        (propsIn.coordinates === undefined) && setCoordinates(data.model.coordinates);
+                        (propsIn.learnMode === undefined) && setLearnMode(data.model.learnMode);
+                        (propsIn.confirmMove === undefined) && setConfirmMove(data.model.confirmMove);
+                        (propsIn.moveTable === undefined) && setMoveTable(data.model.moveTable);
+                    }
+
+                    setLoaded(true);
+                })
+                .catch();
+        }
+    }, [apiGet, propsIn, loaded]);
 
     const set3d = useCallback((value: boolean) => {
         setIs3d(value);
@@ -138,8 +171,8 @@ export const BoardProvider: React.FC<PropsWithChildren<Props>> = (propsIn) => {
                 toggleLearn,
                 toggleConfirm,
                 toggleMoves
-        }}>
-            <Container maxWidth={false} className={clsx(containerClass)}>
+            }}>
+            <Container maxWidth={false} className={clsx(containerClass())}>
                 {props.children}
             </Container>
         </BoardContext.Provider>

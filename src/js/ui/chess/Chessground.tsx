@@ -68,7 +68,12 @@ const Chessground: React.FC<Props> = (propsIn) => {
     }, [coordinates, fen, isCheck, lastMove, onGenerateConfig, orientation, turnColor]);
 
     const handleRef = useCallback((node: HTMLDivElement) => {
-        cg.current = node ? ChessgroundNative(node, generateConfig()) : null;
+        if (!cg.current) {
+            cg.current = node ? ChessgroundNative(node, generateConfig()) : null;
+        } else {
+            cg.current?.set(generateConfig());
+        }
+
         cgRefCallback && cgRefCallback(cg.current);
     }, [cgRefCallback, generateConfig]);
 

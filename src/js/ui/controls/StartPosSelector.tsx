@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
 import { FenFormat, FenString } from '../../chess/FenString';
@@ -22,16 +22,16 @@ type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false,
 const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
     const {
         label, 
-        fen, 
+        // fen,
         openingsPos, 
-        onChangeFen,
+        // onChangeFen,
         open,
         ...other
     } = props;
 
     const { t } = useTranslation(['chess-ctrls']);
 
-    const convertOpeningData = (data: IChessOpening[]): IChessOpeningWithKey[] => {
+    const convertOpeningData = useCallback((data: IChessOpening[]): IChessOpeningWithKey[] => {
         return [...data.map(item => {
             const key = FenString.trim(item.fen, FenFormat.castlingEp);
             return {
@@ -40,47 +40,13 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
                 groupName: t('popular_opening')
             };
         })];
-    };
+    }, [t]);
 
     const [opened, setOpened] = React.useState(false);
     const [items, setItems] = React.useState<readonly IChessOpeningWithKey[]>(convertOpeningData(openingsPos || []));
     const isLoading = open && items.length === 0;
 
-    useEffect(() => {
-        let active = true;
-
-        if (!isLoading) {
-            return undefined;
-        }
-
-        if (process.env.NODE_ENV !== 'production') {
-            fillOpeningData([]);
-            return undefined;
-        }
-
-        fetch('https://www.chess-online.com/api/position/starting-positions', {mode: 'cors'})
-            .then(function(response) {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-
-                return response.json();
-            })
-            .then(function(data: IChessOpening[]) {
-                if (active) {
-                    fillOpeningData(data);
-                }
-            })
-            .catch(function(error) {
-                console.error('Looks like there was a problem when reading openings: \n', error);
-            });
-
-        return () => {
-            active = false;
-        };
-    }, [isLoading]);
-
-    const fillOpeningData = (data: IChessOpening[]) => {
+    const fillOpeningData = useCallback((data: IChessOpening[]) => {
         const list: IChessOpeningWithKey[] = [];
 
         list.push({
@@ -118,7 +84,41 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
         list.push(...convertOpeningData(data));
 
         setItems([...list]);
-    };
+    }, [convertOpeningData, t]);
+
+    useEffect(() => {
+        let active = true;
+
+        if (!isLoading) {
+            return undefined;
+        }
+
+        if (process.env.NODE_ENV !== 'production') {
+            fillOpeningData([]);
+            return undefined;
+        }
+
+        fetch('https://www.chess-online.com/api/position/starting-positions', {mode: 'cors'})
+            .then(function(response) {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+
+                return response.json();
+            })
+            .then(function(data: IChessOpening[]) {
+                if (active) {
+                    fillOpeningData(data);
+                }
+            })
+            .catch(function(error) {
+                console.error('Looks like there was a problem when reading openings: \n', error);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [fillOpeningData, isLoading]);
 
     React.useEffect(() => {
         if (!open) {

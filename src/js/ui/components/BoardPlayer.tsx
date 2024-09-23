@@ -25,7 +25,7 @@ const BoardPlayer: React.FC<Props> = ({position}) => {
     }, [orientation, players.black, players.white, position]);
     
     return (
-        player ? <UserBadge user={player.user} size="small" popover={false}>{player.rating}</UserBadge> : null
+        player ? <UserBadge key={player.user.id} user={player.user} size="small" popover={false}>{player.rating}</UserBadge> : null
     );
 };
 

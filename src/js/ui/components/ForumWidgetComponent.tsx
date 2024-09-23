@@ -24,7 +24,8 @@ import CardContent from "@mui/material/CardContent";
 import IconButton from '@mui/material/IconButton';
 import UserBadge from "../user/UserBadge";
 import {ForumWidgetProps} from "./ForumWidgetProps";
-import {applyDefaults, defaultOf} from "../../utils/propsUtils";
+import {defaultOf} from "../../utils/propsUtils";
+import {useDefaults} from "../../hooks/useDefaults";
 
 
 interface IForumMessage {
@@ -71,7 +72,8 @@ const defaultProps: defaultOf<ForumWidgetProps, propsWithDefaults> = {
 };
 
 const ForumWidgetComponent: React.FC<ForumWidgetProps> = (propsIn) => {
-    const {language, apiUrl, i18n} = applyDefaults(propsIn, defaultProps);
+    const props = useDefaults(propsIn, defaultProps);
+    const {language, apiUrl, i18n} = props;
     const forumPrevStore = storage.make('dashboard-forum-diff');
     const forumKeyStore = storage.make('dashboard-forum-tab');
 

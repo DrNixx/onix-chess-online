@@ -1,8 +1,8 @@
-export interface OnixStorageEvent {
+export type OnixStorageEvent = {
     sri: string;
     nonce: number;
     value?: string;
-} 
+};
 
 export interface OnixBooleanStorage {
     get(): boolean;

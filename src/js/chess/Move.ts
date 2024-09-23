@@ -10,7 +10,7 @@ import { Position } from './Position';
 export class Move {
     private vars: Move[] = [];
     private varNo = 0;
-    private ply: number;
+    protected ply: number;
     private parent: Move | null = null;
     
     private prev_move: Move | null;

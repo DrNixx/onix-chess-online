@@ -29,7 +29,7 @@ export const postMessage = function(message: any, target_url: string, target?: W
     if (has_postMessage) {
         // The browser supports window.postMessage, so call it with a targetOrigin
         // set appropriately, based on the target_url parameter.
-        const url = target_url.replace(/([^:]+:\/\/[^\/]+).*/, '$1');
+        const url = target_url.replace(/([^:]+:\/\/[^/]+).*/, '$1');
         target[_postMessage](message, url);
     } else if (target_url) {
         // The browser does not support window.postMessage, so set the location
@@ -41,7 +41,7 @@ export const postMessage = function(message: any, target_url: string, target?: W
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const receiveMessage = p_receiveMessage = function(callback: Function, source_origin: string|Function, delay: number) {
+export const receiveMessage = p_receiveMessage = function(callback: Function, source_origin: string|Function|number, delay?: number) {
     if (has_postMessage) {
         // Since the browser supports window.postMessage, the callback will be
         // bound to the actual event associated with window.postMessage.

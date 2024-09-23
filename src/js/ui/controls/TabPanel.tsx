@@ -9,6 +9,15 @@ type TabPanelProps = {
     activeKey: string;
 }
 
+/*
+function a11yProps(id: string, eventKey: string) {
+    return {
+        id: `${id}-tab-${eventKey}`,
+        'aria-controls': `${id}-tabpanel-${eventKey}`,
+    };
+}
+*/
+
 const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = (props) => {
 
     const { children, id, eventKey, activeKey, className, ...other } = props;
@@ -32,10 +41,3 @@ const TabPanel: React.FC<PropsWithChildren<TabPanelProps>> = (props) => {
 };
 
 export default TabPanel;
-
-export function a11yProps(id: string, eventKey: string) {
-    return {
-        id: `${id}-tab-${eventKey}`,
-        'aria-controls': `${id}-tabpanel-${eventKey}`,
-    };
-}

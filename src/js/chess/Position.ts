@@ -19,7 +19,7 @@ const {
     Null: NULL_DIR, Up: UP,  Down: DOWN, Left: LEFT, Right: RIGHT, 
     UpLeft: UP_LEFT, UpRight: UP_RIGHT, DownLeft: DOWN_LEFT, DownRight: DOWN_RIGHT } = Direction;
 
-function is_valid_dest(dest: Squares.Square, sqset?: Squares.Square[]) {
+function isValidDest(dest: Squares.Square, sqset?: Squares.Square[]) {
     return ((sqset === undefined) || indexOf(sqset, dest) !== -1);
 }
 
@@ -123,6 +123,7 @@ export class Position {
      */
     public copyFrom(source: Position) {
         this.brd = cloneDeep(source.brd);
+        this.capt = cloneDeep(source.capt);
         this.pieceCount = cloneDeep(source.pieceCount);
         this.listPos = cloneDeep(source.listPos);
         this.list = cloneDeep(source.list);
@@ -192,7 +193,7 @@ export class Position {
     }
 
     /**
-     * Return true if count of specified piece great than zero.
+     * Return true if count of specified pieces is great than zero.
      */
     public hasPiece(p: number) {
         return this.material[p] > 0;
@@ -287,7 +288,7 @@ export class Position {
 
     /**
      * Make the move on the board and update all the necessary 
-     * fields in the simpleMove structure so it can be undone.
+     * fields in the simpleMove structure, so it can be undone.
      * @param sm {SimpleMove}
      */
     public doSimpleMove(sm: SimpleMove): void {
@@ -615,7 +616,7 @@ export class Position {
         const genNonCaptures = (genType & GenerateMode.NonCaptures) !== 0;
         const capturesOnly = !genNonCaptures;
 
-        let mask = 0;
+        let mask: number;
         if (pieceType !== noPiece) {
             mask = 1 << pieceType;
         } else {
@@ -1157,7 +1158,7 @@ export class Position {
             const p = this.brd[dest];
             if (p === noPiece) {
                 if (!capturesOnly) {
-                    if (is_valid_dest(dest, sqset)) {
+                    if (isValidDest(dest, sqset)) {
                         this.addLegalMove(mlist, fromSq, dest, noPiece);
                     }
                 }
@@ -1167,7 +1168,7 @@ export class Position {
 
             // we have reached a piece. Add the capture if it is an enemy.
             if (Piece.color(p) !== color) {
-                if (is_valid_dest(dest, sqset)) {
+                if (isValidDest(dest, sqset)) {
                     this.addLegalMove(mlist, fromSq, dest, noPiece);
                 }
             }
@@ -1202,7 +1203,7 @@ export class Position {
             }
 
             if ((p === noPiece) || (Piece.color(p) !== color)) {
-                if (is_valid_dest(dest, sqset)) {
+                if (isValidDest(dest, sqset)) {
                     this.addLegalMove(mlist, fromSq, dest, noPiece);
                 }
             }
@@ -1411,7 +1412,7 @@ export class Position {
 
         if (genNonCaptures && (dir === NULL_DIR || dir === forward || oppdir === forward)) {
             dest = Square.move(from, forward);
-            if (Square.isSquare(dest) && (this.brd[dest] === noPiece) && (is_valid_dest(dest, sqset))) {
+            if (Square.isSquare(dest) && (this.brd[dest] === noPiece) && (isValidDest(dest, sqset))) {
                 if (Square.rank(dest) === promoRank) {
                     this.addPromotions(mlist, from, dest);
                 } else {
@@ -1421,7 +1422,7 @@ export class Position {
 
             if ((Square.rank(from) === secondRank) && Square.isSquare(dest) && (this.brd[dest] === noPiece)) {
                 dest = Square.move(dest, forward);
-                if (Square.isSquare(dest) && (this.brd[dest] === noPiece) && is_valid_dest(dest, sqset)) {
+                if (Square.isSquare(dest) && (this.brd[dest] === noPiece) && isValidDest(dest, sqset)) {
                     this.addLegalMove(mlist, from, dest, noPiece);
                 }
             }
@@ -1433,7 +1434,7 @@ export class Position {
         let capdir: Directions.Direction = (forward | LEFT) as Directions.Direction;
         if (dir === NULL_DIR || dir === capdir || oppdir === capdir) {
             dest = Square.move(from, capdir);
-            if (Square.isSquare(dest) && this.isPossibleCapture(dest, from) && is_valid_dest(dest, sqset)) {
+            if (Square.isSquare(dest) && this.isPossibleCapture(dest, from) && isValidDest(dest, sqset)) {
                 if (Square.rank(dest) === promoRank) {
                     this.addPromotions(mlist, from, dest);
                 } else {
@@ -1445,7 +1446,7 @@ export class Position {
         capdir = (forward | RIGHT) as Directions.Direction;
         if (dir === NULL_DIR || dir === capdir || oppdir === capdir) {
             dest = Square.move(from, capdir);
-            if (Square.isSquare(dest) && this.isPossibleCapture(dest, from) && (is_valid_dest(dest, sqset))) {
+            if (Square.isSquare(dest) && this.isPossibleCapture(dest, from) && (isValidDest(dest, sqset))) {
                 if (Square.rank(dest) === promoRank) {
                     this.addPromotions(mlist, from, dest);
                 } else {
@@ -1483,7 +1484,7 @@ export class Position {
             const targets: Squares.Square[] = [];  // set of blocking/capturing squares.
             targets.push(attackSq);
 
-            // now add squares we can might be able to block on.
+            // now let's add squares that we can block.
             if (dir !== NULL_DIR) {
                 let sq = Square.move(king, dir);
                 while (Square.isSquare(sq) && (sq !== attackSq)) {
@@ -1532,7 +1533,7 @@ export class Position {
     }
 
     /**
-     * Generates moves for a non pawn, non king piece. 
+     * Generates moves for a non-pawn and non-king piece.
      * If sqset != undefined, moves must be to a square in sqset.
      */
     private genPieceMoves(mlist: SimpleMove[], fromSq: Squares.Square, capturesOnly: boolean, sqset?: Squares.Square[]) {
@@ -1605,7 +1606,6 @@ export class Position {
                                     tryMove = false;
                                     break;
                                 }
-
                                 sq = Square.move(sq, dir);
                             }
                         }

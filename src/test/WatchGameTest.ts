@@ -1,4 +1,4 @@
-import { watchGame } from '../js/ui/game/WatchGame';
+import { watchGame } from '../js/ui/game/WatchGameComponent';
 import { GameProps } from '../js/chess/settings/GameProps';
 
 var props: GameProps = {

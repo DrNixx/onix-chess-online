@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Select, {BaseSelectProps, SelectChangeEvent} from '@mui/material/Select';
-import {BoardConfig} from 'onix-board-assets';
-import {applyDefaults, defaultOf} from "../../utils/propsUtils";
+import {defaultOf} from "../../utils/propsUtils";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const boardsData: BoardConfig = require('onix-board-assets/dist/js/boards.json');
+import boardsData from 'onix-board-assets/dist/js/boards.json';
+import {useDefaults} from "../../hooks/useDefaults";
 
 type SquareSelectorProps = BaseSelectProps<string> & {
     onChangeSquare?: (square: string) => void;
@@ -19,11 +18,12 @@ const defaultProps: defaultOf<SquareSelectorProps, propsWithDefaults> = {
 };
 
 const SquareSelector: React.FC<SquareSelectorProps> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
     const {
         onChangeSquare,
         value,
         ...other
-    } = applyDefaults(propsIn, defaultProps);
+    } = props;
 
     const [square, setSquare] = useState(value);
 

@@ -45,7 +45,7 @@ const TextWithCopy: React.FC<TextWithCopyProps> = (propsIn) => {
     return (
         <TextField 
             className={clsx(elementClass, className)} 
-            contentEditable={false}
+            contentEditable={contentEditable}
             label={label}
             {...other}
             InputProps={{

@@ -4,13 +4,11 @@ import React, {
     PropsWithChildren,
     createContext,
     useCallback,
-    useContext,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
-import { AuthContext } from './AuthProvider';
 import { useEvent } from '../hooks/useEvent';
 import { extractNotifyPkg } from '../utils/wsUtils';
 import { INotifyPacket } from '../models/Chat';
@@ -51,7 +49,6 @@ export const CentrifugeContext = createContext<{
 });
 
 export const CentrifugeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const { isAuthenticated } = useContext(AuthContext);
     const [config, setConfig] = useState<CentrifugeConfig>({});
     const [isConnected, setIsConnected] = useState(false);
     const [lastNotify, setLastNotify] = useState<INotifyPacket | null>(null);
@@ -116,16 +113,14 @@ export const CentrifugeProvider: React.FC<PropsWithChildren> = ({ children }) =>
     });
 
     useEffect(() => {
-        if (isAuthenticated) {
-            apiGet<CentrifugeConfig>(`/centrifuge/config`)
-                .then((data) => {
-                    if (data.model) {
-                        setConfig(data.model);
-                    }
-                })
-                .catch(() => '');
-        }
-    }, [isAuthenticated, apiGet]);
+        apiGet<CentrifugeConfig>(`/centrifuge/config`)
+            .then((data) => {
+                if (data.model) {
+                    setConfig(data.model);
+                }
+            })
+            .catch(() => '');
+    }, [apiGet]);
 
     const getToken = useCallback(
         async (ctx: SubscriptionTokenContext): Promise<string> => {

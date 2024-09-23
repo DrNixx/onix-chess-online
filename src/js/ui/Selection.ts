@@ -3,7 +3,6 @@ export class Selection {
         const active = document.activeElement;
         const selection = document.getSelection();
         if (!active || !selection || !selection.rangeCount) {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
             return function () {};
         }
 
@@ -18,6 +17,7 @@ export class Selection {
             case 'INPUT':
                 focus = (active as HTMLInputElement).focus;
                 (active as HTMLInputElement).blur();
+                break;
             case 'TEXTAREA':
                 focus = (active as HTMLTextAreaElement).focus;
                 (active as HTMLTextAreaElement).blur();

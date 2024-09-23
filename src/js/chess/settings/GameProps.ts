@@ -1,25 +1,20 @@
-import { BoardSize } from 'onix-board-assets';
-import { BoardSettings } from "./BoardSettings";
-import { GameSettings } from "./GameSettings";
+import { BoardSettings, defaultSettings as boardDefaults } from "./BoardSettings";
+import { GameSettings, defaultGameData as gameDefaults } from "./GameSettings";
+import {defaultOf} from "../../utils/propsUtils";
+
+export type GameMode = 'pgn' | 'play' | 'watch' | 'analyse';
 
 export interface GameProps {
-    locale?: string,
-    board: BoardSettings,
-    game: GameSettings,
+    mode?: GameMode;
+    locale?: string;
+    board?: Partial<BoardSettings>;
+    game?: GameSettings;
 }
 
-export const defaultProps: GameProps = {
+type propsWithDefault = 'mode' | 'locale' | 'board' | 'game';
+export const defaultProps: defaultOf<GameProps, propsWithDefault> = {
+    mode: 'watch',
     locale: "ru-ru",
-    board: {
-        is3d: false,
-        orientation: "white",
-        size: BoardSize.Largest,
-        piece: "alpha",
-        square: "cedar",
-        learnMode: false,
-        confirmMove: false,
-    },
-    game: {
-        orientation: "white"
-    }
+    board: boardDefaults,
+    game: gameDefaults
 };

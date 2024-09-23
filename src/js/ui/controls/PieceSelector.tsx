@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Select, {BaseSelectProps, SelectChangeEvent} from '@mui/material/Select';
-import {PiecesConfig} from 'onix-board-assets';
-import {applyDefaults, defaultOf} from "../../utils/propsUtils";
+import {defaultOf} from "../../utils/propsUtils";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const piecesData: PiecesConfig = require('onix-board-assets/dist/js/pieces.json');
+import piecesData from 'onix-board-assets/dist/js/pieces.json';
+import {useDefaults} from "../../hooks/useDefaults";
 
 type PieceSelectorProps =  BaseSelectProps<string> & {
     onChangePiece?: (piece: string) => void;
@@ -19,11 +18,12 @@ const defaultProps: defaultOf<PieceSelectorProps, propsWithDefaults> = {
 };
 
 const PieceSelector: React.FC<PieceSelectorProps> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
     const {
         onChangePiece,
         value,
         ...other
-    } = applyDefaults(propsIn, defaultProps);
+    } = props;
 
     const [piece, setPiece] = useState(value);
 

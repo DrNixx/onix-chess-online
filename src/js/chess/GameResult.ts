@@ -35,3 +35,17 @@ export const resultShortString: string[] = [ "*", "1-0", "0-1", "=-=" ];
 export const resultLongStr: string[] = [ "*", "1-0", "0-1", "1/2-1/2" ];
 
 export const resultHtmlStr: string[] = ["*", "1&ndash;0", "0&ndash;1", "&frac12;&ndash;&frac12;"];
+
+export function getResultName(result: Color, mode: 'char' | 'short' | 'long' | 'html'): string {
+    if (mode === "char") {
+        return resultChar[result];
+    } else if (mode === "short") {
+        return resultShortString[result];
+    } else if (mode === "long") {
+        return resultLongStr[result];
+    } else if (mode === "html") {
+        return resultHtmlStr[result];
+    }
+
+    return "?";
+}

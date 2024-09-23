@@ -1,4 +1,5 @@
 import React, {PropsWithChildren} from 'react';
+import toSafeInteger from "lodash/toSafeInteger";
 import clsx from "clsx";
 import {Md5} from 'ts-md5';
 import BaseAvatar from '@mui/material/Avatar';
@@ -114,7 +115,7 @@ const Avatar: React.FC<PropsWithChildren<Props>> = (propsIn) => {
     };
 
     if (user) {
-        if (user.id && (user.id > 1)) {
+        if (user.id && (toSafeInteger(user.id) > 1)) {
             return avatarUser(user.id);
         } else {
             return avatarDefault();

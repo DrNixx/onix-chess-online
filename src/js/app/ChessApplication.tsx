@@ -1,4 +1,4 @@
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 //import {useSnackbar} from "notistack";
 
 import ConnectionInfo from '../ui/components/ConnectionInfo';
@@ -9,7 +9,8 @@ import {setApiRoot} from '../api/Api';
 import {setNotify} from './AppNotify';
 import {useAlert} from '../hooks/useAlert';
 import {ChessApplicationProps} from './ChessApplicationProps';
-import {defaultOf, applyDefaults} from '../utils/propsUtils';
+import {defaultOf} from '../utils/propsUtils';
+import {useDefaults} from "../hooks/useDefaults";
 
 type propsWithDefaults = 'locale' | 'wsHost' | 'apiRoot' | 'ui' | 'sw' | 'modules';
 const defaultProps: defaultOf<ChessApplicationProps, propsWithDefaults> = {
@@ -22,20 +23,38 @@ const defaultProps: defaultOf<ChessApplicationProps, propsWithDefaults> = {
 };
 
 const ChessApplication: React.FC<ChessApplicationProps> = (propsIn) => {
-    const props = applyDefaults(propsIn, defaultProps);
+    const props = useDefaults(propsIn, defaultProps);
+
+    const {
+        uid,
+        locale,
+        apiRoot,
+        wsHost,
+        sw,
+        token,
+        channel,
+        ui,
+        modules
+    } = props;
 
     // const { enqueueSnackbar } = useSnackbar();
-    const { uid, locale, apiRoot, wsHost, sw, token, channel, ui, modules } = props;
     const { show } = useAlert();
     const [connected, setConnected] = useState(false);
 
     setCentrifugeConfig(wsHost, {token: token ?? ''});
     const [,,centrifuge] = useCentrifuge();
+    const [localeLoaded, setLocaleLoaded] = useState(false);
 
     setApiRoot(apiRoot);
 
     useEffect(() => {
         initI18N(locale).then(() => {
+            setLocaleLoaded(true);
+        });
+    }, [locale]);
+
+    useEffect(() => {
+        if (localeLoaded) {
             if (ui) {
                 const uiInstance = new Frontend(uid);
                 uiInstance.init();
@@ -44,8 +63,8 @@ const ChessApplication: React.FC<ChessApplicationProps> = (propsIn) => {
             modules.forEach((value) => {
                 value.init();
             });
-        });
-    }, [locale, modules, ui, uid]);
+        }
+    }, [localeLoaded, modules, ui, uid]);
 
     useEffect(() => {
         if (centrifuge) {
@@ -115,9 +134,7 @@ const ChessApplication: React.FC<ChessApplicationProps> = (propsIn) => {
     });
 
     return (
-        <Suspense fallback="loading...">
-            <ConnectionInfo online={connected} />
-        </Suspense>
+        <ConnectionInfo online={connected} />
     );
 }
 

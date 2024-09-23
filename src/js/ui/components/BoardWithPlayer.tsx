@@ -23,8 +23,7 @@ const BoardWithPlayer: React.FC<PropsWithChildren<Props>> = (props) => {
         children
     } = props;
     return (
-
-        <div className="d-block d-md-flex flex-wrap mb-2">
+        <div className="d-block d-md-flex align-items-md-start flex-wrap mb-2">
             <div>
                 <Chessground
                     sx={{paddingY: 1}}

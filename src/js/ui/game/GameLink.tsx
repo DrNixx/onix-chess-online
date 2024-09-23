@@ -4,14 +4,21 @@ import {nanoid} from "nanoid";
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import {IChessGame, IGameData} from "../../chess/types/Interfaces";
+import {useDefaults} from "../../hooks/useDefaults";
+import {defaultOf} from "../../utils/propsUtils";
 
 type Props = {
     game: IGameData,
     withColor?: boolean
 };
 
-const GameLink: React.FC<Props> = (props) => {
-    const { game, withColor } = props;
+type propsWithDefaults = 'withColor';
+const defaultProps: defaultOf<Props, propsWithDefaults> = {
+    withColor: true,
+};
+
+const GameLink: React.FC<Props> = (propsIn) => {
+    const { game, withColor } = useDefaults(propsIn, defaultProps);
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const popupId = useMemo(() => nanoid(8), [])
@@ -63,10 +70,6 @@ const GameLink: React.FC<Props> = (props) => {
             </Popover>
         </>
     );
-};
-
-GameLink.defaultProps = {
-    withColor: true
 };
 
 export default GameLink;

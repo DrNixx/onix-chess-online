@@ -1,10 +1,6 @@
 import React from 'react';
 import Scrollbar from "react-scrollbars-custom";
-
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-
 import { copy } from '../CopyToClipboard';
 import TextWithCopy from '../controls/TextWithCopy';
 import {useSnackbar} from "notistack";
@@ -17,9 +13,7 @@ type GamePgnProps = {
 
 const GamePgn: React.FC<GamePgnProps> = (props) => {
     const { fen, pgn } = props;
-
     const { t } = useTranslation(['chess']);
-
     const { enqueueSnackbar } = useSnackbar();
 
     const copyPgn = () => {
@@ -31,12 +25,7 @@ const GamePgn: React.FC<GamePgnProps> = (props) => {
     return (
         <>
             <Box sx={{padding: .5}}>
-                <FormControl variant="standard" sx={{width: '40rem', maxWidth: "100%"}}>
-                    <InputLabel shrink htmlFor="bootstrap-input">
-                        FEN
-                    </InputLabel>
-                    <TextWithCopy fullWidth value={fen} placeholder={t("fen")} />
-                </FormControl>
+                <TextWithCopy fullWidth label={'FEN'} value={fen} placeholder={t("fen")} />
             </Box>
             <Box sx={{padding: .5}}>
                 <div className="pgn-text">

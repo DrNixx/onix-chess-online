@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import toSafeInteger from 'lodash/toSafeInteger';
 import MenuItem from '@mui/material/MenuItem';
 import Select, {SelectChangeEvent, BaseSelectProps} from '@mui/material/Select';
-import { BoardSize, BoardConfig } from 'onix-board-assets';
-import {applyDefaults, defaultOf} from "../../utils/propsUtils";
+import { BoardSize } from 'onix-board-assets';
+import {defaultOf} from "../../utils/propsUtils";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const boardsData: BoardConfig = require('onix-board-assets/dist/js/boards.json');
+import boardsData from 'onix-board-assets/dist/js/boards.json';
+import {useDefaults} from "../../hooks/useDefaults";
 
 type SizeSelectorProps = BaseSelectProps<BoardSize> & {
     onChangeSize?: (size: BoardSize) => void;
@@ -20,11 +20,12 @@ const defaultProps: defaultOf<SizeSelectorProps, propsWithDefaults> = {
 };
 
 const SizeSelector: React.FC<SizeSelectorProps> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
     const {
         onChangeSize,
         value,
         ...other
-    } = applyDefaults(propsIn, defaultProps);
+    } = props;
 
     const [size, setSize] = useState(value);
 

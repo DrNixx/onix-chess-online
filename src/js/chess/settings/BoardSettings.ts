@@ -1,6 +1,7 @@
 import { Config as CgConfig } from 'chessground/config';
 import { BoardSize } from 'onix-board-assets';
 import { Color } from 'chessground/types';
+import {defaultOf} from "../../utils/propsUtils";
 
 export interface BoardSettings extends CgConfig {
     is3d?: boolean,
@@ -18,11 +19,12 @@ export interface BoardSettings extends CgConfig {
     returnUrl?: string,
 }
 
-export const defaultSettings: BoardSettings = {
+type propsBoardWithDefault = 'is3d' | 'size' | 'piece' | 'square' | 'orientation' | 'coordinates' | 'learnMode' | 'confirmMove' | 'moveTable';
+export const defaultSettings: defaultOf<BoardSettings, propsBoardWithDefault> = {
     is3d: false,
     size: BoardSize.Largest,
     piece: "alpha",
-    square: "cedar",
+    square: "color-brown",
     orientation: "white",
     coordinates: true,
     learnMode: false,

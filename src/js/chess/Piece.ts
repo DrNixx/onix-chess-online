@@ -33,7 +33,7 @@ export const BBishop: Pieces.BBishop = 0x0C;
 export const BKnight: Pieces.BKnight = 0x0D;
 export const BPawn: Pieces.BPawn = 0x0E;
 
-export const Score = [9999, 10, 6, 3, 3, 1];
+export const Score = [NaN, 9999, 10, 6, 3, 3, 1];
 
 export function notEmpty(p?: Pieces.Piece): Pieces.Piece {
     return p!;

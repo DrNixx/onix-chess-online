@@ -1,7 +1,6 @@
 import { toInteger } from 'lodash';
-import React, {PropsWithChildren, Suspense, useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import i18next from 'i18next';
-// import {useTranslation} from "react-i18next";
+import React, {PropsWithChildren, Suspense, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import i18next from "i18next";
 
 import Button from "@mui/material/Button";
 import Grid from '@mui/material/Grid';
@@ -26,35 +25,22 @@ interface IGraphEvals extends IEvalItem {
     name: string;
 }
 
-interface IGraphInfo {
-    gameId: number | string;
-    startPly: number;
-    currentPly: number;
-}
-
 const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
     // const { t } = useTranslation(['analyse']);
 
     const {
         gameId,
-        startPly,
+        // startPly,
         currentPly,
         analysis,
         navigateToPly,
-        loadPartial
+        loadPartial,
+        getCurrentMove
     } = useContext(GameContext);
-
-    const graphInfo = useMemo<IGraphInfo>(() =>{
-            return {
-                gameId: gameId ?? 0,
-                startPly: startPly,
-                currentPly: currentPly
-            }
-    }, []);
 
     const evals = useCallback(() => {
         const evals: IGraphEvals[] = [];
-        let move = engine.CurrentMove.Begin;
+        let move = getCurrentMove().Begin;
         while (!move.END_MARKER) {
             const turn = move.PlyCount ? ChessEngine.plyToTurn(move.PlyCount) : null;
             const name = turn ? "" + turn + (move.sm.color === White ? ". " : "... ") + move.sm.san : i18next.t("startPos", { ns: "chess" });
@@ -72,30 +58,30 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
         }
 
         return evals;
-    }, []);
+    }, [getCurrentMove]);
 
     const [status, setStatus] = useState(analysis.state);
     const [completed, setCompleted] = useState(0);
 
     const [abortController, setAbortController] = useState(new AbortController());
 
-    let timeout = 0;
+    const timeout = useRef(0);
 
     useEffect(() => {
 
         return () => {
             abortController.abort();
         };
-    }, []);
+    }, [abortController]);
 
-    const requestAnalysis = () => {
-        if (!graphInfo.gameId) return;
+    const requestAnalysis = useCallback(() => {
+        if (!gameId) return;
 
         if (abortController.signal.aborted) {
             setAbortController(new AbortController());
         }
 
-        fetch('https://www.chess-online.com/fishnet/create/' + graphInfo.gameId.toString(), { mode: "cors", signal: abortController.signal })
+        fetch('https://www.chess-online.com/fishnet/create/' + gameId.toString(), { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -109,16 +95,16 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
             .catch(function(error) {
                 console.error('Looks like there was a problem when request analysis: \n', error);
             });
-    }
+    }, [abortController.signal, gameId]);
 
-    const loadAnalysis = () => {
-        if (!graphInfo.gameId) return;
+    const loadAnalysis = useCallback(() => {
+        if (!gameId) return;
 
         if (abortController.signal.aborted) {
             setAbortController(new AbortController());
         }
 
-        fetch('https://www.chess-online.com/api/analyse/game/' + graphInfo.gameId.toString() + "?v=2", { mode: "cors", signal: abortController.signal })
+        fetch('https://www.chess-online.com/api/analyse/game/' + gameId.toString() + "?v=2", { mode: "cors", signal: abortController.signal })
             .then(function(response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -143,9 +129,9 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
             .catch(function(error) {
                 console.error('Looks like there was a problem when load analysis: \n', error);
             });
-    }
+    }, [abortController.signal, gameId, loadPartial]);
 
-    const anTooltipValFmt = (...params: any[]) => {
+    const anTooltipValFmt = useCallback((...params: any[]) => {
         const obj = params[2];
         return (
             <span>
@@ -153,19 +139,19 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 <span>{obj.payload.name}</span>
             </span>
         );
-    }
+    }, []);
 
-    const anTooltipLblFmt = () => {
+    const anTooltipLblFmt = useCallback(() => {
         return "";
-    }
+    }, []);
 
-    const moveToPly = (ply?: number) => {
+    const moveToPly = useCallback((ply?: number) => {
         if (ply !== undefined) {
             navigateToPly(ply);
         }
-    };
+    }, [navigateToPly]);
 
-    const handleClick = (data: any) => {
+    const handleClick = useCallback((data: any) => {
         const apl = data.activePayload;
         if (apl && apl[0]) {
             const pl = apl[0];
@@ -173,9 +159,9 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 moveToPly(pl.payload.ply);
             }
         }
-    }
+    }, [moveToPly]);
 
-    const renderProgress = (progress?: number) => {
+    const renderProgress = useCallback((progress?: number) => {
         const progressInt = toInteger(progress);
         return (
             <div className="analysis-inprogress">
@@ -189,9 +175,9 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 </>
             </div>
         );
-    }
+    }, []);
 
-    const renderRequestBtn = () => {
+    const renderRequestBtn = useCallback(() => {
         return (
             <span className="analysis-request">
                 <Button color="info" tabIndex={-1} href="#" onClick={requestAnalysis}>
@@ -199,55 +185,64 @@ const AnalyseGraphDumb: React.FC<PropsWithChildren<Props>> = (props) => {
                 </Button>
             </span>
         );
-    };
+    }, [requestAnalysis]);
 
-    if (graphInfo.gameId && (status != "empty")) {
-        if (status == "unanalysed") {
-            return renderRequestBtn();
-        } else if (status == "inprogress") {
-            if (!timeout) {
-                timeout = window.setTimeout(() => {
-                    timeout = 0;
-                    loadAnalysis();
-                }, 5500);
-            }
-
-            return renderProgress(completed);
-        } else if (status == "ready") {
-            return (
-                <Suspense fallback={<Loader />} >
-                    <div className="analyse d-block d-lg-flex">
-                        <div className="graph-container flex-grow-1">
-                            <ResponsiveContainer width="100%" height={props.height}>
-                                <AreaChart data={evals()} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
-                                    <XAxis dataKey="ply" hide={true} />
-                                    <YAxis />
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <Tooltip contentStyle={{ "fontSize": ".75rem" }} formatter={anTooltipValFmt} labelFormatter={anTooltipLblFmt} />
-                                    <Area type="monotone" dataKey="advantage" name={ i18next.t("advantage", { ns: "analyse" })} stroke="#8884d8" fill="#8884d8" />
-                                    { graphInfo.currentPly ? (<ReferenceLine x={graphInfo.currentPly} stroke="green" />) : null }
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="graph-totals align-self-stretch">
-                            <Grid container className="h-100">
-                                <Grid item xs={6} lg={12} className="white">
-                                    <TotalItem color={White} item={analysis.white} />
-                                </Grid>
-                                <Grid item xs={6} lg={12} className="black">
-                                    <TotalItem color={Black} item={analysis.black} />
-                                </Grid>
-                            </Grid>
-                        </div>
+    const renderGraph = useCallback(() => {
+        return (
+            <Suspense fallback={<Loader />} >
+                <div className="analyse d-block d-lg-flex">
+                    <div className="graph-container flex-grow-1">
+                        <ResponsiveContainer width="100%" height={props.height}>
+                            <AreaChart data={evals()} margin={{ top: 20, right: 20, left: 0, bottom: 0 }} onClick={handleClick}>
+                                <XAxis dataKey="ply" hide={true} />
+                                <YAxis />
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <Tooltip contentStyle={{ "fontSize": ".75rem" }} formatter={anTooltipValFmt} labelFormatter={anTooltipLblFmt} />
+                                <Area type="monotone" dataKey="advantage" name={ i18next.t("advantage", { ns: "analyse" })} stroke="#8884d8" fill="#8884d8" />
+                                { currentPly ? (<ReferenceLine x={currentPly} stroke="green" />) : null }
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
-                </Suspense>
-            );
-        }
-    }
+                    <div className="graph-totals align-self-stretch">
+                        <Grid container className="h-100">
+                            <Grid item xs={6} lg={12} className="white">
+                                <TotalItem color={White} item={analysis.white} />
+                            </Grid>
+                            <Grid item xs={6} lg={12} className="black">
+                                <TotalItem color={Black} item={analysis.black} />
+                            </Grid>
+                        </Grid>
+                    </div>
+                </div>
+            </Suspense>
+        );
+    }, [anTooltipLblFmt, anTooltipValFmt, analysis.black, analysis.white, evals, currentPly, handleClick, props.height]);
 
-    return (
-        <span className="analysis-loading"><>{ i18next.t("loading", { ns: "analyse" })}</></span>
-    );
+    const renderElement = useCallback(() => {
+        if (gameId && (status != "empty")) {
+            if (status == "unanalysed") {
+                return renderRequestBtn();
+            } else if (status == "inprogress") {
+                if (!timeout.current) {
+                    timeout.current = window.setTimeout(() => {
+                        timeout.current = 0;
+                        loadAnalysis();
+                    }, 5500);
+                }
+
+                return renderProgress(completed);
+            } else if (status == "ready") {
+                return renderGraph();
+            }
+        }
+
+        return (
+            <span className="analysis-loading"><>{ i18next.t("loading", { ns: "analyse" })}</></span>
+        );
+    }, [completed, gameId, loadAnalysis, renderGraph, renderProgress, renderRequestBtn, status]);
+
+
+    return renderElement();
 };
 
 export default AnalyseGraphDumb;
