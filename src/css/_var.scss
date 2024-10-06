@@ -7,7 +7,7 @@ $base-img-url: "/img" !default;
 $assets-url: "../../assets" !default;
 $base-cdn-url: "//cdn.chess-online.com/" !default;
 
-$rem-base: 16px;
+$rem-base: 14px;
 
 // Global Color
 // ================ COLOR PALETTE ====================
@@ -90,16 +90,16 @@ $saturation-shift: 18 !default; //This value changes the saturation shift in sha
 $hue-shift: 8 !default; //This value changes the hue of shades
 
 //Primary and Extended color scale
-$mix-percentage-lighter: 16 !default;
-$mix-percentage-light: 90 !default;
-$mix-percentage-darker: 60 !default;
-$mix-percentage-dark: 81 !default;
+$mix-percentage-lighter: 16% !default;
+$mix-percentage-light: 90% !default;
+$mix-percentage-darker: 60% !default;
+$mix-percentage-dark: 81% !default;
 
 //Neutral color contrast scale
-$mix-percentage-contrast-lower: 5 !default;   //Background
-$mix-percentage-contrast-low: 14 !default;	  //Borders
-$mix-percentage-contrast-medium: 62 !default; //Hinted text
-$mix-percentage-contrast-high: 81 !default;	  //Body text
+$mix-percentage-contrast-lower: 5% !default;   //Background
+$mix-percentage-contrast-low: 14% !default;	  //Borders
+$mix-percentage-contrast-medium: 62% !default; //Hinted text
+$mix-percentage-contrast-high: 81% !default;	  //Body text
 
 // ================ COLOR FACTORY ====================
 //color shades and variable generation
