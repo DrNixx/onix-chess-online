@@ -243,6 +243,10 @@ $color-online-none: #333;
     }
 }
 
+.popover.user-popup {
+    --bs-popover-font-size: 1rem;
+}
+
 .conn-status {
     display: inline-block;
     .status-icon {

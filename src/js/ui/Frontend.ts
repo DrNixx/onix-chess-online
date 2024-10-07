@@ -133,9 +133,14 @@ export class Frontend implements IModule {
 
         const userDataMiniList = <HTMLElement[]>[].slice.call(document.querySelectorAll('[data-mini]'));
         const userDataPopoverList = userDataMiniList.map(function (el) {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+            });
+
             return new Popover(el, {
                 container: "body",
-                template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
+                template: '<div class="popover user-popup" role="tooltip"><div class="arrow"></div><div class="popover-body username-popup"></div></div>',
                 content: function () {
                     const $that: JQuery<Element> = jQuery(this);
                     const popupId = $that.data('popupId') ?? nanoid(8);
@@ -147,6 +152,7 @@ export class Frontend implements IModule {
                         return userNamePopup($that, $that.data("mini"), popupId);
                     }
                 },
+                placement: "auto",
                 html: true,
                 sanitize: false,
                 trigger: "click"

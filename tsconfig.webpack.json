@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "moduleResolution": "node",
-        "target": "ES2016",
+        "target": "ES2020",
         "module": "commonjs",
-        "lib": ["DOM", "ES2016", "DOM.iterable"],
+        "lib": ["DOM", "ES2020", "DOM.iterable"],
         "jsx": "react",
         "esModuleInterop": true,
         "sourceMap": true,

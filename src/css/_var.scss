@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:color";
 
 // Default Theme
 @import "mixins";
@@ -72,12 +73,12 @@ $darkViolet:            #57169a;
 $darkBlue:              #16499a;
 $lightBlue:             #4390df;
 $lighterBlue:           #00CCFF;
-$lightTeal:             lighten($teal, 30%);
+$lightTeal:             color.scale($teal, $lightness: 30%);
 $lightOlive:            #78aa1c;
 $lightOrange:           #c29008;
 $lightPink:             #f472d0;
-$lightRed:              lighten($red, 10%);
-$lightGreen:            lighten($green, 10%);
+$lightRed:              color.scale($red, $lightness: 10%);
+$lightGreen:            color.scale($green, $lightness: 10%);
 $grayed:                #585858;
 $grayDarker:            #222222;
 $grayDark:              #333333;

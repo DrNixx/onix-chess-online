@@ -6,9 +6,9 @@
     },
     "compilerOptions": {
         "moduleResolution": "node",
-        "target": "ES2016",
+        "target": "ES2020",
         "module": "commonjs",
-        "lib": ["DOM", "ES2016", "DOM.iterable", "ES2020.Intl" ],
+        "lib": ["DOM", "ES2020", "DOM.iterable", "ES2020.Intl" ],
         "jsx": "react",
         "esModuleInterop": true,
         "skipLibCheck": true,

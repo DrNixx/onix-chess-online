@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:color";
 
 //--------------------------------
 // Normal
@@ -6,7 +7,6 @@
 @function blend-normal ($foreground, $background) {
   $opacity: opacity($foreground);
   $background-opacity: opacity($background);
-
   // calculate opacity
   $bm-red: red($foreground) * $opacity + red($background) * $background-opacity * (1 - $opacity);
   $bm-green: green($foreground) * $opacity + green($background) * $background-opacity * (1 - $opacity);
@@ -553,6 +553,7 @@
 			 0.0722 * $-local-blue), 255);
 }
 
+//noinspection CssInvalidFunction
 @function make-shade($color, $mix-percentage, $saturation-shift, $hue-shift, $level){
 	$divider: 1;
 	$base: #000000;
@@ -569,7 +570,7 @@
 	$color-saturate: $color-mix;
 	$color-hue: $hue-shift;
 
-	@if(saturation($color-mix) > 5){
+	@if(color.channel($color-mix, "saturation", $space: hsl) > 5){
 		$color-saturate: saturate($color-mix, math.div($saturation-shift, $divider))
 	}
 
@@ -637,4 +638,3 @@
 	}
 	  @return $text-color;
 }
-

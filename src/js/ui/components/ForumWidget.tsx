@@ -20,12 +20,13 @@ import { storage } from '../../storage';
 import { IChessUser } from '../../chess/types/Interfaces';
 import { Logger } from '../../common/Logger';
 import {ChessTheme} from "../ChessTheme";
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid2'
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import IconButton from '@mui/material/IconButton';
 import UserBadge from "../user/UserBadge";
+import {applyDefaults, defaultOf} from "../../utils/propsUtils";
 
 
 interface IForumMessage {
@@ -58,9 +59,9 @@ interface IForumData {
 }
 
 type ForumWidgetProps = {
-    language: string;
-    apiUrl: string;
-    i18n: {
+    language?: string;
+    apiUrl?: string;
+    i18n?: {
         forums: string,
         tabs: {
             [key: string]: string
@@ -68,7 +69,22 @@ type ForumWidgetProps = {
     }
 }
 
-const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
+type propsWithDefaults = 'language' | 'apiUrl' | 'i18n';
+const defaultProps: defaultOf<ForumWidgetProps, propsWithDefaults> = {
+    language: 'ru-ru',
+    apiUrl: '/api/forums/widget?c=15',
+    i18n: {
+        forums: 'Forums',
+        tabs: {
+            chatter: 'Chatter',
+            official: 'Official',
+            arena: 'Arena',
+        }
+    }
+};
+
+const ForumWidget: React.FC<ForumWidgetProps> = (propsIn) => {
+    const props = applyDefaults(propsIn, defaultProps);
     const {language, apiUrl, i18n} = props;
 
     const forumPrevStore = storage.make('dashboard-forum-diff');
@@ -192,7 +208,6 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
         if (!loading) {
             fetchForumData(true);
         }
-
     }, []);
 
 
@@ -282,7 +297,7 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
             <StripedListItem key={message.msgId}>
                 <ListItemText>
                     <Grid container spacing={2}>
-                        <Grid item md={8}>
+                        <Grid size={{ md: 8 }}>
                             <div className="text-nowrap text-truncate">
                                 <a href={forumLink}
                                    className="fw-bold pe-1">{message.forumName}:</a>
@@ -291,7 +306,7 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
                             </div>
                             <time className="d-block small">{message.timeAgo}</time>
                         </Grid>
-                        <Grid item md={4}>
+                        <Grid size={{ md: 4 }}>
                             <div>
                                 <UserBadge user={message.poster} size='small' compact={true} />
                             </div>
@@ -305,7 +320,7 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
     const renderForumBlock = (messages?: IForumMessage[]) => {
         const rows: JSX.Element[] = [];
 
-        messages && messages.forEach((item) => {
+        messages?.forEach((item) => {
             rows.push(renderMessageRow(item));
         });
 
@@ -344,7 +359,7 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
                         </IconButton>
                     }
                     title={
-                        <a className="title" href={`/${props.language}/forums`}><i className="xi-forum-o text-orange pe-2" />{i18n.forums}</a>
+                        <a className="title" href={`/${language}/forums`}><i className="xi-forum-o text-orange pe-2" />{i18n.forums}</a>
                     }
                     sx={{ paddingBottom: 0 }}
                 />
@@ -366,19 +381,6 @@ const ForumWidget: React.FC<ForumWidgetProps> = (props) => {
             </Card>
         </ThemeProvider>
     );
-};
-
-ForumWidget.defaultProps = {
-    language: 'ru-ru',
-    apiUrl: '/api/forums/widget?c=15',
-    i18n: {
-        forums: 'Forums',
-        tabs: {
-            chatter: 'Chatter',
-            official: 'Official',
-            arena: 'Arena',
-        }
-    }
 };
 
 export const forumWidget = (props: ForumWidgetProps, container: HTMLElement) => {

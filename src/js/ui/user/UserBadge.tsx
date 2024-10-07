@@ -21,6 +21,7 @@ import UserTitle from "./UserTitle";
 import UserNameElement from "./UserNameElement";
 import {IUser} from "../../models/user/IUser";
 import {apiGet} from "../../api/Api";
+import {applyDefaults, defaultOf} from "../../utils/propsUtils";
 
 type Props = {
     language?: string;
@@ -34,10 +35,22 @@ type Props = {
     popover?: boolean;
 };
 
+type propsWithDefaults = 'language' | 'size' | 'icon' | 'withFlag' | 'compact' | 'controls' | 'popover';
+const defaultProps: defaultOf<Props, propsWithDefaults> = {
+    language: 'ru-ru',
+    size: 'medium',
+    icon: Icons.NONE,
+    withFlag: false,
+    compact: true,
+    controls: false,
+    popover: true
+};
 
 
-const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
-    const { language, user: propsUser, userId, size, popover, compact, children } = props;
+const UserBadge: React.FC<PropsWithChildren<Props>> = (propsIn) => {
+    const props = applyDefaults(propsIn, defaultProps);
+    const { language, user: propsUser, userId, size, popover, compact } = props;
+    const children = propsIn.children;
 
     const { t, ready } = useTranslation(['actions'], { useSuspense: false });
 
@@ -209,7 +222,7 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
                     <UserTitle title={user.title} />
                     {renderUserLink()}
                 </Box>
-                <UserNameElement user={user} compact={!!compact}>{children}</UserNameElement>
+                <UserNameElement user={user} compact={compact}>{children}</UserNameElement>
             </InfoBox>
         );
     };
@@ -222,16 +235,6 @@ const UserBadge: React.FC<PropsWithChildren<Props>> = (props) => {
             )}
         </Box>
     );
-};
-
-UserBadge.defaultProps = {
-    language: 'ru-ru',
-    size: 'medium',
-    icon: Icons.NONE,
-    withFlag: false,
-    compact: true,
-    controls: false,
-    popover: true
 };
 
 export default UserBadge;

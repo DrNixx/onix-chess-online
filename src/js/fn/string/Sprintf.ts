@@ -28,7 +28,7 @@ const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 	let i = 0;
 
 	// finalFormat()
-	const doFormat = function(substring: string, valueIndex: number, flags: string, minWidth: number | string, _: any, precision?: number | string, type?: string) {
+	const doFormat = function(substring: string, valueIndex: number, flags: string, mw: number | string, _: any, precision?: number | string, type?: string) {
 		if (substring == '%%') return '%';
 
 		// parse flags
@@ -43,19 +43,19 @@ const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 
 		// parameters may be null, undefined, empty-string or real valued
 		// we want to ignore null, undefined and empty-string values
-		if (!minWidth) {
+		let minWidth: number = 0;
+		if (!mw) {
 			minWidth = 0;
-		} else if (typeof minWidth === "string") {
-			if (minWidth === '*') {
+		} else if (typeof mw === "string") {
+			if (mw === '*') {
 				minWidth = +a[i++];
-			} else if (minWidth.charAt(0) == '*') {
-				minWidth = +a[toSafeInteger(minWidth.slice(1, -1))];
+			} else if (mw.charAt(0) == '*') {
+				minWidth = +a[toSafeInteger(mw.slice(1, -1))];
 			}
 		} else {
-			minWidth = +minWidth;
+			minWidth = +mw;
 		}
 
-		// Note: undocumented perl feature:
 		if (minWidth < 0) {
 			minWidth = -minWidth;
 			leftJustify = true;
@@ -66,8 +66,6 @@ const sprintf = (format: string, ...a: any[]) => {	// Return a formatted string
 		if (!isFinite(minWidth)) {
 			throw new Error('sprintf: (minimum-)width must be finite');
 		}
-
-
 
 		if (!precision) {
 			precision = 'fFeE'.indexOf(<string>type) > -1 ? 6 : ((type == 'd') ? 0 : undefined);

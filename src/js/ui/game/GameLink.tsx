@@ -10,9 +10,7 @@ type Props = {
     withColor?: boolean
 };
 
-const GameLink: React.FC<Props> = (props) => {
-    const { game, withColor } = props;
-
+const GameLink: React.FC<Props> = ({ game, withColor = true }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const popupId = useMemo(() => nanoid(8), [])
 
@@ -63,10 +61,6 @@ const GameLink: React.FC<Props> = (props) => {
             </Popover>
         </>
     );
-};
-
-GameLink.defaultProps = {
-    withColor: true
 };
 
 export default GameLink;

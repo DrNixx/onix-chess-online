@@ -114,7 +114,7 @@ const Avatar: React.FC<PropsWithChildren<Props>> = (propsIn) => {
     };
 
     if (user) {
-        if (user.id && (user.id > 1)) {
+        if (user.id) {
             return avatarUser(user.id);
         } else {
             return avatarDefault();
