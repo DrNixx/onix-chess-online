@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "compile": "tsc",
+    "serve": "vite",
     "dev:mjs": "tsc && vite build --mode development",
     "welcome:dev": "cross-env NODE_ENV=development gulp welcome",
     "welcome:prod": "cross-env NODE_ENV=production gulp welcome",

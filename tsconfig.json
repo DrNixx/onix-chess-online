@@ -7,7 +7,7 @@
     "compilerOptions": {
         "moduleResolution": "node",
         "target": "ES2020",
-        "module": "commonjs",
+        "module": "ES2020",
         "lib": ["DOM", "ES2020", "DOM.iterable", "ES2020.Intl" ],
         "jsx": "react",
         "esModuleInterop": true,
@@ -29,15 +29,6 @@
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist"
     },
-    "files": [
-        "src/js/index.ts",
-        "src/js/analyse.ts",
-        "src/js/configure.ts",
-        "src/js/play.ts",
-        "src/js/watch.ts",
-        "src/js/setup.ts"
-    ],
-    "include": [
-        "src/js/**/*.d.ts"
-    ]
+    "include": ["src/js", "src/**/*.d.ts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }
