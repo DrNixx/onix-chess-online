@@ -1,5 +1,5 @@
-import { configureGame } from '../js/ui/game/ConfigureGame';
-import { BoardSettings } from '../js/chess/settings/BoardSettings';
+import { configureGame } from '../src/ui/game/ConfigureGame';
+import { BoardSettings } from '../src/chess/settings/BoardSettings';
 
 var props: BoardSettings = {
     size: 4,

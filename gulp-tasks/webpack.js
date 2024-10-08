@@ -22,7 +22,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
                         chunks: [key],
                         inject: false,
                         minify: false,
-                        template: './src/templates/php/include.ejs'
+                        template: './templates/php/include.ejs'
                     })
                 );
             } else {
@@ -33,7 +33,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
                         chunks: [key],
                         inject: false,
                         minify: false,
-                        template: './src/templates/php/include.ejs',
+                        template: './templates/php/include.ejs',
                         templateParameters: {
                             'keyName': keyName
                         }
@@ -51,7 +51,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
                     chunks: chunks,
                     inject: 'body',
                     minify: false,
-                    template: './src/templates/tpl/' + key + '.html'
+                    template: './templates/tpl/' + key + '.html'
                 })
             );
         });

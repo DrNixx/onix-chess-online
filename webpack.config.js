@@ -10,12 +10,12 @@ const entryPoints =
         //app: path.resolve(__dirname, PATHS.src.scripts),
     } : 
     { 
-        tests: path.resolve(__dirname, PATHS.src.tests),
+        onix: path.resolve(__dirname, PATHS.src.scripts),
     };
 
 module.exports = {
     entry: {
-        tests: path.resolve(__dirname, PATHS.src.tests),
+        onix: path.resolve(__dirname, PATHS.src.scripts),
     },
     
 	output: {

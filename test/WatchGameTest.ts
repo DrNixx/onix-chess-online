@@ -1,5 +1,5 @@
-import { watchGame } from '../js/ui/game/WatchGame';
-import { GameProps } from '../js/chess/settings/GameProps';
+import { watchGame } from '../src/ui/game/WatchGame';
+import { GameProps } from '../src/chess/settings/GameProps';
 
 var props: GameProps = {
     board: {

@@ -1,5 +1,5 @@
-import { analyseGame } from '../js/ui/game/AnalyseGame';
-import { GameProps } from '../js/chess/settings/GameProps';
+import { analyseGame } from '../src/ui/game/AnalyseGame';
+import { GameProps } from '../src/chess/settings/GameProps';
 
 var props: GameProps = {
     board: {
