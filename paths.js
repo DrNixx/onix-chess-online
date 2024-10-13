@@ -60,7 +60,7 @@ module.exports = {
 
         webpack: {
             entry: {
-                onix: path.resolve(__dirname, "./src/index.ts"),
+                onix: path.resolve(__dirname, "./src/onix.ts"),
 
                 dashboard: {
                     import: path.resolve(__dirname, "./src/dashboard.ts"),

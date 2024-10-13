@@ -1,9 +1,10 @@
 import * as cg from "chessground/types";
 import {Chess} from "../chess/Chess";
-import {Square} from "../chess/Square";
+//import {Square} from "../chess/types/Squares";
 
 
 export function getLegalMovesMap(engine: Chess) {
+    /*
     const mlist = engine.CurrentPos.generateMoves();
 
     const dests: cg.Dests = mlist.reduce((map, m) => {
@@ -18,4 +19,5 @@ export function getLegalMovesMap(engine: Chess) {
     }, new Map());
 
     return dests;
+     */
 }

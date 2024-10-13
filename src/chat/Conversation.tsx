@@ -2,8 +2,7 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import Scrollbar from "react-scrollbars-custom";
 import { dateToAgo } from '../fn/date/DateToAgo';
 import { IChatMessage } from './Interfaces';
-import { Logger } from '../common/Logger';
-import UserBadge from "../ui/user/UserBadge";
+import UserBadge from "../components/user/UserBadge";
 import {IUser} from "../models/user/IUser";
 import {useRoom} from "../hooks/useRoom";
 import {CHAT, IChatContext} from "../models/stream/IStreamMessage";
@@ -86,7 +85,7 @@ const Conversation: React.FC<Props> = (props) => {
                 setMessages([...messages, ...data]);
             })
             .catch(function(error) {
-                Logger.error('Looks like there was a problem when reading forums: \n', error);
+                console.error('Looks like there was a problem when reading forums: \n', error);
             });
     };
 

@@ -18,9 +18,20 @@ export default defineConfig(({ mode, command }) => {
         build: {
             outDir: './build/' + outDir + '/mjs',
             lib: {
-                entry: resolve(__dirname, 'src/main.ts'),
+                entry: [
+                    resolve(__dirname, 'src/onix.ts'),
+                    resolve(__dirname, 'src/dashboard.ts'),
+                    resolve(__dirname, 'src/analyse.ts'),
+                    resolve(__dirname, 'src/play.ts'),
+                    resolve(__dirname, 'src/watch.ts'),
+                    resolve(__dirname, 'src/pgn.ts'),
+                    resolve(__dirname, 'src/configure.ts'),
+                ],
                 name: 'onix',
-                fileName: 'onix.chess',
+                // fileName: 'onix.chess',
+                fileName: (format, entryName) => {
+                    return `chess-online.${entryName}.mjs`;
+                },
                 formats: ['es'],
             },
             manifest: true,
@@ -32,7 +43,9 @@ export default defineConfig(({ mode, command }) => {
 
                     defaultHandler(warning)
                 },
-                output: {},
+                output: {
+
+                },
             },
         },
         server: {

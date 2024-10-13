@@ -29,6 +29,6 @@
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist"
     },
-    "include": ["src/js", "src/**/*.d.ts"],
+    "include": ["src", "src/**/*.d.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

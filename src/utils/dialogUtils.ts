@@ -9,10 +9,12 @@ export function executeDialog<T extends React.ComponentType<T>, P extends Instan
 ) {
     type DialogParams = NonNullable<Parameters<typeof Component>[0]>;
     type RejectFn = Pick<DialogParams, 'onReject'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let x: RejectFn;
     type RejectType = NonNullable<Parameters<typeof x.onReject>[0]>;
 
     type ResolveFn = Pick<DialogParams, 'onResolve'>;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let y: ResolveFn;
     type ResolveType = NonNullable<Parameters<typeof y.onResolve>[0]>;
 

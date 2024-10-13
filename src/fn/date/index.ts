@@ -1,4 +1,4 @@
-export { DateInterval } from './DateInterval';
+export { type DateInterval } from './DateInterval';
 export { DateExtensions } from './DateExtensions';
 export { timestampToInterval } from './timestampToInterval';
 export { formatInterval } from './formatInterval';

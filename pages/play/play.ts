@@ -1,7 +1,7 @@
-/// <reference types="../../src/js/vite-env" />
-import { ChessApplicationProps } from '../../src/js/app/ChessApplicationProps';
-import {chessApp, playGame} from "../../src/js/play";
-import {GameProps} from "../../src/js/chess/settings/GameProps";
+/// <reference types="../../src/vite-env" />
+import { ChessApplicationProps } from '../../src/app/ChessApplicationProps';
+import {chessApp, playGame} from "../../src/play";
+import {GameProps} from "../../src/chess/settings/GameProps";
 
 const app_props: ChessApplicationProps = {
     locale: 'ru-RU',

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { Logger } from '../common/Logger';
 import {apiPost} from "../api/Api";
 
 type Props = {
@@ -34,7 +33,7 @@ const ChatInput: React.FC<Props> = ({ channel, apiUrl}) =>  {
                     clearMessage();
                 })
                 .catch(function(error) {
-                    Logger.error('Looks like there was a problem when send chat message: \n', error);
+                    console.error('Looks like there was a problem when send chat message: \n', error);
                 });
         }
     };

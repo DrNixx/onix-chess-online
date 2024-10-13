@@ -4087,126 +4087,126 @@ describe('Chess', function() {
     describe('constructor()', function() {
         it('test construct without params', function() {
             const game = new Chess();
-            expect(game.StartFen).toBe(fenStdStart);
+            expect(game.startFen).toBe(fenStdStart);
             
             game.moveLast();
-            expect(game.StartPlyCount).toBe(1);
-            expect(game.CurrentPlyCount).toBe(0);
+            expect(game.startPlyCount).toBe(1);
+            expect(game.currentPlyCount).toBe(0);
         });
 
         it('test construct with watch data', function() {
             const game = new Chess(dataWatch);
             game.moveLast();
-            expect(game.CurrentPlyCount).toBe(70);
+            expect(game.currentPlyCount).toBe(70);
         });
 
         it('test moves', function() {
             const game = new Chess(dataWatch);
 
             game.moveBegin();
-            expect(game.CurrentMove.isBegin()).toBe(true);
-            expect(game.CurrentMove.isFirst()).toBe(true);
-            expect(game.CurrentMove.PlyCount).toBe(0);
+            expect(game.currentMove.isBegin()).toBe(true);
+            expect(game.currentMove.isFirst()).toBe(true);
+            expect(game.currentMove.PlyCount).toBe(0);
             
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).toBe(false);
-            expect(game.CurrentMove.isFirst()).toBe(true);
-            expect(game.CurrentMove.PlyCount).toBe(1);
+            expect(game.currentMove.isBegin()).toBe(false);
+            expect(game.currentMove.isFirst()).toBe(true);
+            expect(game.currentMove.PlyCount).toBe(1);
 
             game.moveFirst();
-            expect(game.CurrentMove.isBegin()).toBe(false);
-            expect(game.CurrentMove.isFirst()).toBe(true);
-            expect(game.CurrentMove.sm.color).toBe(0);
-            expect(game.CurrentMove.PlyCount).toBe(1);
+            expect(game.currentMove.isBegin()).toBe(false);
+            expect(game.currentMove.isFirst()).toBe(true);
+            expect(game.currentMove.sm.color).toBe(0);
+            expect(game.currentMove.PlyCount).toBe(1);
 
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).toBe(false);
-            expect(game.CurrentMove.isFirst()).toBe(false);
-            expect(game.CurrentMove.sm.color).toBe(1);
-            expect(game.CurrentMove.PlyCount).toBe(2);
+            expect(game.currentMove.isBegin()).toBe(false);
+            expect(game.currentMove.isFirst()).toBe(false);
+            expect(game.currentMove.sm.color).toBe(1);
+            expect(game.currentMove.PlyCount).toBe(2);
 
             game.moveForward();
-            expect(game.CurrentMove.isBegin()).toBe(false);
-            expect(game.CurrentMove.isFirst()).toBe(false);
-            expect(game.CurrentMove.sm.color).toBe(0);
-            expect(game.CurrentMove.PlyCount).toBe(3);
+            expect(game.currentMove.isBegin()).toBe(false);
+            expect(game.currentMove.isFirst()).toBe(false);
+            expect(game.currentMove.sm.color).toBe(0);
+            expect(game.currentMove.PlyCount).toBe(3);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).toBe(2);
+            expect(game.currentMove.PlyCount).toBe(2);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).toBe(1);
-            expect(game.CurrentMove.isBegin()).toBe(false);
-            expect(game.CurrentMove.isFirst()).toBe(true);
+            expect(game.currentMove.PlyCount).toBe(1);
+            expect(game.currentMove.isBegin()).toBe(false);
+            expect(game.currentMove.isFirst()).toBe(true);
 
             game.moveBackward();
-            expect(game.CurrentMove.PlyCount).toBe(0);
-            expect(game.CurrentMove.isBegin()).toBe(true);
-            expect(game.CurrentMove.isFirst()).toBe(true);
+            expect(game.currentMove.PlyCount).toBe(0);
+            expect(game.currentMove.isBegin()).toBe(true);
+            expect(game.currentMove.isFirst()).toBe(true);
 
             game.moveEnd();
-            expect(game.CurrentMove.isEnd()).toBe(true);
-            expect(game.CurrentMove.isLast()).toBe(true);
+            expect(game.currentMove.isEnd()).toBe(true);
+            expect(game.currentMove.isLast()).toBe(true);
 
             game.moveBackward();
-            expect(game.CurrentMove.isEnd()).toBe(false);
-            expect(game.CurrentMove.isLast()).toBe(true);
+            expect(game.currentMove.isEnd()).toBe(false);
+            expect(game.currentMove.isLast()).toBe(true);
 
             game.moveBegin();
             game.moveLast();
-            expect(game.CurrentMove.isEnd()).toBe(false);
-            expect(game.CurrentMove.isLast()).toBe(true);
+            expect(game.currentMove.isEnd()).toBe(false);
+            expect(game.currentMove.isLast()).toBe(true);
 
             game.moveToPly(12);
-            expect(game.CurrentMove.PlyCount).toBe(12);            
+            expect(game.currentMove.PlyCount).toBe(12);
 
             game.moveToPly(60);
-            expect(game.CurrentMove.PlyCount).toBe(60);
+            expect(game.currentMove.PlyCount).toBe(60);
 
             game.moveToKey("3");
-            expect(game.CurrentMove.PlyCount).toBe(3);
+            expect(game.currentMove.PlyCount).toBe(3);
 
             game.moveToKey("1");
-            expect(game.CurrentMove.PlyCount).toBe(1);
+            expect(game.currentMove.PlyCount).toBe(1);
         });
 
         it('test clock', function() {
             const game = new Chess(dataWatch);
 
             // const raw = game.RawData;
-            expect(isBlitzClock(game.RawData.correspondence)).toBe(false);
-            expect(isCorrespondenceClock(game.RawData.correspondence)).toBe(false);
-            expect(isAdvanceClock(game.RawData.correspondence)).toBe(true);
+            expect(isBlitzClock(game.timer)).toBe(false);
+            expect(isCorrespondenceClock(game.timer)).toBe(false);
+            expect(isAdvanceClock(game.timer)).toBe(true);
         });
 
         it('test construct with analysis data', function() {
             const game = new Chess(dataAnalyse);
             game.moveLast();
-            expect(game.CurrentPlyCount).toBe(125);
+            expect(game.currentPlyCount).toBe(125);
         });
 
         it('test construct with not std start white', function() {
             const game = new Chess(dataWatchNonStdWhite);
             game.moveBegin();
-            expect(game.StartPlyCount).toBe(13);
+            expect(game.startPlyCount).toBe(13);
             game.moveFirst();
-            expect(game.StartPlyCount).toBe(13);
-            expect(game.CurrentPlyCount).toBe(13);
+            expect(game.startPlyCount).toBe(13);
+            expect(game.currentPlyCount).toBe(13);
             game.moveForward();
 
-            //const cm = game.CurrentMove;
-            expect(game.CurrentPlyCount).toBe(14);
+            //const cm = game.currentMove;
+            expect(game.currentPlyCount).toBe(14);
         });
 
         it('test construct with not std start black', function() {
             const game = new Chess(dataWatchNonStdBlack);
             game.moveBegin();
-            expect(game.StartPlyCount).toBe(8);
+            expect(game.startPlyCount).toBe(8);
             game.moveFirst();
-            expect(game.StartPlyCount).toBe(8);
-            expect(game.CurrentPlyCount).toBe(8);
+            expect(game.startPlyCount).toBe(8);
+            expect(game.currentPlyCount).toBe(8);
             game.moveForward();
-            expect(game.CurrentPlyCount).toBe(9);
+            expect(game.currentPlyCount).toBe(9);
         });
 
         it('test plyToTurn', function() {

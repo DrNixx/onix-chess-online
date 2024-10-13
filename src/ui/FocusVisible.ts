@@ -93,9 +93,8 @@ export function focusVisible() {
      * Treat `keydown` as a signal that the user is in keyboard modality.
      * Apply `focus-visible` to any current active element and keep track
      * of our keyboard modality state with `hadKeyboardEvent`.
-     * @param {Event} e
      */
-    function onKeyDown(e: KeyboardEvent) {
+    function onKeyDown() {
         if (isValidFocusTarget(document.activeElement)) {
             addFocusVisibleClass(document.activeElement!);
         }
@@ -109,9 +108,8 @@ export function focusVisible() {
      * This avoids the situation where a user presses a key on an already focused
      * element, and then clicks on a different element, focusing it with a
      * pointing device, while we still think we're in keyboard modality.
-     * @param {Event} e
      */
-    function onPointerDown(e: MouseEvent|TouchEvent|PointerEvent) {
+    function onPointerDown() {
         hadKeyboardEvent = false;
     }
 
@@ -163,9 +161,8 @@ export function focusVisible() {
     /**
      * If the user changes tabs, keep track of whether or not the previously
      * focused element had .focus-visible.
-     * @param {Event} e
      */
-    function onVisibilityChange(e: Event) {
+    function onVisibilityChange() {
         if (document.visibilityState == 'hidden') {
             // If the tab becomes active again, the browser will handle calling focus
             // on the element (Safari actually calls it twice).

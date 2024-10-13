@@ -1,4 +1,4 @@
-import { watchGame } from '../src/ui/game/WatchGame';
+import watchGame from '../src/components/chess/WatchGame';
 import { GameProps } from '../src/chess/settings/GameProps';
 
 var props: GameProps = {

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
-import { Color } from './Color';
+import * as Colors from './types/Colors';
+import * as Color from './Color';
 import { SimpleMove } from './SimpleMove';
-import { Colors } from './types/Types';
 import { Position } from './Position';
 
 /**
@@ -10,7 +10,7 @@ import { Position } from './Position';
 export class Move {
     private vars: Move[] = [];
     private varNo = 0;
-    private ply: number;
+    protected ply: number;
     private parent: Move | null = null;
     
     private prev_move: Move | null;

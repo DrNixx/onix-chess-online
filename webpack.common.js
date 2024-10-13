@@ -1,5 +1,8 @@
 const path = require('path');
-const TerserPlugin = require("terser-webpack-plugin");
+const webpack = require('webpack');
+const importMetaEnv = require("@import-meta-env/unplugin");
+const TerserPlugin = require('terser-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const { PRODUCTION } = require('./config');
 
@@ -9,7 +12,10 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                options: { configFile: 'tsconfig.webpack.json' },
+                options: {
+                    configFile: 'tsconfig.webpack.json',
+                    transpileOnly: true
+                },
                 exclude: /node_modules/
             },
             {
@@ -31,34 +37,35 @@ module.exports = {
         modules: ['node_modules'],
     },
 
-    plugins:[],
+    plugins:[
+        new ForkTsCheckerWebpackPlugin(),
+        importMetaEnv.webpack({
+            env: '.env',
+            example: '.env',
+            transformMode: 'compile-time',
+        }),
+    ],
 	devtool: PRODUCTION ? false : 'eval-source-map',
 	mode: PRODUCTION ? 'production' : 'development',
-	optimization: {
+    optimization: {
         runtimeChunk: 'single',
-        //chunkIds: PRODUCTION ? 'deterministic' : 'named',
         chunkIds: 'deterministic',
         splitChunks: {
             chunks: 'all',
-            //cacheGroups: {
-            //    defaultVendors: {
-            //        test: /[\\/]node_modules[\\/]/,
-            //        name: "vendors",
-            //        priority: -20,
-            //        chunks: "all"
-            //    }
-            //}
+            maxSize: 244000,
         },
-		minimize: PRODUCTION,
+        minimize: PRODUCTION,
         minimizer: [
             new TerserPlugin({
+                parallel: true,
                 terserOptions: {
+                    ecma: 6,
                     format: {
                         comments: false,
                     },
                 },
                 extractComments: false,
-            }),
-        ],
-	}
+            })
+        ]
+    }
 };

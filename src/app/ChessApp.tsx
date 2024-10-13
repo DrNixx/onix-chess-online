@@ -1,12 +1,12 @@
 import React, {Suspense, useEffect, useState} from 'react';
 import { createRoot } from 'react-dom/client';
-import {useSnackbar} from "notistack";
+// import {useSnackbar} from "notistack";
 
 import { Logger } from '../common/Logger';
 import { IModule } from './IModule';
 import serviceWorker from '../push/ServiceWorker';
-import ConnectionInfo from '../ui/components/ConnectionInfo';
-import { Frontend } from '../ui/Frontend';
+import ConnectionInfo from '../components/ConnectionInfo';
+import { Frontend } from './Frontend';
 import {init as initI18N} from '../i18n/i18Init';
 import {setCentrifugeConfig, useCentrifuge} from "../hooks/useCentrifuge";
 import {setApiRoot} from "../api/Api";
@@ -36,7 +36,7 @@ const defaultProps = {
 
 const ChessApplication: React.FC<Props> = (propsIn) => {
     const props = {...defaultProps, ...propsIn};
-    const { enqueueSnackbar } = useSnackbar();
+    // const { enqueueSnackbar } = useSnackbar();
     const { uid, locale, apiRoot, wsHost, sw, token, channel, ui, modules } = props;
 
     const [connected, setConnected] = useState(false);

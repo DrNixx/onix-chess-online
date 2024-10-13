@@ -1,17 +1,9 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { IChatMessage } from './Interfaces';
 import Conversation from './Conversation';
 import ChatInput from './ChatInput';
+import {ChatProps} from "./ChatProps";
 
-type Props = {
-    channel: string;
-    apiUrl: string;
-    messages: IChatMessage[];
-    userid?: number;
-};
-
-const Chat: React.FC<Props> = ({channel, messages, userid, apiUrl}) => {
+const Chat: React.FC<ChatProps> = ({channel, messages, userid, apiUrl}) => {
 
     return (
         <div className="chat-view h-100 d-flex flex-column">
@@ -22,8 +14,3 @@ const Chat: React.FC<Props> = ({channel, messages, userid, apiUrl}) => {
 }
 
 export default Chat;
-
-export const simpleChat = (props: Props, container: HTMLElement) => {
-    const root = createRoot(container);
-    root.render(React.createElement(Chat, props));
-};

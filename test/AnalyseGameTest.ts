@@ -1,4 +1,4 @@
-import { analyseGame } from '../src/ui/game/AnalyseGame';
+import analyseGame from '../src/components/chess/AnalyseGame';
 import { GameProps } from '../src/chess/settings/GameProps';
 
 var props: GameProps = {

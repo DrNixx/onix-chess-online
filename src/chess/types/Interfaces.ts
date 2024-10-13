@@ -1,4 +1,4 @@
-import { Colors } from './Types';
+import * as Colors from './Colors';
 import {IUser} from "../../models/user/IUser";
 
 export interface IChessPref {
@@ -13,6 +13,8 @@ export interface IChessPref {
 export type VariantNameType = 'exotic' | 'chess960' | 'crazyhouse' | 'antichess' | 'horde' | 'kingOfTheHill' | 'racingKings' | 'threeCheck';
 
 export type SpeedNameType = 'blitz' | 'bullet' | 'rapid' | 'ultraBullet';
+
+export type GameSpeedType = 'correspondence' | 'classical' | SpeedNameType;
 
 export interface IChessVariant {
     key: 'standard' | 'fromPosition' | VariantNameType;
@@ -51,21 +53,21 @@ export interface IChessOpening {
 }
 
 export interface IChessGame {
-    id: number | string;
+    id?: number | string;
     load: boolean;
     insite: boolean;
-    variant: IChessVariant;
-    speed: 'correspondence' | 'classical' | SpeedNameType;
+    variant?: IChessVariant;
+    speed?: GameSpeedType;
     perf?: PerfNameType;
     rated?: boolean;
-    initialFen: string;
+    initialFen?: string;
     fen?: string;
     // Current user as played color
     player?: Colors.Name;
     mover?: Colors.Name;
-    turns: number;
-    startedAtTurn: number;
-    status: IGameStatus;
+    turns?: number;
+    startedAtTurn?: number;
+    status?: IGameStatus;
     event?: string;
     tournamentId?: number;
     createdAt?: number;
@@ -85,10 +87,11 @@ export interface ITournamentRanks {
 }
 
 export interface IChessTournament {
-    id: number;
+    id?: number;
     round?: number;
     name: string;
-    running: boolean;
+    eventDate?: string;
+    running?: boolean;
     berserkable?: boolean;
     ranks?: ITournamentRanks;
     nbSecondsForFirstMove?: number;
@@ -148,7 +151,7 @@ export interface IAdvanceClock {
     serverNow?: number;
 }
 
-type AnyClock = IBlitzClock | ICorrespondenceClock | IAdvanceClock;
+export type AnyClock = IBlitzClock | ICorrespondenceClock | IAdvanceClock;
 
 export function isBlitzClock(c?: AnyClock): c is IBlitzClock {
     return !!c && ('initial' in c);
@@ -190,6 +193,8 @@ export interface IGlyph {
     symbol: string;
 }
 
+export type MistakeLevel = "blunder" | "mistake" | "inaccuracy";
+
 export interface IJudgment {
     name: string;
     comment: string;
@@ -211,23 +216,24 @@ export interface ITreePart extends IMovePart {
     glyphs?: IGlyph[];
 }
 
-export interface gameUrls {
+export type GameUrls = {
     socket?: string;
     board?: string;
     api?: string;
 }
 
 export interface IGameData {
-    game?: IChessGame;
+    game: IChessGame;
     tournament?: IChessTournament;
     clock?: IBlitzClock;
     correspondence?: ICorrespondenceClock | IAdvanceClock;
     observer?: number;
+    display?: number;
     owner?: number;
     player?: IChessPlayer;
     opponent?: IChessPlayer; 
-    orientation: Colors.Name;
-    url?: gameUrls;
+    orientation?: Colors.Name;
+    url?: GameUrls;
     analysis?: IGameAnalysis;
     treeParts?: ITreePart[];
     steps?: IMovePart[];

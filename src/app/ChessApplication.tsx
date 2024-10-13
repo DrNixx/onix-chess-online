@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 //import {useSnackbar} from "notistack";
 
-import ConnectionInfo from '../ui/components/ConnectionInfo';
-import {Frontend} from '../ui/Frontend';
+import ConnectionInfo from '../components/ConnectionInfo';
+import {Frontend} from './Frontend';
 import {init as initI18N} from '../i18n/i18Init';
 import {setCentrifugeConfig, useCentrifuge} from '../hooks/useCentrifuge';
 import {setApiRoot} from '../api/Api';

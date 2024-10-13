@@ -1,6 +1,0 @@
-<% var item, key %>
-<% var files = htmlWebpackPlugin.files.js.map((file) => {
-    return "\t<script src=\"assets/js/" + file.replace(htmlWebpackPlugin.files.publicPath, "") + "\"></script>";
-}) %>
-
-<%= files.join("\n ") %>

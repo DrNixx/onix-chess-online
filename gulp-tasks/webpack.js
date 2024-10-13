@@ -42,20 +42,6 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
             }
         });
 
-        Object.keys(PATHS.webpack.entry).forEach((key) => {
-            const filename = (key === 'onix') ? 'index' : key;
-            const chunks = (key === 'onix') ? [key] : ['onix', key];
-            common.plugins.push(
-                new HtmlWebpackPlugin({
-                    filename: '../../' + filename + '.html',
-                    chunks: chunks,
-                    inject: 'body',
-                    minify: false,
-                    template: './templates/tpl/' + key + '.html'
-                })
-            );
-        });
-        
         const config = merge(common, PATHS.webpack);
 
         return gulp.src(PATHS.src.scripts)

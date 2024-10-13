@@ -1,7 +1,7 @@
 import { renderRoot } from './utils/renderUtils';
 import { ComponentProps } from './utils/types';
 import ChessApplicationComponent from "./app/ChessApplicationComponent";
-import ConfigureGame from "./ui/game/ConfigureGame";
+import ConfigureGame from "./components/chess/ConfigureGame";
 
 export const chessApp = (container: HTMLElement, props: ComponentProps<typeof ChessApplicationComponent>) =>
     renderRoot(container, ChessApplicationComponent, props);

@@ -1,2 +1,2 @@
-export { forumWidget } from './ui/components/ForumWidget';
-export { gameList } from './ui/game/GameList';
+export { forumWidget } from './components/widgets/ForumWidget';
+export { gameList } from './components/widgets/GameList';

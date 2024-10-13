@@ -102,6 +102,7 @@ export class LoggerClass {
 
             const arg_norm = (args.length === 1) ? args[0] : args;
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             (<any>con).firebug ? (con as { [key: string]: any })[level].apply(wnd, arg_norm)
                 : (con as { [key: string]: any })[level] ? (con as { [key: string]: any })[level](arg_norm)
                     : con.log(arg_norm);

@@ -1,4 +1,4 @@
-import { configureGame } from '../src/ui/game/ConfigureGame';
+import configureGame from '../src/components/chess/ConfigureGame';
 import { BoardSettings } from '../src/chess/settings/BoardSettings';
 
 var props: BoardSettings = {

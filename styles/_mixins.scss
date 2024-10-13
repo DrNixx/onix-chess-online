@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:color";
 
 @mixin clearfix() {
   &:before,
@@ -413,7 +414,7 @@
 }
 
 @function fade($color, $opacity){
-  @return fade-out($color, 1 - math.div($opacity, 100))
+  @return color.adjust($color, $alpha: 1 - math.div($opacity, 100%))
 }
 
 

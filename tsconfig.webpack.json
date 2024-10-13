@@ -2,7 +2,7 @@
     "compilerOptions": {
         "moduleResolution": "node",
         "target": "ES2020",
-        "module": "commonjs",
+        "module": "ES2020",
         "lib": ["DOM", "ES2020", "DOM.iterable"],
         "jsx": "react",
         "esModuleInterop": true,
@@ -21,5 +21,6 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "outDir": "./dist"
-    }
+    },
+    "include": ["src/*.ts"]
 }

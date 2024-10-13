@@ -1,10 +1,12 @@
 import repeat from 'lodash/repeat';
 import toSafeInteger from 'lodash/toSafeInteger';
-import { Colors, Squares, Pieces } from './types/Types';
-import { Piece } from './Piece';
+import * as Colors from './types/Colors';
+import * as Squares from './types/Squares';
+import * as Pieces from './types/Pieces';
+import * as Piece from './Piece';
 import { Position } from './Position';
-import { Square } from './Square';
-import { Color } from './Color';
+import * as Square from './Square';
+import * as Color from './Color';
 import { Castling, CastlingSide } from './Castling';
 import { turnToPly } from './Common';
 
