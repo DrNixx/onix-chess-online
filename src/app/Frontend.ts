@@ -191,11 +191,10 @@ export class Frontend implements IModule {
                 const channel = el.dataset['simpleChat'];
                 const apiUrl = el.dataset['apiUrl'];
                 if (channel && apiUrl) {
-                    simpleChat({ channel: channel, apiUrl: apiUrl, messages: [] }, el);
+                    simpleChat(el, { channel: channel, apiUrl: apiUrl, messages: [] });
                 }
             });
         }
-
         // }}} Chat
     }
 
