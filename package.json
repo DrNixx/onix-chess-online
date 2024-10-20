@@ -1,6 +1,6 @@
 {
   "name": "onix-chess-online",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chess-Online client",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,14 +10,11 @@
     "site:dev": "cross-env NODE_ENV=development gulp site",
     "site:script:dev": "cross-env NODE_ENV=development gulp site:script",
     "site:style:dev": "cross-env NODE_ENV=development gulp site:style",
-
     "site:prod": "cross-env NODE_ENV=production gulp site",
     "site:script:prod": "cross-env NODE_ENV=production gulp site:script",
     "site:style:prod": "cross-env NODE_ENV=production gulp site:style",
-
     "welcome:dev": "cross-env NODE_ENV=development gulp welcome",
     "welcome:prod": "cross-env NODE_ENV=production gulp welcome",
-
     "lint": "eslint ./src/js --cache --report-unused-disable-directives --ext .js,.ts,.tsx --max-warnings 0",
     "lint:ci": "eslint ./src/js --report-unused-disable-directives --ext .js,.ts,.tsx --max-warnings 0",
     "test": "cross-env NODE_ICU_DATA=node_modules/full-icu jest unittest.ts"
