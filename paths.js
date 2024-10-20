@@ -5,9 +5,8 @@ const { PRODUCTION } = require("./config");
 
 const suffix = PRODUCTION ? "-prod" : "-dev";
 const suffix2 = PRODUCTION ? "prod" : "dev";
-const base = PRODUCTION ? path.resolve(__dirname, "build") : path.resolve(__dirname, "public");
+const base = PRODUCTION ? path.resolve(__dirname, "./build") : path.resolve(__dirname, "./public");
 const assets = (PRODUCTION ? "" : "/assets");
-const php = PRODUCTION ? '/php' : '/site/php';
 
 module.exports = {
     site: {
@@ -21,7 +20,7 @@ module.exports = {
 
         build: {
             base: base,
-            php: base +  php,
+            php: path.resolve(__dirname, './bundles/' + suffix2),
             assets: base + "/site" + assets,
             scripts: base + "/site" + assets + "/js",
             styles: base + "/site" + assets + "/css",
@@ -44,7 +43,6 @@ module.exports = {
         },
 
         clean: [
-            base +  php,
             base + "/site" + assets,
             base + "/site/locales"
         ],

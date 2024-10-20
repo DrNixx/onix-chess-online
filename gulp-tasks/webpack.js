@@ -11,14 +11,15 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
         const _ = require('lodash');
         const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-        const suffix = PRODUCTION ? 'Prod' : 'Dev'
+        const suffix = PRODUCTION ? 'prod' : 'dev'
 
         const common = require(path.resolve(__dirname, '../webpack.common.js'));
-        Object.keys(PATHS.webpack.entry).forEach((key) => {
+        const phpPath = PRODUCTION ? '../../../bundles/' : '../../../../bundles/';
+            Object.keys(PATHS.webpack.entry).forEach((key) => {
             if (key === "onix") {
                 common.plugins.push(
                     new HtmlWebpackPlugin({
-                        filename: '../../php/ChessPortalAsset.inc',
+                        filename: phpPath +  suffix + '/ChessPortalAsset.inc',
                         chunks: [key],
                         inject: false,
                         minify: false,
@@ -29,7 +30,7 @@ module.exports = function (gulp, plugins, PATHS, PRODUCTION) {
                 const keyName = _.capitalize(key);
                 common.plugins.push(
                     new HtmlWebpackPlugin({
-                        filename: '../../php/' + _.capitalize(key) + 'Asset.inc',
+                        filename: phpPath + suffix + '/' + _.capitalize(key) + 'Asset.inc',
                         chunks: [key],
                         inject: false,
                         minify: false,
