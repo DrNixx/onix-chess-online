@@ -18,11 +18,11 @@
             }
 
             &.pointer .pointer {
-                background-image: svg-load('../img/pointer.svg');
+                background-image: svg-load('../media/img/pointer.svg');
             }
 
             &.trash .trash {
-                background-image: svg-load('../img/trash.svg');
+                background-image: svg-load('../media/img/trash.svg');
             }
 
             &.selected-square {

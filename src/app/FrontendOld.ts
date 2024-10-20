@@ -6,7 +6,6 @@ import { pg, Bootstrap, ListView, MobileView, Parallax, Progress, Quickview, Sid
 import { notify as notifyBase, INotificationOptions } from 'pages-ts/lib/ui/Notification';
 import { Content } from '../ui/Content';
 import { equalHeight } from '../ui/Functions';
-import { IModule } from '../app';
 import { focusVisible } from '../ui/FocusVisible';
 import { simpleChat } from '../chat/SimpleChat';
 import { Popover } from 'bootstrap';
@@ -23,7 +22,7 @@ declare global {
     }
 }
 
-export class Frontend implements IModule {
+export class FrontendOld {
     //private height?: number = 0;
 
     private window: JQuery<Window>;
@@ -62,16 +61,6 @@ export class Frontend implements IModule {
 		});
 
 		Parallax.onInitialize();
-
-        /*
-        jQuery('body').on('click', '.toggle-more-details', function (event) {
-            event.stopPropagation();
-            const p = jQuery(this).closest('.heading');
-            p.closest('.heading').children('.more-details').stop().slideToggle('fast', function () {
-                p.toggleClass('open');
-            });
-        });
-        */
 
 		pg.queryElements('[data-pages-progress="circle"]').forEach((el) => {
 			new Progress(<HTMLInputElement>el, {});
@@ -191,7 +180,7 @@ export class Frontend implements IModule {
                 const channel = el.dataset['simpleChat'];
                 const apiUrl = el.dataset['apiUrl'];
                 if (channel && apiUrl) {
-                    simpleChat(el, { channel: channel, apiUrl: apiUrl, messages: [] });
+                    simpleChat(el, { channel: channel });
                 }
             });
         }

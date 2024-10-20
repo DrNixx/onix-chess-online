@@ -1,10 +1,36 @@
 {
-  "years": "{y, plural, one{# год} few{# года} many{# лет} other{# года}}",
-  "months": "{m, plural, one{# месяц} few{# месяца} many{# месяцев} other{# месяца}}",
-  "days": "{d, plural, one{# день} few{# дня} many{# дней} other{# дня}}",
-  "hours": "{h, plural, one{# час} few{# часа} many{# часов} other{# часа}}",
-  "minutes": "{i, plural, one{# минута} few{# минуты} many{# минут} other{# минуты}}",
-  "seconds": "{s, plural, one{# секунда} few{# секунды} many{# секунд} other{# секунды}}",
+  "years_one": "{{count}} год",
+  "years_few": "{{count}} года",
+  "years_many": "{{count}} лет",
+  "years_other": "{{count}} года",
+
+  "months_one": "{{count}} месяц",
+  "months_few": "{{count}} месяца",
+  "months_many": "{{count}} месяцев",
+  "months_other": "{{count}} месяца",
+
+  "days_one": "{{count}} день",
+  "days_few": "{{count}} дня",
+  "days_many": "{{count}} дней",
+  "days_other": "{{count}} дня",
+
+  "hours_one": "{{count}} час",
+  "hours_few": "{{count}} часа",
+  "hours_many": "{{count}} часов",
+  "hours_other": "{{count}} часа",
+
+  "minutes_one": "{{count}} минута",
+  "minutes_few": "{{count}} минуты",
+  "minutes_many": "{{count}} минут",
+  "minutes_other": "{{count}} минуты",
+
+  "seconds_one": "{{count}} секунда",
+  "seconds_few": "{{count}} секунды",
+  "seconds_many": "{{count}} секунд",
+  "seconds_other": "{{count}} секунды",
+
   "ago": "назад",
-  "just_now": "Только что"
+  "just_now": "Только что",
+  "short_time": "{{date, HH:mm}}",
+  "date_dmhm": "{{date, dd MMM HH:mm}}"
 }

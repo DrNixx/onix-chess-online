@@ -157,6 +157,9 @@
                 margin-top: .5rem;
                 zoom: 90%;
                 @include border-left(4px solid $color-contrast-low-a);
+                &:before {
+                    content: "";
+                }
 
                 & > small {
                     display: block;

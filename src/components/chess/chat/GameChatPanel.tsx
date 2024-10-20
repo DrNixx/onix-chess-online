@@ -25,7 +25,7 @@ const GameChatPanel: React.FC = () => {
 
     return (gameId && observerId) ? (
         <TabPanel sx={{p: 0}} value="chat">
-            <Chat channel={chatChannel} apiUrl="/api/chat" messages={[]} userid={observerId} />
+            <Chat channel={chatChannel} />
         </TabPanel>
     ) : null;
 };

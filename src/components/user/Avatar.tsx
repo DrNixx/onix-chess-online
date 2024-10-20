@@ -7,6 +7,8 @@ import Skeleton from "@mui/material/Skeleton";
 import PersonIcon from "@mui/icons-material/Person";
 import { AvatarSizeType } from './Interfaces';
 import {IUser} from "../../models/user/IUser";
+import {defaultOf} from "../../utils/propsUtils";
+import {useDefaults} from "../../hooks/useDefaults";
 
 type Props = {
     user?: IUser,
@@ -15,14 +17,14 @@ type Props = {
     className?: string;
 };
 
-const defaultProps = {
-    user: undefined,
+type propsWithDefaults = 'size';
+const defaultProps: defaultOf<Props, propsWithDefaults> = {
     size: 'medium' as AvatarSizeType
 };
 
-const Avatar: React.FC<PropsWithChildren<Props>> = (propsIn) => {
-    const props = { ...defaultProps, ...propsIn };
-    const {user, size, online, className, children} = props;
+const Avatar: React.FC<PropsWithChildren<Props>> = ({children, ...propsIn}) => {
+    const props = useDefaults(propsIn, defaultProps);
+    const {user, size, online, className} = props;
     const sizes = {
         'tiny': 24,
         'small': 32,

@@ -11,41 +11,26 @@ const php = PRODUCTION ? '/php' : '/site/php';
 
 module.exports = {
     site: {
-        build: {
-            base: base,
-            php: base +  php,
-            html: base + "/site",
-            assets: base + "/site" + assets,
-            scripts: base + "/site" + assets + "/js",
-            styles: base + "/site" + assets + "/css",
-            board: base + "/site" + assets + "/bs",
-            locales: base + "/site/locales",
-            deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\chess" + suffix,
-            deploy_php: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\assets\\" + suffix2,
-        },
-
         src: {
             scriptsPath: "./src/",
             scripts: "./src/index.ts",
             styles: ["./styles/*.scss", "!./styles/_*.scss"],
             tests: "./test/index.ts",
             templates: "./templates/",
-            nunj: "templates/*.nunj",
-            locales: "locales/*.json",
         },
 
-        watch: {
-            nunj: "templates/tpl/*.html",
-            scripts: ["src/**/*.ts", "src/**/*.tsx"],
-            styles: "styles/**/*.scss",
-            locales: "locales/**/*.json",
+        build: {
+            base: base,
+            php: base +  php,
+            assets: base + "/site" + assets,
+            scripts: base + "/site" + assets + "/js",
+            styles: base + "/site" + assets + "/css",
+            board: base + "/site" + assets + "/bs",
         },
-
-        clean: base + "/site",
 
         locales: {
             src: "./locales/**/*.json",
-            dest: base + "/site/locales"
+            dest: base + "/locales",
         },
 
         fonts: {
@@ -57,6 +42,12 @@ module.exports = {
             src: "./media/img/**/*.*",
             dest: base + "/site" + assets + "/img"
         },
+
+        clean: [
+            base +  php,
+            base + "/site" + assets,
+            base + "/site/locales"
+        ],
 
         webpack: {
             entry: {
@@ -99,32 +90,36 @@ module.exports = {
             },
 
             output: {
-                libraryTarget: "umd",
-                library: "[name]",
+                library: {
+                    name: "[name]",
+                    type: "umd"
+                },
                 path: base + "/site" + assets + "/site/js",
-                publicPath: "/assets/js",
                 crossOriginLoading: "anonymous",
                 chunkFilename: "chess-online.[id].js",
                 filename: "chess-online.[name].js",
             },
+
+            externals: {
+                bootstrap: true,
+            },
         }
     },
     welcome: {
+        src: {
+            stylesBase: "./welcome/css",
+            styles: ["./welcome/css/**/*.scss", "!./src/modules/welcome/css/_*.scss"],
+            scriptsBase: "./welcome/js",
+            scripts: ["./welcome/js/**/*.js"]
+        },
+
         build: {
             html: base + "/welcome",
             assets: base + "/welcome" + assets,
             scripts: base + "/welcome" + assets + "/js",
             styles: base + "/welcome" + assets + "/css",
-            deploy: "D:\\Workspace\\OpenServer\\domains\\dev.chess-online.com\\ui\\build\\welcome" + suffix,
         },
 
-        src: {
-            stylesBase: "./src/modules/welcome/css",
-            styles: ["./src/modules/welcome/css/**/*.scss", "!./src/modules/welcome/css/_*.scss"],
-            scriptsBase: "./src/modules/welcome/js",
-            scripts: ["./src/modules/welcome/js/**/*.js"]
-        },
-
-        clean: assets + "/welcome"
+        clean: base + "/welcome"
     }
 };

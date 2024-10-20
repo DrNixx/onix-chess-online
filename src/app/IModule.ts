@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface IModule {
-    init(): void;
+    init(): React.ReactPortal;
 }

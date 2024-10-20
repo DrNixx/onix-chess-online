@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useCallback, useRef, useMemo} from 'react';
+import React, {useState, useEffect, useCallback, useRef, useMemo, Suspense} from 'react';
 
-import { styled, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
@@ -16,7 +16,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Scrollbar from "react-scrollbars-custom";
 import { storage } from '../../storage';
 import { IChessUser } from '../../chess/types/Interfaces';
-import {ChessTheme} from "../../ui/ChessTheme";
 import Grid from "@mui/material/Grid2";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -27,6 +26,7 @@ import {ForumWidgetProps} from "./ForumWidgetProps";
 import {defaultOf} from "../../utils/propsUtils";
 import {useDefaults} from "../../hooks/useDefaults";
 import {useApi} from "../../hooks/useApi";
+import Loader from "../../ui/Loader";
 
 
 interface IForumMessage {
@@ -73,7 +73,7 @@ const defaultProps: defaultOf<ForumWidgetProps, propsWithDefaults> = {
 const forumPrevStore = storage.makeObject<IIdentifiers>('dashboard-forum-diff');
 const forumKeyStore = storage.make('dashboard-forum-tab');
 
-const ForumWidgetComponent: React.FC<ForumWidgetProps> = (propsIn) => {
+const ForumWidget: React.FC<ForumWidgetProps> = (propsIn) => {
     const props = useDefaults(propsIn, defaultProps);
     const {language, apiUrl, i18n} = props;
 
@@ -275,7 +275,7 @@ const ForumWidgetComponent: React.FC<ForumWidgetProps> = (propsIn) => {
     };
 
     return (
-        <ThemeProvider theme={ChessTheme}>
+        <Suspense fallback={<Loader />}>
             <Card variant="outlined"
                   className="widget-body"
                   sx={{
@@ -312,8 +312,8 @@ const ForumWidgetComponent: React.FC<ForumWidgetProps> = (propsIn) => {
                     {renderLoader()}
                 </CardContent>
             </Card>
-        </ThemeProvider>
+        </Suspense>
     );
 };
 
-export default ForumWidgetComponent;
+export default ForumWidget;

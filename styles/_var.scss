@@ -148,10 +148,10 @@ $color-contrast-medium: mix($color-contrast-higher, $color-contrast-lowest, $mix
 $color-contrast-high: mix($color-contrast-higher, $color-contrast-lowest, $mix-percentage-contrast-high) !default;
 
 //Neutral color shades - rgba values
-$color-contrast-lower-a: rgba($color-contrast-higher, math.div($mix-percentage-contrast-lower, 100)) !default;
-$color-contrast-low-a: rgba($color-contrast-higher, math.div($mix-percentage-contrast-low, 100)) !default;
-$color-contrast-medium-a: rgba($color-contrast-higher, math.div($mix-percentage-contrast-medium, 100)) !default;
-$color-contrast-high-a: rgba($color-contrast-higher, math.div($mix-percentage-contrast-high, 100)) !default;
+$color-contrast-lower-a: rgba($color-contrast-higher, $mix-percentage-contrast-lower) !default;
+$color-contrast-low-a: rgba($color-contrast-higher, $mix-percentage-contrast-low) !default;
+$color-contrast-medium-a: rgba($color-contrast-higher, $mix-percentage-contrast-medium) !default;
+$color-contrast-high-a: rgba($color-contrast-higher, $mix-percentage-contrast-high) !default;
 
 //Menu colors generation
 $color-menu-dark: mix($color-menu, #000, 77%) !default;

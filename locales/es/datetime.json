@@ -1,10 +1,18 @@
 {
-  "years": "{y,plural,one{# year} few{# years} many{# years} other{# years}}",
-  "months": "{m,plural,one{# month} few{# months} many{# months} other{# months}}",
-  "days": "{d,plural,one{# day} few{# days} many{# days} other{# days}}",
-  "hours": "{h,plural,one{# hour} few{# hours} many{# hours} other{# hours}}",
-  "minutes": "{i,plural,one{# minute} few{# minutes} many{# minutes} other{# minutes}}",
-  "seconds": "{s,plural,one{# second} few{# seconds} many{# seconds} other{# seconds}}",
+  "years_one": "{{count}} year",
+  "years_many": "{{count}} years",
+  "months_one": "{{count}} month",
+  "months_many": "{{count}} months",
+  "days_one": "{{count}} day",
+  "days_many": "{{count}} days",
+  "hours_one": "{{count}} hour",
+  "hours_many": "{{count}} hours",
+  "minutes_one": "{{count}} minute",
+  "minutes_many": "{{count}} minutes",
+  "seconds_one": "{{count}} second",
+  "seconds_many": "{{count}} seconds",
   "ago": "ago",
-  "just_now": "Just now"
+  "just_now": "Just now",
+  "short_time": "{{date, HH:mm}}",
+  "date_dmhm": "{{date, dd MMM HH:mm}}"
 }

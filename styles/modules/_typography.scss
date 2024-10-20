@@ -12,7 +12,7 @@
     --bs-warning: #{$color-warning};
     --bs-danger: #{$color-danger};
     --bs-body-font-size: #{$body-font-size};
-    --bs-font-secondary: #{$secondary-font-family}
+    --bs-font-secondary: #{$secondary-font-family};
 }
 
 html {
@@ -1078,4 +1078,9 @@ z = font size
             }
         }
     }
+}
+
+.popover {
+    --bs-popover-font-size: #{$body-font-size};
+    --bs-popover-bg: #{$color-contrast-lowest};
 }

@@ -11,17 +11,17 @@ export const formatTimer = (timestamp: number, isend?: string): string => {
     const result: string[] = [];
     if (interval.invert || ((interval.d === 0) && (interval.h === 0) && (interval.i === 0) && (interval.s === 0) && (interval.f === 0))) {
         result.push(
-            isend ?? i18next.t("isend", {ns: "timer"})
+            isend ?? i18next.t('isend', {ns: "timer"})
         );
     } else {
         if (interval.d > 0) {
             result.push(
-                i18next.t("days", { ns: "timer", d: interval.d })
+                i18next.t('days', { ns: "timer", d: interval.d })
             );
             
             if (interval.h > 0) {
                 result.push(
-                    i18next.t("hours", { ns: "timer", h: interval.h })
+                    i18next.t('hours', { ns: "timer", h: interval.h })
                 );
             }
         } else {

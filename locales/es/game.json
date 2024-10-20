@@ -91,7 +91,7 @@
 
   "next_game": "Next game",
 
-  "postpone_rest": "There have {n} of vacation time left",
+  "postpone_rest": "There have {{n}} of vacation time left",
 
   "canJoin": "Join to а game",
   "canJoinNote": "You can join this game",

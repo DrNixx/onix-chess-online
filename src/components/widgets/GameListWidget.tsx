@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 
 import clsx from "clsx";
 import {useTranslation} from "react-i18next";
@@ -13,14 +13,13 @@ import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import {styled, ThemeProvider} from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import Tooltip from '@mui/material/Tooltip';
 
 import { IAdvanceClock, IChessPlayer, IGameData } from '../../chess/types/Interfaces';
 import { formatTimer, formatInterval, timestampToInterval } from '../../fn/date';
 import UserBadge from "../user/UserBadge";
 
-import {ChessTheme} from "../../ui/ChessTheme";
 import GameLink from "../chess/GameLink";
 import Loader from "../../ui/Loader";
 import {GameListProps} from "./GameListProps";
@@ -31,7 +30,7 @@ interface IListData {
     nextInterval: number
 }
 
-const GameListComponent: React.FC<GameListProps> = (props) => {
+const GameListWidget: React.FC<GameListProps> = (props) => {
     const {language, apiUrl, emptyText, isPostponed} = props;
 
     const { t } = useTranslation(['game', 'timer']);
@@ -320,7 +319,7 @@ const GameListComponent: React.FC<GameListProps> = (props) => {
     };
 
     return (
-        <ThemeProvider theme={ChessTheme}>
+        <Suspense fallback={<Loader />}>
             <Card variant="outlined"
                   className="widget-body"
                   sx={{
@@ -342,8 +341,8 @@ const GameListComponent: React.FC<GameListProps> = (props) => {
                 />
                 { renderGames() }
             </Card>
-        </ThemeProvider>
+        </Suspense>
     );
 };
 
-export default GameListComponent;
+export default GameListWidget;

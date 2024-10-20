@@ -3,11 +3,10 @@ import React, { PropsWithChildren, createContext, useCallback, useEffect, useMem
 import {IUser} from "../models/user/IUser";
 import {apiGet} from "../services/ApiService";
 
-
 export const AuthContext = createContext<{
     isAuthenticated: boolean;
     token?: string;
-    getUserId: () => number | undefined;
+    getUserId: () => number | string | undefined;
     getUserName: () => string | undefined;
     getFirstName: () => string | undefined;
 }>({
@@ -19,22 +18,22 @@ export const AuthContext = createContext<{
 });
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const isAuthenticated = useMemo<boolean>(
-        () => process.env.NODE_ENV == 'production' || !!import.meta.env.VITE_USER_API_TOKEN,
-        [],
-    );
-
+    const [loaded, setLoaded] = useState(false);
     const token = useMemo<string | undefined>(() => import.meta.env.VITE_USER_API_TOKEN, []);
     const [user, setUser] = useState<IUser | undefined>();
+    const isAuthenticated = useMemo<boolean>(() => {
+            return !!user?.id
+    }, [user?.id]);
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (!loaded) {
+            setLoaded(true);
             const apiUrl = process.env.NODE_ENV == 'production' ? '' : import.meta.env.VITE_API_URL;
             apiGet(`${apiUrl}/api/user`, { token: token }).then((r) => {
                 setUser(r.model);
             });
         }
-    }, [isAuthenticated, token]);
+    }, [loaded, token]);
 
     const getUserId = useCallback(() => {
         return toInteger(user?.id);

@@ -1,62 +1,103 @@
-import React, {useState} from 'react';
-import {apiPost} from "../api/Api";
+import React, { useState } from 'react';
+
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { useTheme } from '@mui/material/styles';
+
+import { IChatRoom } from '../models/Chat';
+import { useApi } from '../hooks/useApi';
+import SendIcon from '@mui/icons-material/Send';
+import IconButton from "@mui/material/IconButton";
 
 type Props = {
-    channel: string;
-    apiUrl: string;
+    room: IChatRoom;
 };
 
-const ChatInput: React.FC<Props> = ({ channel, apiUrl}) =>  {
-
-    const [message, setMessage] = useState("");
+const ChatInput: React.FC<Props> = ({ room }) => {
+    const theme = useTheme();
+    const [message, setMessage] = useState('');
+    const { apiPost } = useApi();
 
     const msgChange = (e: React.ChangeEvent) => {
-        const val = (e.target as HTMLInputElement).value;
+        const val = (e.target as HTMLTextAreaElement).value;
         setMessage(val);
     };
 
     const clearMessage = () => {
-        setMessage("");
+        setMessage('');
     };
 
-    const doSend = (e?: React.MouseEvent) => {
-        e && e.preventDefault();
+    const doSend = (e?: React.MouseEvent | React.KeyboardEvent) => {
+        if (e) e.preventDefault();
 
         if (message) {
             const data = {
-                channel: channel,
-                message: message
+                channel: room.id,
+                message: message,
             };
 
-            apiPost(apiUrl, data)
+            const apiUrl = process.env.NODE_ENV == 'production' ? '' : import.meta.env.VITE_API_URL ?? '';
+            apiPost(`${apiUrl}/api/chat`, { data })
                 .then(() => {
                     clearMessage();
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('Looks like there was a problem when send chat message: \n', error);
                 });
         }
     };
 
     const keyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            doSend();
+        if (e.key === 'Enter' && e.ctrlKey) {
+            doSend(e);
         }
     };
 
     return (
-        <div className="chat-controls b-t b-grey bg-white clearfix px-2">
-            <div className="d-flex align-items-center">
-                <div className="flex-grow-1 no-padding">
-                    <label className="sr-only">Message</label>
-                    <input type="text" className="form-control chat-input" value={message} onKeyDown={keyPress} onChange={msgChange} />
-                </div>
-                <div className="link text-color ms-2 ps-2 b-l b-grey">
-                    <a href="#" className="link text-color" onClick={doSend}><i className="pg-icon">send</i></a>
-                </div>
-            </div>
-        </div>
+        <>
+            <Box
+                className="chat-input-holder"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderTop: '1px solid rgba(0, 0, 0, .1)',
+                    padding: theme.spacing(0.5),
+                }}
+            >
+                <TextField
+                    sx={{
+                        mr: theme.spacing(0.5),
+                        flex: 1,
+                    }}
+                    multiline
+                    maxRows={4}
+                    size="small"
+                    value={message}
+                    onKeyDown={keyPress}
+                    onChange={msgChange}
+                />
+                <IconButton size={'large'} color={'secondary'} disabled={!message} onClick={doSend}>
+                    <SendIcon />
+                </IconButton>
+            </Box>
+            <Box
+                sx={{
+                    padding: '3px 10px',
+                    textAlign: 'right',
+                    display: process.env.NODE_ENV !== 'production' ? 'block' : 'none',
+                }}
+            >
+                <a href="#" className="fa fa-thumbs-up"></a>
+                <a href="#" className="fa fa-camera"></a>
+                <a href="#" className="fa fa-video-camera"></a>
+                <a href="#" className="fa fa-image"></a>
+                <a href="#" className="fa fa-paperclip"></a>
+                <a href="#" className="fa fa-link"></a>
+                <a href="#" className="fa fa-trash-o"></a>
+                <a href="#" className="fa fa-search"></a>
+            </Box>
+        </>
     );
-}
+};
 
 export default ChatInput;

@@ -14,15 +14,11 @@ const GameWrapper: React.FC<GamePropsVsComponent> = (props) => {
     const {GameComponent, ...other} = props;
 
     return (
-        <AuthProvider>
-            <ThemeContext>
-                <GameProvider settings={props.game} mode={props.mode}>
-                    <BoardProvider {...props.board}>
-                        <GameComponent {...other}/>
-                    </BoardProvider>
-                </GameProvider>
-            </ThemeContext>
-        </AuthProvider>
+        <GameProvider settings={props.game} mode={props.mode}>
+            <BoardProvider {...props.board}>
+                <GameComponent {...other}/>
+            </BoardProvider>
+        </GameProvider>
     );
 };
 

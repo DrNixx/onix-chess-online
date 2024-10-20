@@ -1,5 +1,4 @@
 ﻿const gulp = require('gulp');
-const { series, parallel, watch } = require('gulp');
 const plugins = require('gulp-load-plugins')({
     rename: {
         'gulp-if': 'gif',
@@ -11,69 +10,51 @@ const plugins = require('gulp-load-plugins')({
 const { PRODUCTION } = require('./config');
 const PATHS_OPTIONS = require('./paths');
 
-function getTask(module, task, paths, taskName = undefined) {
-    let taskMoodule = '.';
-    if (module) {
-        taskMoodule += '/' + module
-    }
-
-    taskMoodule +=  '/gulp-tasks/' + task;
-
+function getTask(task, paths, taskName = undefined)
+{
+    const taskMoodule =  './gulp-tasks/' + task;
     const taskFn = require(taskMoodule)(gulp, plugins, paths, PRODUCTION);
     if (taskName) {
         taskFn.displayName = taskName;
     }
-    
+
     return taskFn;
 }
 
-const welcomeClean = getTask('', 'clean', PATHS_OPTIONS.welcome);
-const welcomeStyles = getTask('', 'styles', PATHS_OPTIONS.welcome);
-const welcomeScripts = getTask('', 'scripts', PATHS_OPTIONS.welcome);
-const welcomeDeply = getTask('', 'deploy', PATHS_OPTIONS.welcome);
-let welcome = series(welcomeClean, parallel(welcomeStyles, welcomeScripts), welcomeDeply);
+const welcomePath = PATHS_OPTIONS.welcome;
+const welcomeClean = getTask('clean', welcomePath);
+const welcomeStyles = getTask('styles', welcomePath);
+const welcomeScripts = getTask('scripts', welcomePath);
+let welcome = gulp.series(welcomeClean, gulp.parallel(welcomeStyles, welcomeScripts));
 gulp.task("welcome", welcome, function () {
     console.log('Building welcome...');
 });
 
-const siteClean = getTask('', 'clean', PATHS_OPTIONS.site);
-const siteBoard = getTask('', 'board', PATHS_OPTIONS.site);
-const siteVendors = getTask('', 'vendors', PATHS_OPTIONS.site);
-const siteHtml = getTask('', 'html', PATHS_OPTIONS.site);
-const siteFonts = getTask('', 'copy', PATHS_OPTIONS.site.fonts, 'fonts');
-const siteImg = getTask('', 'copy', PATHS_OPTIONS.site.img, 'img');
-const siteLocales = getTask('', 'copy', PATHS_OPTIONS.site.locales, 'locales');
-const siteStyles = getTask('', 'styles', PATHS_OPTIONS.site);
-const siteWebpack = getTask('', 'webpack', PATHS_OPTIONS.site);
-const siteServer = getTask('', 'server', PATHS_OPTIONS.site);
-const siteWatch = getTask('', 'watch', PATHS_OPTIONS.site);
-const siteDeploy = getTask('', 'deploy', PATHS_OPTIONS.site);
+const sitePath = PATHS_OPTIONS.site;
+const siteClean = getTask('clean', sitePath);
+const siteBoard = getTask('board', sitePath);
+const siteFonts = getTask('copy', sitePath.fonts, 'fonts');
+const siteImg = getTask('copy', sitePath.img, 'img');
+const siteLocales = getTask('copy', sitePath.locales, 'locales');
+const siteStyles = getTask('styles', sitePath);
+const siteWebpack = getTask('webpack', sitePath);
 
-let site = series(siteClean, parallel(siteBoard, siteFonts, siteImg, siteLocales, siteVendors, siteStyles, siteWebpack), siteDeploy);
-gulp.task("site", site, function () {
-    console.log('Building site...');
-});
-
-let siteStyle = series(parallel(siteFonts, siteImg, siteStyles));
+let siteStyle = gulp.series(gulp.parallel(siteFonts, siteImg, siteStyles));
 gulp.task("site:style", siteStyle, function () {
     console.log('Building site style...');
 });
 
-let siteScript = series(parallel(siteVendors, siteWebpack), siteDeploy);
+let siteScript = gulp.series(gulp.parallel(siteWebpack));
 gulp.task("site:script", siteScript, function () {
     console.log('Building site scripts...');
 });
 
-let siteDeployTask = series(siteDeploy);
-gulp.task("site:deploy", siteDeployTask, function () {
-    console.log('Deploy site...');
+let site = gulp.series(siteClean, gulp.parallel(siteBoard, siteFonts, siteImg, siteLocales, siteStyles, siteWebpack));
+gulp.task("site", site, function () {
+    console.log('Building site...');
 });
 
-
-
-gulp.task('site:server', parallel('site', siteWatch, siteServer));
-
 gulp.task('sass:watch', function () {
-    gulp.watch('./chess/**/*.scss', parallel(['chessSass']));
-    gulp.watch('./pages/**/*.scss', parallel(['pagesSass']));
+    gulp.watch('./styles/**/*.scss', gulp.parallel(['siteStyles']));
+    gulp.watch('./welcome/**/*.scss', gulp.parallel(['welcomeStyles']));
 });

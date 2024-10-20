@@ -1,32 +1,43 @@
-import {useCentrifuge} from "./useCentrifuge";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import { useEvent } from "./useEvent";
-import {JoinContext, LeaveContext, PublicationContext, Subscription} from "centrifuge";
-import {IStreamMessage} from "../models/stream/IStreamMessage";
+import {IChatContext, INotifyContext, isChat, isNotify} from "../models/Chat";
+import { JoinContext, PublicationContext, Subscription } from "centrifuge";
+import {CentrifugeContext} from "../providers/CentrifugeProvider";
 
-type RoomResult = [IStreamMessage | null, string[], Subscription | null];
+type RoomResult = {
+    message: IChatContext | undefined,
+    notify: INotifyContext | undefined,
+    users: string[],
+    subscription: Subscription | null
+}
 
-export function useRoom(id: string): RoomResult {
-    const [, connected, centrifuge, getToken] = useCentrifuge();
+    //[IChatContext | undefined, string[], Subscription | null];
+
+export function useRoom(id?: string): RoomResult {
+    const { centrifuge, isConnected, getToken } = useContext(CentrifugeContext);
     const [users, setUsers] = useState<string[]>([]);
-    const [lastMessage, setLastMessage] = useState<IStreamMessage | null>(null);
+    const [lastMessage, setLastMessage] = useState<IChatContext | undefined>(undefined);
+    const [lastNotify, setLastNotify] = useState<INotifyContext | undefined>(undefined);
     const subRef = useRef<Subscription | null>(null);
 
     const presence = () => {
-        subRef.current?.presence().then(function(ctx) {
-            const u: string[] = [];
-            const clients: any = ctx.clients;
-            for (const k in clients) {
-                const v = clients[k];
-                if (v) {
-                    u.push(v.user);
+        subRef.current?.presence().then(
+            function(ctx) {
+                const u: string[] = [];
+                const clients: any = ctx.clients;
+                for (const k in clients) {
+                    const v = clients[k];
+                    if (v) {
+                        u.push(v.user);
+                    }
                 }
-            }
 
-            setUsers(u);
-        }, function(err) {
-            console.error(err);
-        });
+                setUsers(u);
+            },
+            function(err) {
+                console.error(err);
+            }
+        );
     };
 
     const subscribedListener = useEvent(() => {
@@ -34,10 +45,14 @@ export function useRoom(id: string): RoomResult {
     });
 
     const publicationListener = useEvent((ctx: PublicationContext) => {
-        console.debug('message', ctx);
-        const msg = ctx?.data as IStreamMessage | undefined;
-        if (msg) {
-            setLastMessage(msg);
+        if (isChat(ctx?.data)) {
+            if (ctx.data.ctx) {
+                setLastMessage(ctx.data.ctx);
+            }
+        } else if (isNotify(ctx?.data)) {
+            if (ctx.data.ctx) {
+                setLastNotify(ctx.data.ctx);
+            }
         }
     });
 
@@ -47,16 +62,15 @@ export function useRoom(id: string): RoomResult {
         }
     });
 
-    const leaveListener = useEvent((ctx: LeaveContext) => {
+    const leaveListener = useEvent(() => {
         presence();
     });
 
     useEffect(() => {
-        let isNew = false;
-        if (centrifuge && connected) {
-            let sub = centrifuge.getSubscription(id);
+        let sub: Subscription | null = null;
+        if (id && centrifuge && isConnected) {
+            sub = centrifuge.getSubscription(id);
             if (sub === null) {
-                isNew = true;
                 sub = centrifuge.newSubscription(id, {
                     getToken: (ctx) => getToken(ctx)
                 });
@@ -68,23 +82,19 @@ export function useRoom(id: string): RoomResult {
             sub.on('leave', leaveListener);
 
             sub.subscribe();
-
             subRef.current = sub;
         }
 
-        if (isNew) {
-            return () => {
-                subRef.current?.unsubscribe();
-                subRef.current?.removeAllListeners();
-            };
-        }
-
         return () => {
-            // none
+            if (sub) {
+                sub.removeAllListeners();
+                sub.unsubscribe();
+                subRef.current = null;
+            }
         };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [centrifuge, connected, getToken, id]);
+    }, [centrifuge, isConnected, getToken, id]);
 
-    return [lastMessage, users, subRef.current];
+    return {message: lastMessage, notify: lastNotify, users: users, subscription: subRef.current};
 }

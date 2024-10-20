@@ -72,7 +72,4 @@ const UserRatings: React.FC<Props> = (props) => {
     );
 };
 
-UserRatings.defaultProps = {
-};
-
 export default UserRatings;

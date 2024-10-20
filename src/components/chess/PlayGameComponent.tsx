@@ -130,7 +130,7 @@ const PlayGameComponent: React.FC<PlayGameProps> = (props) => {
     const [manualFrom, setManualFrom] = useState<string|undefined>();
     const [manualTo, setManualTo] = useState<string|undefined>();
 
-    const [lastMessage] = useRoom(`game:${gameId}`);
+    const {notify: lastMessage} = useRoom(`game:${gameId}`);
 
     const isPlay = useCallback(() => {
         return mode === BoardMode.Play;
@@ -196,10 +196,10 @@ const PlayGameComponent: React.FC<PlayGameProps> = (props) => {
     };
 
     useEffect(() => {
-        if (lastMessage?.t == GAME) {
-            if (lastMessage?.ctx.c == "delete") {
+        if (lastMessage?.command == GAME) {
+            if (lastMessage?.payload.c == "delete") {
                 window.location.href = "/";
-            } else if (lastMessage?.ctx.c == "reload") {
+            } else if (lastMessage?.payload.c == "reload") {
                 window.location.reload();
             }
         }

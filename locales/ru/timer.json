@@ -2,8 +2,8 @@
   "lessone": "менее 1",
   "isend": "истекло",
   "empty": "---",
-  "days": "{d} дн.",
-  "hours": "{h} ч.",
-  "minutes": "{i} мин.",
-  "seconds": "{s} сек."
+  "days": "{{d}} дн.",
+  "hours": "{{h}} ч.",
+  "minutes": "{{i}} мин.",
+  "seconds": "{{s}} сек."
 }

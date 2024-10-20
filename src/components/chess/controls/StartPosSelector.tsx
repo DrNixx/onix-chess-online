@@ -5,13 +5,15 @@ import Autocomplete, {AutocompleteProps} from '@mui/material/Autocomplete';
 import { FenFormat, FenString } from '../../../chess/FenString';
 import { IChessOpening } from '../../../chess/types/Interfaces';
 import Loader from "../../../ui/Loader";
+import {defaultOf} from "../../../utils/propsUtils";
+import {useDefaults} from "../../../hooks/useDefaults";
 
 type IChessOpeningWithKey = IChessOpening & {
     key?: string;
     groupName?: string;
 }
 
-type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false, false, false>,
+type Props = Omit<AutocompleteProps<IChessOpeningWithKey, false, false, false>,
         'renderInput' | 'options' | 'loading' | 'getOptionLabel' | 'isOptionEqualToValue' | 'groupBy' | 'onClose' | 'onOpen'>  & {
     label?: React.ReactNode,
     fen?: string,
@@ -19,7 +21,14 @@ type StartPosSelectorProps = Omit<AutocompleteProps<IChessOpeningWithKey, false,
     onChangeFen?: (fen: string) => void,
 }
 
-const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
+type propsWithDefaults = 'fen' | 'openingsPos';
+const defaultProps: defaultOf<Props, propsWithDefaults> = {
+    fen: FenString.standartStart,
+    openingsPos: [],
+};
+
+const StartPosSelector: React.FC<Props> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
     const {
         label, 
         // fen,
@@ -170,11 +179,6 @@ const StartPosSelector: React.FC<StartPosSelectorProps> = (props) => {
             )}
         />
     );
-};
-
-StartPosSelector.defaultProps = {
-    fen: FenString.standartStart,
-    openingsPos: [],
 };
 
 export default StartPosSelector;

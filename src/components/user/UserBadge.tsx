@@ -1,7 +1,8 @@
-import React, { PropsWithChildren, useEffect, useCallback, useState} from 'react';
+import React, {PropsWithChildren, useEffect, useCallback, useState, useMemo} from 'react';
 import clsx from "clsx";
 import {nanoid} from "nanoid";
 import toSafeInteger from "lodash/toSafeInteger";
+import i18n from "i18next";
 import {useTranslation} from "react-i18next";
 
 import Box from '@mui/material/Box';
@@ -24,7 +25,6 @@ import {defaultOf} from "../../utils/propsUtils";
 import {useDefaults} from "../../hooks/useDefaults";
 
 type Props = {
-    language?: string;
     user?: IUser;
     userId?: number|string;
     size?: AvatarSizeType;
@@ -35,9 +35,8 @@ type Props = {
     popover?: boolean;
 };
 
-type propsWithDefaults = 'language' | 'size' | 'icon' | 'withFlag' | 'compact' | 'controls' | 'popover';
+type propsWithDefaults = 'size' | 'icon' | 'withFlag' | 'compact' | 'controls' | 'popover';
 const defaultProps: defaultOf<Props, propsWithDefaults> = {
-    language: 'ru-ru',
     size: 'medium',
     icon: Icons.NONE,
     withFlag: false,
@@ -48,9 +47,12 @@ const defaultProps: defaultOf<Props, propsWithDefaults> = {
 
 const UserBadge: React.FC<PropsWithChildren<Props>> = ({children, ...propsIn}) => {
     const props = useDefaults(propsIn, defaultProps);
-    const { language, user: propsUser, userId, size, popover, compact } = props;
+    const { user: propsUser, userId, size, popover, compact } = props;
 
     const { t, ready } = useTranslation(['actions'], { useSuspense: false });
+    const language = useMemo(() => {
+        return i18n.language
+    } , []);
 
     const [user, setUser] = useState(props.user);
     const [loading, setLoading] = useState(false);

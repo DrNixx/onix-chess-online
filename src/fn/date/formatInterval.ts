@@ -7,7 +7,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
     const format: any[] = [];
     if (interval.y !== 0) {
         format.push(
-            i18next.t("years", { ns: "datetime", y: interval.y })
+            i18next.t("years", { ns: "datetime", count: interval.y })
         );
     } else {
         format.push(false);
@@ -15,7 +15,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
 
     if (interval.m !== 0) {
         format.push(
-            i18next.t("months", { ns: 'datetime', m: interval.m })
+            i18next.t("months", { ns: 'datetime', count: interval.m })
         );
     } else {
         format.push(false);
@@ -23,7 +23,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
 
     if (interval.d !== 0) {
         format.push(
-            i18next.t("days", { ns: 'datetime', d: interval.d })
+            i18next.t("days", { ns: 'datetime', count: interval.d })
         );
     } else {
         format.push(false);
@@ -31,7 +31,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
 
     if (interval.h !== 0) {
         format.push(
-            i18next.t("hours", { ns: 'datetime', h: interval.h })
+            i18next.t("hours", { ns: 'datetime', count: interval.h })
         );
     } else {
         format.push(false);
@@ -39,7 +39,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
 
     if (interval.i !== 0) {
         format.push(
-            i18next.t("minutes", { ns: 'datetime', i: interval.i })
+            i18next.t("minutes", { ns: 'datetime', count: interval.i })
         );
     } else {
         format.push(false);
@@ -47,7 +47,7 @@ export const formatInterval = (interval: DateInterval, parts = 0): string => {
 
     if (interval.s !== 0) {
         format.push(
-            i18next.t("seconds", { ns: 'datetime', s: interval.s })
+            i18next.t("seconds", { ns: 'datetime', count: interval.s })
         );
     } else {
         format.push(false);

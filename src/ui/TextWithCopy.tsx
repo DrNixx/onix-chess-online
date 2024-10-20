@@ -8,18 +8,21 @@ import CopyIcon from '@mui/icons-material/CopyAll';
 
 import { copy } from './CopyToClipboard';
 import {useTranslation} from "react-i18next";
+import {defaultOf} from "../utils/propsUtils";
+import {useDefaults} from "../hooks/useDefaults";
 
-type TextWithCopyProps = TextFieldProps & {
+type Props = TextFieldProps & {
     icon?: React.ReactNode;
     label?: React.ReactNode;
 }
 
-const defaultProps = {
+type propsWithDefaults = 'icon';
+const defaultProps: defaultOf<Props, propsWithDefaults> = {
     icon: <CopyIcon />
 };
 
-const TextWithCopy: React.FC<TextWithCopyProps> = (propsIn) => {
-    const props = {...defaultProps, ...propsIn};
+const TextWithCopy: React.FC<Props> = (propsIn) => {
+    const props = useDefaults(propsIn, defaultProps);
 
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation(['chess-ctrls', 'core']);

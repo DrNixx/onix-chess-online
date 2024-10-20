@@ -54,7 +54,7 @@ interface IBaseMessage {
     deliveredToMeAt?: number;
     readByMe?: number;
     status?: string;
-    readReceipts?: number[];
+    readReceipts?: (number | string)[];
     editedAt?: number;
     editedBy?: IUser;
     deletedAt?: number;

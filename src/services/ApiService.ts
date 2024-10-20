@@ -17,6 +17,7 @@ const defaultParams: ApiParamsWithMethod = {
     method: 'GET',
     headers: {
         Accept: 'application/json',
+        "X-Requested-With": 'XMLHttpRequest'
     },
 };
 

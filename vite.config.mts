@@ -43,6 +43,7 @@ export default defineConfig(({ mode, command }) => {
 
                     defaultHandler(warning)
                 },
+                external: [],
                 output: {
 
                 },

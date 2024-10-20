@@ -45,7 +45,7 @@ module.exports = {
             transformMode: 'compile-time',
         }),
     ],
-	devtool: PRODUCTION ? false : 'eval-source-map',
+	devtool: PRODUCTION ? false : 'source-map',
 	mode: PRODUCTION ? 'production' : 'development',
     optimization: {
         runtimeChunk: 'single',
